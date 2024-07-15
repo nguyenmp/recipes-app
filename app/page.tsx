@@ -23,7 +23,7 @@ export default function Home() {
               {/* In Tailwind CSS, how to style elements while using dangerouslySetInnerHTML in ReactJS?
               https://stackoverflow.com/questions/74518155/in-tailwind-css-how-to-style-elements-while-using-dangerouslysetinnerhtml-in-re
               https://stackoverflow.com/questions/69276276/why-tailwind-list-style-type-is-not-working */}
-              <div className="[&>*]:py-3 [&>ul]:list-disc [&>ul]:list-inside" dangerouslySetInnerHTML={{ __html: new showdown.Converter().makeHtml(note.content_markdown) }}></div>
+              <div className="markdown-container" dangerouslySetInnerHTML={{ __html: new showdown.Converter({simplifiedAutoLink: true}).makeHtml(note.content_markdown) }}></div>
             </div>
           })}
         </div>
