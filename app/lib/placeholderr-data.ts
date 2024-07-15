@@ -34,4 +34,39 @@ export const recipes: Recipe[] = [
             },
         ],
     },
+    {
+        name: "Blue Corn Waffles / Pancakes",
+        notes: [
+            {
+                date_epoch_seconds: 1715097554,
+                locations: [],
+                assets: [],
+                content_markdown: "https://www.eatingwell.com/recipe/7902149/blue-corn-waffles-rancheros/",
+            },
+            {
+                date_epoch_seconds: 1715270354,
+                locations: [],
+                assets: [],
+                content_markdown: "https://www.allrecipes.com/recipe/45145/blue-cornmeal-pancakes/\n* Note, it uses cornmeal instead, this is the biggest difference, we’re using harina.\n* Pine nuts were a good add\n* It was nice!  A bit chewy.  Maybe consider making them thinner\n* Needed to add an extra cup of liquid",
+            },
+            {
+                date_epoch_seconds: 1715443154,
+                locations: [],
+                assets: [],
+                content_markdown: "https://masienda.com/blogs/learn/blue-corn-waffles-with-masa-harina\n* Added an extra cup of liquid (water) cause batter was so dry\n* Reduced baking powder to 1 tsp and it was fine\n* Used yogurt in addition to chobani vanilla oatmilk which was good\n* Used keep warm toaster oven\n* < 1 cup per waffle\n* Also rotated waffles to make even cooking\n* Experimented with walnuts, looks nice!\n* Less batter per waffle is better so it cooks more thoroughly and more crispy\n* Could use more salt, I only used 0.5 tsp\n* Best cooked twice, once to cook, then let steam off, them cook again",
+            },
+            {
+                date_epoch_seconds: 1716652754,
+                locations: [],
+                assets: [],
+                content_markdown: "https://masienda.com/blogs/learn/blue-corn-waffles-with-masa-harina\n* 1 tsp salt (more than last)\n* 0.5 tsp baking powder and baking soda this time (less than last)",
+            },
+            {
+                date_epoch_seconds: 1719763154,
+                locations: [],
+                assets: [],
+                content_markdown: "For Shiv\n* Added some cornstarch and sugar\n* No eggs\n* Hella good\n* 2.5 cups water\n* Double fry (hold in toaster oven before second fry)",
+            },
+        ],
+    },
 ]
