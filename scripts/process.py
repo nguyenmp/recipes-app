@@ -3,10 +3,10 @@ My original data is in google docs.  Each recipe is under a sub heading.
 
 I manually formatted dates into their own line (e.g. Apr 20 2024)
 
-This script formats that into the placeholder-data.ts format so I can import it into my app.
+This script formats markdown into the placeholder-data.ts format so I can import it into my app.
 
 Export the google doc to HTML webpage
-Then convert to markdown: https://codebeautify.org/html-to-markdown
+Then convert to markdown using html_to_markdown.py
 Then parse markdown into JSON structured data using this file
 Then format output with https://jsonlint.com/
 '''
