@@ -13,11 +13,11 @@ function getDateStringFromEpochSeconds(epoch_seconds: number): string {
 export default function Home() {
   return (
     <main>
-      {recipes.map((recipe: Recipe) => {
-        return <div className="m-10">
+      {recipes.map((recipe: Recipe, index: number) => {
+        return <div className="m-10" key={`recipe-${index}`}>
           <h1 className="text-2xl pt-10">{recipe.name}</h1>
-          {recipe.notes.map((note: Note) => {
-            return <div className="px-5 hover:bg-stone-200 transition-colors duration-200">
+          {recipe.notes.map((note: Note, index: number) => {
+            return <div key={`note-${index}`} className="px-5 hover:bg-stone-200 transition-colors duration-200">
               <p className="text-xs">{getDateStringFromEpochSeconds(note.date_epoch_seconds)}</p>
 
               {/* In Tailwind CSS, how to style elements while using dangerouslySetInnerHTML in ReactJS?
