@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { recipes } from "./lib/placeholderr-data";
+import { recipes } from "./lib/placeholder-data";
 import { Note, Recipe } from "./lib/definitions";
 
 import showdown from "showdown";
