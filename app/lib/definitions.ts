@@ -1,6 +1,11 @@
 export type Recipe = {
     name: string;
-    notes: Note[]
+    notes: Note[];
+}
+
+export type StoredRecipe = Recipe & {
+    id: number;
+    notes: StoredNote[];
 }
 
 export type Location = {
@@ -16,6 +21,11 @@ export type Note = {
     locations: Location[];
     content_markdown: string;
     assets: ExternalAsset[];
+}
+
+export type StoredNote = Note & {
+    id: number;
+    recipe_id: number;
 }
 
 export type ExternalAsset =
