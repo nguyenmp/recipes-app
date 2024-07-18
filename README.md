@@ -17,6 +17,8 @@ Then, run the development server:
 pnpm dev
 ```
 
+Visit [http://localhost:3000/admin](http://localhost:3000/admin) and hit "Reset Database" to seed the database with placeholder data.
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Learn More
