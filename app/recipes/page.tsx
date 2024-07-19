@@ -1,13 +1,15 @@
 
+import Link from "next/link";
 import { getRecipesWithNotes } from "../lib/data";
-import { Recipe as RecipeUI } from "../ui/recipe";
+import { RecipeCard } from "../ui/recipe";
 
 export default async function Recipes() {
   const recipes = await getRecipesWithNotes();
   return (
     <main>
+      <Link href="/recipes/new">Create New Recipe</Link>
       {recipes.map((recipe) => {
-        return RecipeUI(recipe)
+        return RecipeCard(recipe)
       })}
     </main>
   );

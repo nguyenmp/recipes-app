@@ -1,4 +1,4 @@
-import { StoredNote, StoredRecipe } from "../lib/definitions";
+import { DeepRecipe, ShallowRecipe, StoredNote } from "../lib/definitions";
 import showdown from "showdown";
 import Link from 'next/link';
 
@@ -7,7 +7,7 @@ function getDateStringFromEpochSeconds(epoch_seconds: number): string {
     return date.toLocaleString();
 }
 
-export function Recipe(recipe: StoredRecipe) {
+export function RecipeCard(recipe: DeepRecipe) {
     return (
         <div className="m-10" key={`recipe-${recipe.id}`}>
             <Link href={`/recipes/${recipe.id}`}><h1 className="text-2xl pt-10">{recipe.name}</h1></Link>
@@ -23,4 +23,16 @@ export function Recipe(recipe: StoredRecipe) {
             })}
         </div>
     );
+}
+
+export function EditRecipe(params: {recipe?: ShallowRecipe}) {
+    return (
+        <div className="flex flex-col">
+            <div className="flex flex-row">
+                <label className="p-2" htmlFor="name">Name</label>
+                <input className="border bg-slate-200 p-2" type="text" id="name" name="name" defaultValue={params.recipe?.name} placeholder="Recipe Name"/>
+            </div>
+            <button type="submit">Save {params.recipe ? "" : "New "} Recipe</button>
+        </div>
+    )
 }

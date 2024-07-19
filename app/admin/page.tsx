@@ -1,6 +1,7 @@
 import {sql} from '@vercel/postgres'
-import { Note, Recipe } from '../lib/definitions';
-import { recipes } from '../lib/placeholder-data';
+import { ShallowNote } from '../lib/definitions';
+import { PlaceholderData, recipes } from '../lib/placeholder-data';
+import { createRecipe } from '../lib/data';
 
 async function seedDatabase() {
     "use server";
@@ -15,16 +16,15 @@ async function seedDatabase() {
     recipes.map(insertRecipe);
 }
 
-async function insertRecipe(recipe: Recipe): Promise<Number> {
-    const result = await sql`INSERT INTO recipes (name) VALUES (${recipe.name}) RETURNING id;`
-    const newRecipeId = result.rows[0]['id'];
+async function insertRecipe(recipe: PlaceholderData): Promise<Number> {
+    const newRecipeId = await createRecipe(recipe);
 
     recipe.notes.map(insertNoteForRecipe.bind(null, newRecipeId))
 
     return newRecipeId;
 }
 
-async function insertNoteForRecipe(recipeId: Number, note: Note): Promise<Number> {
+async function insertNoteForRecipe(recipeId: Number, note: ShallowNote): Promise<Number> {
     const result = await sql`INSERT INTO notes (date_epoch_seconds, content_markdown, recipe_id) VALUES (${note.date_epoch_seconds}, ${note.content_markdown}, ${recipeId.valueOf()}) RETURNING id;`
     const newNoteId = result.rows[0]['id'];
     return newNoteId;

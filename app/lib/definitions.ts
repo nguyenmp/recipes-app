@@ -1,42 +1,21 @@
-export type Recipe = {
-    name: string;
-    notes: Note[];
-}
-
-export type StoredRecipe = Recipe & {
-    id: number;
+export type DeepRecipe = StoredRecipe & {
     notes: StoredNote[];
 }
 
-export type Location = {
-    label: string;
-    gps: {
-        longitude: number;
-        latitude: number;
-    }
+export type ShallowRecipe = {
+    name: string;
 }
 
-export type Note = {
+export type StoredRecipe = ShallowRecipe & {
+    id: number;
+}
+
+export type ShallowNote = {
     date_epoch_seconds: number;
-    locations: Location[];
     content_markdown: string;
-    assets: ExternalAsset[];
 }
 
-export type StoredNote = Note & {
+export type StoredNote = ShallowNote & {
     id: number;
     recipe_id: number;
-}
-
-export type ExternalAsset =
-    | Photo
-    | URL;
-
-export type URL = {
-    url: string;
-}
-
-export type Photo = {
-    url: string;
-    ocr: string;
 }
