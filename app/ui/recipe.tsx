@@ -1,5 +1,6 @@
 import { StoredNote, StoredRecipe } from "../lib/definitions";
 import showdown from "showdown";
+import Link from 'next/link';
 
 function getDateStringFromEpochSeconds(epoch_seconds: number): string {
     const date = new Date(epoch_seconds * 1000);
@@ -9,7 +10,7 @@ function getDateStringFromEpochSeconds(epoch_seconds: number): string {
 export function Recipe(recipe: StoredRecipe) {
     return (
         <div className="m-10" key={`recipe-${recipe.id}`}>
-            <a href={`./recipes/${recipe.id}`}><h1 className="text-2xl pt-10">{recipe.name}</h1></a>
+            <Link href={`/recipes/${recipe.id}`}><h1 className="text-2xl pt-10">{recipe.name}</h1></Link>
             {recipe.notes.map((note: StoredNote) => {
                 return <div key={`note-${note.id}`} className="px-5 hover:bg-stone-200 transition-colors duration-200">
                     <p className="text-xs">{getDateStringFromEpochSeconds(note.date_epoch_seconds)}</p>
