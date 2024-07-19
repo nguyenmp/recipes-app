@@ -6,6 +6,14 @@ export async function getRecipes(): Promise<StoredRecipe[]> {
     return result.rows;
 }
 
+export async function getRecipeById(id: number): Promise<StoredRecipe> {
+    const response = await sql<StoredRecipe>`SELECT * FROM Recipes WHERE id=${id}`;
+    const notes = await getNotesForRecipe(id);
+    const result = response.rows[0];
+    result.notes = notes;
+    return result;
+}
+
 export async function getRecipesWithNotes(): Promise<StoredRecipe[]> {
     const recipes = await getRecipes();
     return await Promise.all(recipes.map(async (recipe: StoredRecipe) => {
