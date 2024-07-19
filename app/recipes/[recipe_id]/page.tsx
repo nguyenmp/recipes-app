@@ -3,8 +3,8 @@ import { RecipeCard } from "@/app/ui/recipe";
 import Link from "next/link";
 
 
-export default async function Page({ params }: { params: { id: string } }) {
-    const id = params.id;
+export default async function Page({ params }: { params: { recipe_id: string } }) {
+    const id = params.recipe_id;
     const recipe = await getRecipeById(Number(id));
     return (
         <div>
