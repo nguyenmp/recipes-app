@@ -1,17 +1,13 @@
 import {sql} from '@vercel/postgres'
 import { ShallowNote } from '../lib/definitions';
 import { PlaceholderData, recipes } from '../lib/placeholder-data';
-import { createRecipe } from '../lib/data';
+import { createNoteForRecipe, createRecipe, resetDatabaseTables } from '../lib/data';
 
 async function seedDatabase() {
     "use server";
     console.log('Seed Database')
 
-    await sql`DROP TABLE IF EXISTS Recipes CASCADE`;
-    await sql`DROP TABLE IF EXISTS Notes CASCADE`;
-
-    await sql`CREATE TABLE IF NOT EXISTS Recipes (id BIGSERIAL PRIMARY KEY, name VARCHAR(255))`
-    await sql`CREATE TABLE IF NOT EXISTS Notes (id BIGSERIAL PRIMARY KEY, recipe_id BIGINT NOT NULL REFERENCES Recipes(id), date_epoch_seconds BIGINT, content_markdown TEXT)`
+    await resetDatabaseTables();
 
     recipes.map(insertRecipe);
 }
@@ -25,9 +21,7 @@ async function insertRecipe(recipe: PlaceholderData): Promise<Number> {
 }
 
 async function insertNoteForRecipe(recipeId: Number, note: ShallowNote): Promise<Number> {
-    const result = await sql`INSERT INTO notes (date_epoch_seconds, content_markdown, recipe_id) VALUES (${note.date_epoch_seconds}, ${note.content_markdown}, ${recipeId.valueOf()}) RETURNING id;`
-    const newNoteId = result.rows[0]['id'];
-    return newNoteId;
+    return await createNoteForRecipe(recipeId.valueOf(), note);
 }
 
 export default function AdminPage() {
