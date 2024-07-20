@@ -3,6 +3,8 @@ import showdown from "showdown";
 import Link from 'next/link';
 import { constants } from "zlib";
 import assert from "assert";
+import { MarkdownPreview } from "./markdown";
+import { MarkdownEditorWithPreview } from "./markdown_editor";
 
 function getDateStringFromEpochSeconds(epoch_seconds: number): string {
     const date = new Date(epoch_seconds * 1000);
@@ -19,11 +21,7 @@ export function RecipeCard(recipe: DeepRecipe) {
                         <p className="text-xs">{getDateStringFromEpochSeconds(note.date_epoch_seconds)}</p>
                         <Link className="text-xs" href={`/recipes/${recipe.id}/notes/${note.id}/edit`}>Edit Note</Link>
                     </div>
-
-                    {/* In Tailwind CSS, how to style elements while using dangerouslySetInnerHTML in ReactJS?
-              https://stackoverflow.com/questions/74518155/in-tailwind-css-how-to-style-elements-while-using-dangerouslysetinnerhtml-in-re
-              https://stackoverflow.com/questions/69276276/why-tailwind-list-style-type-is-not-working */}
-                    <div className="markdown-container" dangerouslySetInnerHTML={{ __html: new showdown.Converter({ simplifiedAutoLink: true }).makeHtml(note.content_markdown) }}></div>
+                    <MarkdownPreview content_markdown={note.content_markdown} />
                 </div>
             })}
             <Link href={`/recipes/${recipe.id}/notes/new`}>Add a new note</Link>
@@ -73,10 +71,7 @@ export function EditNote(params: { note?: ShallowNote }) {
                 <label className="p-2" htmlFor="datetime">Date</label>
                 <input className="border bg-slate-200 p-2" type="datetime-local" id="datetime" name="datetime" defaultValue={dateFieldValue} />
             </div>
-            <div className="flex flex-row">
-                <label className="p-2" htmlFor="content_markdown">Content</label>
-                <textarea className="border bg-slate-200 p-2" rows={10} cols={30} id="content_markdown" name="content_markdown" defaultValue={params.note?.content_markdown} placeholder="TODO" />
-            </div>
+            <MarkdownEditorWithPreview content_markdown={params.note?.content_markdown} />
             <button type="submit">Save {params.note ? "" : "New "} Note</button>
         </div>
     );
