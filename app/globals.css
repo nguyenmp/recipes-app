@@ -12,13 +12,22 @@
   .markdown-container {
     @apply py-3;
 
+    p {
+      @apply py-2
+    }
+
     ul {
       @apply list-disc;
+    }
+
+    ol {
+      @apply list-decimal;
     }
 
     ul,
     ol {
       @apply list-inside;
+      @apply pl-4; /* Indent for nesting lists */
     }
 
     a {
