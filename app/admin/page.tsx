@@ -2,6 +2,8 @@ import {sql} from '@vercel/postgres'
 import { ShallowNote } from '../lib/definitions';
 import { PlaceholderData, recipes } from '../lib/placeholder-data';
 import { createNoteForRecipe, createRecipe, resetDatabaseTables } from '../lib/data';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 async function seedDatabase() {
     "use server";
@@ -9,7 +11,11 @@ async function seedDatabase() {
 
     await resetDatabaseTables();
 
-    recipes.map(insertRecipe);
+    await Promise.all(recipes.map(insertRecipe));
+
+    const targetPath = '/recipes'
+    revalidatePath(targetPath);
+    redirect(targetPath);
 }
 
 async function insertRecipe(recipe: PlaceholderData): Promise<Number> {

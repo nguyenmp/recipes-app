@@ -40,7 +40,7 @@ export async function saveNote(recipeId: number, noteId: number | null, formData
         await updateNoteById(noteId, note);
     }
 
-
+    revalidatePath(`/recipes/${recipeId}/notes/${noteId}/edit`);
     const targetPath = `/recipes/${recipeId}`
     revalidatePath(targetPath);
     redirect(targetPath);
