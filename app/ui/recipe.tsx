@@ -55,8 +55,8 @@ function leftPad(input: string, length: number, filler: string): string {
 function getDateTimeFieldValueFromEpochSeconds(epoch_seconds: number): string {
     const date = new Date(epoch_seconds * 1000);
     const year = date.getFullYear()
-    const month = leftPad(date.getMonth().toString(), 2, '0');
-    const day = leftPad(date.getDay().toString(), 2, '0');
+    const month = leftPad((date.getMonth() + 1).toString(), 2, '0');
+    const day = leftPad(date.getDate().toString(), 2, '0');
     const hours = leftPad(date.getHours().toString(), 2, '0');
     const minutes = leftPad(date.getMinutes().toString(), 2, '0');
     return `${year}-${month}-${day}T${hours}:${minutes}`;
