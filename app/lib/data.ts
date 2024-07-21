@@ -40,7 +40,7 @@ export async function createRecipe(recipe: ShallowRecipe): Promise<number> {
 }
 
 export async function getNotesForRecipe(recipeId: number): Promise<StoredNote[]> {
-    const result = await sql<StoredNote>`SELECT * FROM Notes WHERE recipe_id = ${recipeId}`;
+    const result = await sql<StoredNote>`SELECT * FROM Notes WHERE recipe_id = ${recipeId} ORDER BY date_epoch_seconds ASC`;
     return result.rows;
 }
 
