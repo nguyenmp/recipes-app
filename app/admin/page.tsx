@@ -1,4 +1,4 @@
-import {sql} from '@vercel/postgres'
+import { sql } from '@vercel/postgres'
 import { ShallowNote } from '../lib/definitions';
 import { PlaceholderData, recipes } from '../lib/placeholder-data';
 import { createNoteForRecipe, createRecipe, resetDatabaseTables } from '../lib/data';
@@ -31,14 +31,14 @@ async function insertNoteForRecipe(recipeId: Number, note: ShallowNote): Promise
 }
 
 export default function AdminPage() {
-  return (
-    <main>
-        <h1>Admin Page</h1>
+    return (
+        <main>
+            <h1>Admin Page</h1>
 
-<form action={seedDatabase}>
-    <button type="submit" className="bg-slate-300 rounded p-4 active:bg-slate-600">Reset Database</button>
-</form>
+            <form action={seedDatabase}>
+                <button type="submit" className="bg-slate-300 rounded p-4 active:bg-slate-600">Reset Database</button>
+            </form>
 
-    </main>
-  );
+        </main>
+    );
 }
