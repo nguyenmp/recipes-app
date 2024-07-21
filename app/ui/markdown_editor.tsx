@@ -13,8 +13,18 @@ export function MarkdownEditorWithPreview(params: { content_markdown?: string, p
     return (
         <div className="flex flex-row">
             <label className="p-2" htmlFor="content_markdown">Content</label>
-            <textarea className="border bg-slate-200 p-2" rows={10} cols={30} id="content_markdown" name="content_markdown" defaultValue={params.content_markdown} placeholder={params.placeholder} onChange={handleFieldChange} />
-            <MarkdownPreview content_markdown={contentMarkdown} />
+            <textarea className="border bg-slate-200 p-2" id="content_markdown" name="content_markdown" defaultValue={params.content_markdown} placeholder={params.placeholder} onChange={handleFieldChange} />
+            <div className="flex flex-col">
+                <p>Markdown Preview:</p>
+                <noscript>
+                    {/* Basically this button refreshes the page with new query
+                    params from the form, forcing server side rendering when
+                    client side is not available */}
+                    <input type="submit" value="Reload markdown preview" formMethod="get" formAction=''/>
+                    <p>Automatic preview requires JavaScript to be enabled.</p>
+                </noscript>
+                <MarkdownPreview content_markdown={contentMarkdown} />
+            </div>
         </div>
     );
 }
