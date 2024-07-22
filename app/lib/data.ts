@@ -9,8 +9,14 @@ export async function resetDatabaseTables() {
     await sql`CREATE TABLE IF NOT EXISTS Notes (id BIGSERIAL PRIMARY KEY, recipe_id BIGINT NOT NULL REFERENCES Recipes(id), date_epoch_seconds BIGINT, content_markdown TEXT)`
 }
 
-export async function getRecipes(): Promise<StoredRecipe[]> {
-    const result = await sql<StoredRecipe>`SELECT * FROM Recipes`;
+export async function getRecipes(query?: string): Promise<StoredRecipe[]> {
+    let promise;
+    if (query) {
+        promise = sql<StoredRecipe>`SELECT * FROM Recipes WHERE name ILIKE ${`%${query}%`}`;
+    } else {
+        promise = sql<StoredRecipe>`SELECT * FROM Recipes`;
+    }
+    const result = await promise;
     return result.rows;
 }
 
@@ -20,8 +26,8 @@ export async function getRecipeById(id: number): Promise<DeepRecipe> {
     return {...response.rows[0], notes: notes};
 }
 
-export async function getRecipesWithNotes(): Promise<DeepRecipe[]> {
-    const recipes = await getRecipes();
+export async function getRecipesWithNotes(query?: string): Promise<DeepRecipe[]> {
+    const recipes = await getRecipes(query);
     return await Promise.all(recipes.map(async (recipe: StoredRecipe) => {
         const notes = await getNotesForRecipe(recipe.id);
         const result : DeepRecipe = {...recipe, notes: notes};

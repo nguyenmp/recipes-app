@@ -2,6 +2,7 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useDebouncedCallback } from "use-debounce";
 
 const QUERY_KEY = 'query';
 
@@ -10,7 +11,7 @@ export function SearchBar() {
     const pathname = usePathname();
     const { replace } = useRouter();
 
-    function handleSearch(term: string) {
+    const handleSearch = useDebouncedCallback((term: string) => {
         const params = new URLSearchParams(searchParams);
         if (term) {
             params.set(QUERY_KEY, term);
@@ -18,7 +19,7 @@ export function SearchBar() {
             params.delete(QUERY_KEY);
         }
         replace(`${pathname}?${params.toString()}`)
-    }
+    }, 300);
 
     return (
         <form className="flex flex-row">

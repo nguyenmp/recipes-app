@@ -1,4 +1,4 @@
-import { getRecipeById, getRecipesWithNotes } from "@/app/lib/data";
+import { getRecipeById } from "@/app/lib/data";
 import { RecipeCard } from "@/app/ui/recipe";
 import Link from "next/link";
 
