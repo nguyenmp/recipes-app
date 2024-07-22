@@ -6,7 +6,7 @@ import { SearchBar } from "../ui/search";
 import { Suspense } from "react";
 import { DeepRecipe } from "../lib/definitions";
 
-export async function RecipesList(params: {recipes: DeepRecipe[]}) {
+async function RecipesList(params: {recipes: DeepRecipe[]}) {
   const recipes = params.recipes;
 
   if (recipes.length == 0) {
