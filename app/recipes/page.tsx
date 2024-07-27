@@ -21,9 +21,10 @@ function sortRecipesByRelevance(terms_list: string[], recipes: DeepRecipe[]): De
   const documentFrequencies: number[] = new Array(terms_list.length).fill(0);
   recipes.forEach((recipe: DeepRecipe, recipe_index: number) => {
     terms_list.forEach((term: string, term_index: number) => {
+      const all_notes = recipe.notes.map((note: StoredNote) => note.content_markdown)
       const content = [
         recipe.name,
-        ...recipe.notes.map((note: StoredNote) => note.content_markdown),
+        ...all_notes,
       ].join(' ');
       const term_matches = Array.from(content.matchAll(new RegExp(term, 'gi')));
       if (term_matches.length > 0) {
@@ -37,7 +38,11 @@ function sortRecipesByRelevance(terms_list: string[], recipes: DeepRecipe[]): De
           tf_by_term[term] = 0;
         }
 
-        tf_by_term[term] += 1;
+        // 10 pts for each instance of term in title, title matches are high signal
+        tf_by_term[term] += 10 * (recipe.name.toLowerCase().split(term).length - 1);
+
+        // 1 pt for each instance of term in note
+        tf_by_term[term] += 1 * (all_notes.join(' ').toLowerCase().split(term).length - 1);
       }
     })
   });
@@ -47,7 +52,8 @@ function sortRecipesByRelevance(terms_list: string[], recipes: DeepRecipe[]): De
     const scores_ = terms_list.map((term: string, term_index: number) => {
       const tf = (term in tf_by_term) ? tf_by_term[term] : 0;
       const df = documentFrequencies[term_index];
-      const idf = Math.log2((1 + recipes.length) / (1 + df))
+      const idf_offset = 0.1;  // the IDF offset allows IDF to be non-zero allowing single term search to stll sort by document frequency
+      const idf = Math.log2((1 + recipes.length) / (1 + df) + idf_offset)
       const score = tf*idf;
       return score;
     });
