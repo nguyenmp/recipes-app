@@ -4,7 +4,64 @@ import { getRecipesWithNotes } from "../lib/data";
 import { RecipeCard } from "../ui/recipe";
 import { SearchBar } from "../ui/search";
 import { Suspense } from "react";
-import { DeepRecipe } from "../lib/definitions";
+import { DeepRecipe, StoredNote } from "../lib/definitions";
+
+function getTermsFromQuery(query: string): string[] {
+  const pattern = new RegExp('([a-zA-Z]+|[0-9\\.\\,]+)', 'g');
+  const matches = query.matchAll(pattern);
+  const terms_set = new Set(Array.from(matches).map((match: RegExpExecArray) => {
+    return match[0];
+  }));
+  return Array.from(terms_set);
+}
+
+function sortRecipesByRelevance(terms_list: string[], recipes: DeepRecipe[]): DeepRecipe[] {
+  const tf_by_term_by_document : {[term: string]: number}[] = new Array(recipes.length);
+
+  const documentFrequencies: number[] = new Array(terms_list.length).fill(0);
+  recipes.forEach((recipe: DeepRecipe, recipe_index: number) => {
+    terms_list.forEach((term: string, term_index: number) => {
+      const content = [
+        recipe.name,
+        ...recipe.notes.map((note: StoredNote) => note.content_markdown),
+      ].join(' ');
+      const term_matches = Array.from(content.matchAll(new RegExp(term, 'gi')));
+      if (term_matches.length > 0) {
+        documentFrequencies[term_index] += 1;
+
+        if (!(recipe_index in tf_by_term_by_document)) {
+          tf_by_term_by_document[recipe_index] = {};
+        }
+        const tf_by_term = tf_by_term_by_document[recipe_index];
+        if (!(term in tf_by_term)) {
+          tf_by_term[term] = 0;
+        }
+
+        tf_by_term[term] += 1;
+      }
+    })
+  });
+
+  const scores : {recipe: DeepRecipe, score: number}[] = recipes.map((recipe: DeepRecipe, recipe_index: number) => {
+    const tf_by_term = tf_by_term_by_document[recipe_index] || {};
+    const scores_ = terms_list.map((term: string, term_index: number) => {
+      const tf = (term in tf_by_term) ? tf_by_term[term] : 0;
+      const df = documentFrequencies[term_index];
+      const idf = Math.log2((1 + recipes.length) / (1 + df))
+      const score = tf*idf;
+      return score;
+    });
+    recipe.name = recipe.name + ' ' + JSON.stringify(scores_);
+    return {
+      recipe,
+      score: scores_.reduce((cum, val) => cum + val, 0)
+    };
+  });
+
+  const sorted = scores.toSorted((a, b) => b.score - a.score);
+
+  return sorted.map((item) => item.recipe);
+}
 
 async function RecipesList(params: {recipes: DeepRecipe[]}) {
   const recipes = params.recipes;
@@ -17,7 +74,11 @@ async function RecipesList(params: {recipes: DeepRecipe[]}) {
     <div>
       {
         recipes.map((recipe) => {
-          return RecipeCard(recipe);
+          return (
+            <Link href={`/recipes/${recipe.id}`} key={recipe.id} className="hover:underline">
+              <h1 className="text-2xl m-10">{recipe.name}</h1>
+            </Link>
+          );
         })
       }
     </div>
@@ -26,14 +87,27 @@ async function RecipesList(params: {recipes: DeepRecipe[]}) {
 
 export default async function Recipes({searchParams}: {searchParams: {query?: string}}) {
   const query = searchParams.query || '';
-  const recipes = await getRecipesWithNotes(query);
+
+  const terms_list = getTermsFromQuery(query);
+
+  // Query for each term and reduce by duplicate matches
+  const recipes_by_id: {[recipe_id: number]: DeepRecipe} = {};
+  (await Promise.all(terms_list.map(async (term: string) => await getRecipesWithNotes(term)))).forEach(
+    (recipes: DeepRecipe[]) => {
+      recipes.forEach((recipe: DeepRecipe) => recipes_by_id[recipe.id] = recipe)
+    }
+  )
+  const recipes = Object.values(recipes_by_id);
+
+  // Then sort by relevancy
+  const sortedRecipes = sortRecipesByRelevance(terms_list, recipes);
 
   return (
     <main>
       <Link href="/recipes/new">Create New Recipe</Link>
       <SearchBar />
       <Suspense key={query} fallback={<p>Loading...</p>}>
-        <RecipesList recipes={recipes} />
+        <RecipesList recipes={sortedRecipes} />
       </Suspense>
     </main>
   );
