@@ -91,9 +91,7 @@ async function RecipesList(params: {recipes: DeepRecipe[]}) {
   )
 }
 
-export default async function Recipes({searchParams}: {searchParams: {query?: string}}) {
-  const query = searchParams.query || '';
-
+async function getSortedRecipesForQuery(query: string): Promise<DeepRecipe[]> {
   const terms_list = getTermsFromQuery(query);
 
   // Query for each term and reduce by duplicate matches
@@ -107,6 +105,14 @@ export default async function Recipes({searchParams}: {searchParams: {query?: st
 
   // Then sort by relevancy
   const sortedRecipes = sortRecipesByRelevance(terms_list, recipes);
+
+  return sortedRecipes;
+}
+
+export default async function Recipes({searchParams}: {searchParams: {query?: string}}) {
+  const query = searchParams.query || '';
+
+  let sortedRecipes = query ? await getSortedRecipesForQuery(query) : await getRecipesWithNotes();
 
   return (
     <main>
