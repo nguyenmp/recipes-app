@@ -1,7 +1,6 @@
 
 import Link from "next/link";
-import { getRecipesWithNotes } from "../lib/data";
-import { RecipeCard } from "../ui/recipe";
+import { getMoreTerms, getRecipesWithNotes } from "../lib/data";
 import { SearchBar } from "../ui/search";
 import { Suspense } from "react";
 import { DeepRecipe, StoredNote } from "../lib/definitions";
@@ -114,13 +113,28 @@ export default async function Recipes({searchParams}: {searchParams: {query?: st
 
   let sortedRecipes = query ? await getSortedRecipesForQuery(query) : await getRecipesWithNotes();
 
+  const terms = getTermsFromQuery(query);
+  const more_terms: string[] = [];
+  for (const term of terms) {
+    const oyster = await getMoreTerms(term);
+    console.log('Oyster' + oyster);
+    oyster.forEach((new_term: string) => {
+      if (terms.includes(new_term)) return;
+      more_terms.push(new_term);
+    });
+  }
+  console.log(terms);
+  console.log(more_terms);
+
   return (
     <main>
       <Link href="/recipes/new">Create New Recipe</Link>
       <SearchBar />
+      <p>{more_terms.join(' ')}</p>
       <Suspense key={query} fallback={<p>Loading...</p>}>
         <RecipesList recipes={sortedRecipes} />
       </Suspense>
+      {/* {words.join(' ')} */}
     </main>
   );
 }

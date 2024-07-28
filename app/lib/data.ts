@@ -4,9 +4,51 @@ import { DeepRecipe, ShallowNote, ShallowRecipe, StoredNote, StoredRecipe } from
 export async function resetDatabaseTables() {
     await sql`DROP TABLE IF EXISTS Recipes CASCADE`;
     await sql`DROP TABLE IF EXISTS Notes CASCADE`;
+    await sql`DROP VIEW Words`;
 
     await sql`CREATE TABLE IF NOT EXISTS Recipes (id BIGSERIAL PRIMARY KEY, name VARCHAR(255))`
     await sql`CREATE TABLE IF NOT EXISTS Notes (id BIGSERIAL PRIMARY KEY, recipe_id BIGINT NOT NULL REFERENCES Recipes(id), date_epoch_seconds BIGINT, content_markdown TEXT)`
+
+    await sql`
+        CREATE OR REPLACE VIEW Words (word) AS
+            SELECT DISTINCT unnest(regexp_matches(LOWER(Recipes.name),'([a-zA-Z]+|[0-9\\.\\,]+)', 'g'))
+            FROM Recipes
+            UNION
+            SELECT DISTINCT unnest(regexp_matches(LOWER(Notes.content_markdown),'([a-zA-Z]+|[0-9\\.\\,]+)', 'g'))
+            FROM Notes
+    `
+
+    // https://vercel.com/docs/storage/vercel-postgres/supported-postgresql-extensions#installing-an-extension
+    await sql`CREATE EXTENSION IF NOT EXISTS fuzzystrmatch`
+}
+
+export async function getMoreTerms(term: string) : Promise<string[]> {
+    const response = await sql<{word: string, levenshtein: number}>`
+        SELECT word, levenshtein(Words.word, ${term}) as levenshtein
+        FROM Words
+
+        -- Limit levenshtein distance by half of the term, any more than half and it's a stretch...
+        WHERE levenshtein(Words.word, ${term}) < char_length(${term}) / 2
+
+        -- don't include self or any superstrings since we match by substring, so superstrings don't add any value
+        AND word NOT LIKE ${`%${term}%`}
+        ORDER BY levenshtein(Words.word, ${term}) ASC
+    `;
+
+
+    const new_terms = response.rows.map((row) => row.word);
+
+    // Reduce by substrings.  i.e. tomatoes => tomato and tomatos but tomato would cover tomatos
+    return new_terms.filter((new_term: string) => {
+        for (const other_term of new_terms) {
+            if (new_term === other_term) continue;
+            if (new_term.includes(other_term)) {
+                console.log('Ignoring ' + new_term + ' because its covered by ' + other_term)
+                return false;
+            }
+        }
+        return true;
+    })
 }
 
 export async function searchRecipesAndNotes(query?: string): Promise<StoredRecipe[]> {
