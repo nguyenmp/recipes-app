@@ -108,12 +108,20 @@ async function getSortedRecipesForQuery(query: string): Promise<DeepRecipe[]> {
   return sortedRecipes;
 }
 
-export default async function Recipes({searchParams}: {searchParams: {query?: string}}) {
-  const query = searchParams.query || '';
+function queryWithOysterTerm(query: string, oysterTerm: string) {
+  if (query.includes(oysterTerm)) {
+    // If oyster term is a subset of existing terms, we're growing by reducing our specificity, so remove the overly specific term
+    // e.g. "Tomatos" + "Tomato" => "Tomato" because "tomato" includes "tomatos"
+    return query.replaceAll(new RegExp(`${oysterTerm}[a-zA-Z]+`, 'g'), oysterTerm);
+  } else {
+    // If oyster term is not covered by existing query at all, just append it
+    // e.g. "Mexico" + "Mexican" => "Mexico Mexican"
+    return query + ' ' + oysterTerm;
+  }
+}
 
-  let sortedRecipes = query ? await getSortedRecipesForQuery(query) : await getRecipesWithNotes();
-
-  const terms = getTermsFromQuery(query);
+async function SuggestedTerms(params: {query: string}) {
+  const terms = getTermsFromQuery(params.query);
   const more_terms: string[] = [];
   for (const term of terms) {
     const oyster = await getMoreTerms(term);
@@ -123,18 +131,35 @@ export default async function Recipes({searchParams}: {searchParams: {query?: st
       more_terms.push(new_term);
     });
   }
-  console.log(terms);
-  console.log(more_terms);
+
+  return (
+    <ul className="flex flex-row gap-4">
+      {
+        more_terms.map((term: string) => {
+          const urlparams = new URLSearchParams();
+          urlparams.set('query', queryWithOysterTerm(params.query, term));
+          const link = `?${urlparams.toString()}`;
+          return <li key={term}><Link href={link}>+{term}</Link></li>
+        })
+      }
+    </ul>
+  );
+}
+
+export default async function Recipes({searchParams}: {searchParams: {query?: string}}) {
+  const query = searchParams.query || '';
+
+  let sortedRecipes = query ? await getSortedRecipesForQuery(query) : await getRecipesWithNotes();
+
 
   return (
     <main>
       <Link href="/recipes/new">Create New Recipe</Link>
       <SearchBar />
-      <p>{more_terms.join(' ')}</p>
+      <SuggestedTerms query={query} />
       <Suspense key={query} fallback={<p>Loading...</p>}>
         <RecipesList recipes={sortedRecipes} />
       </Suspense>
-      {/* {words.join(' ')} */}
     </main>
   );
 }
