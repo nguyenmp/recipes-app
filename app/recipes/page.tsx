@@ -112,7 +112,7 @@ function queryWithOysterTerm(query: string, oysterTerm: string) {
   if (query.includes(oysterTerm)) {
     // If oyster term is a subset of existing terms, we're growing by reducing our specificity, so remove the overly specific term
     // e.g. "Tomatos" + "Tomato" => "Tomato" because "tomato" includes "tomatos"
-    return query.replaceAll(new RegExp(`${oysterTerm}[a-zA-Z]+`, 'g'), oysterTerm);
+    return query.replaceAll(new RegExp(`[a-zA-Z]*${oysterTerm}[a-zA-Z]*`, 'g'), oysterTerm);
   } else {
     // If oyster term is not covered by existing query at all, just append it
     // e.g. "Mexico" + "Mexican" => "Mexico Mexican"
