@@ -4,7 +4,7 @@ import { DeepRecipe, ShallowNote, ShallowRecipe, StoredNote, StoredRecipe } from
 export async function resetDatabaseTables() {
     await sql`DROP TABLE IF EXISTS Recipes CASCADE`;
     await sql`DROP TABLE IF EXISTS Notes CASCADE`;
-    await sql`DROP VIEW Words`;
+    await sql`DROP VIEW IF EXISTS Words`;
 
     await sql`CREATE TABLE IF NOT EXISTS Recipes (id BIGSERIAL PRIMARY KEY, name VARCHAR(255))`
     await sql`CREATE TABLE IF NOT EXISTS Notes (id BIGSERIAL PRIMARY KEY, recipe_id BIGINT NOT NULL REFERENCES Recipes(id), date_epoch_seconds BIGINT, content_markdown TEXT)`
