@@ -13,9 +13,12 @@ async function seedDatabase() {
 
     await Promise.all(recipes.map(insertRecipe));
 
-    const targetPath = '/recipes'
-    revalidatePath(targetPath);
-    redirect(targetPath);
+    // This invalidates all data
+    // https://nextjs.org/docs/app/api-reference/functions/revalidatePath#revalidating-all-data
+    revalidatePath('/', 'page');
+    revalidatePath('/recipes', 'page');
+    revalidatePath('/recipes/[recipe_id]', 'page')
+    redirect('/recipes');
 }
 
 async function insertRecipe(recipe: PlaceholderData): Promise<Number> {
