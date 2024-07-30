@@ -24,6 +24,7 @@ export async function resetDatabaseTables() {
 }
 
 export async function getMoreTerms(term: string) : Promise<string[]> {
+    term = term.toLowerCase();
     const response = await sql<{word: string, levenshtein: number}>`
         SELECT word, levenshtein(Words.word, ${term}) as levenshtein
         FROM Words
@@ -44,7 +45,6 @@ export async function getMoreTerms(term: string) : Promise<string[]> {
         for (const other_term of new_terms) {
             if (new_term === other_term) continue;
             if (new_term.includes(other_term)) {
-                console.log('Ignoring ' + new_term + ' because its covered by ' + other_term)
                 return false;
             }
         }

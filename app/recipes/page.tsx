@@ -109,10 +109,10 @@ async function getSortedRecipesForQuery(query: string): Promise<DeepRecipe[]> {
 }
 
 function queryWithOysterTerm(query: string, oysterTerm: string) {
-  if (query.includes(oysterTerm)) {
+  if (query.toLowerCase().includes(oysterTerm)) {
     // If oyster term is a subset of existing terms, we're growing by reducing our specificity, so remove the overly specific term
     // e.g. "Tomatos" + "Tomato" => "Tomato" because "tomato" includes "tomatos"
-    return query.replaceAll(new RegExp(`[a-zA-Z]*${oysterTerm}[a-zA-Z]*`, 'g'), oysterTerm);
+    return query.replaceAll(new RegExp(`[a-zA-Z]*${oysterTerm}[a-zA-Z]*`, 'gi'), oysterTerm);
   } else {
     // If oyster term is not covered by existing query at all, just append it
     // e.g. "Mexico" + "Mexican" => "Mexico Mexican"
@@ -125,7 +125,6 @@ async function SuggestedTerms(params: {query: string}) {
   const more_terms: string[] = [];
   for (const term of terms) {
     const oyster = await getMoreTerms(term);
-    console.log('Oyster' + oyster);
     oyster.forEach((new_term: string) => {
       if (terms.includes(new_term)) return;
       more_terms.push(new_term);
