@@ -1,0 +1,14 @@
+diff --git a/src/backends/onnx.js b/src/backends/onnx.js
+index 0bee3dce7184d1fec1bd0e75677a6fea3a47db30..834fad5b3720dda85670aa5e79329f0ac71dc9bb 100644
+--- a/src/backends/onnx.js
++++ b/src/backends/onnx.js
+@@ -31,7 +31,8 @@ export const executionProviders = [
+ 
+ if (typeof process !== 'undefined' && process?.release?.name === 'node') {
+     // Running in a node-like environment.
+-    ONNX = ONNX_NODE.default ?? ONNX_NODE;
++    const onnx_node = require('onnxruntime-node');
++    ONNX = onnx_node.default ?? onnx_node;
+ 
+     // Add `cpu` execution provider, with higher precedence that `wasm`.
+     executionProviders.unshift('cpu');
