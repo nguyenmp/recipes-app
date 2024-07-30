@@ -121,7 +121,7 @@ function queryWithOysterTerm(query: string, oysterTerm: string) {
 }
 
 async function SuggestedTerms(params: {query: string}) {
-  const terms = getTermsFromQuery(params.query);
+  const terms = getTermsFromQuery(params.query).map((term) => term.toLowerCase());
   const more_terms: string[] = [];
   for (const term of terms) {
     const oyster = await getMoreTerms(term);
