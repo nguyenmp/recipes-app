@@ -1,9 +1,10 @@
 
 import Link from "next/link";
-import { getMoreTerms, getRecipesWithNotes } from "../lib/data";
+import { EmbeddingMatch, getMoreTerms, getRecipesWithNotes, getRelatedWords } from "../lib/data";
 import { SearchBar } from "../ui/search";
 import { Suspense } from "react";
 import { DeepRecipe, StoredNote } from "../lib/definitions";
+import { pipeline } from "@xenova/transformers";
 
 function getTermsFromQuery(query: string): string[] {
   const pattern = new RegExp('([a-zA-Z]+|[0-9\\.\\,]+)', 'g');
@@ -123,18 +124,33 @@ function queryWithOysterTerm(query: string, oysterTerm: string) {
 async function SuggestedTerms(params: {query: string}) {
   const terms = getTermsFromQuery(params.query).map((term) => term.toLowerCase());
   const more_terms: string[] = [];
+
+  // Add more terms by levenshtein distance
   for (const term of terms) {
     const oyster = await getMoreTerms(term);
     oyster.forEach((new_term: string) => {
-      if (terms.includes(new_term)) return;
       more_terms.push(new_term);
     });
   }
 
+  // Add more terms by cosine similarity of word embeddings (semantic meaning)
+  const similar_terms: EmbeddingMatch[] = [];
+
+  // Just use the default model, but hard-code it so it doesn't change under us and log too much in our logs
+  const classifier = await pipeline('embeddings', 'Xenova/all-MiniLM-L6-v2');
+  for (const term of terms) {
+    const response = await classifier(term);
+    const embedding = response.tolist()[0][0];
+    const matches = await getRelatedWords(embedding);
+    similar_terms.push(...matches);
+  }
+  similar_terms.sort((a, b) => b.distance - a.distance);
+  more_terms.push(...similar_terms.map((similar_term) => similar_term.word).splice(0, 10));
+
   return (
     <ul className="flex flex-row gap-4">
       {
-        more_terms.map((term: string) => {
+        more_terms.filter((term) => !terms.includes(term)).map((term: string) => {
           const urlparams = new URLSearchParams();
           urlparams.set('query', queryWithOysterTerm(params.query, term));
           const link = `?${urlparams.toString()}`;
