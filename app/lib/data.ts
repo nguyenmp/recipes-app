@@ -30,6 +30,25 @@ export async function resetDatabaseTables() {
 }
 
 export type StoredWordEmbedding = {word: string, embedding: number[] | null};
+export type EmbeddingMatch = StoredWordEmbedding & {
+    distance: number;
+}
+
+/**
+ * Postgres stores vectors as JSON-ish encoded arrays of numbers (basically strings).
+ *
+ * When we pull it back out, it's a string, but it's easier to work with an
+ * array of numbers so we decode it instead and use this function for consistency.
+ */
+function fixEmbeddingFromJson(rows: StoredWordEmbedding[]) {
+    return rows.map((row) => {
+        if (row.embedding && typeof row.embedding === 'string') {
+            row.embedding = JSON.parse(row.embedding);
+        }
+
+        return row;
+    })
+}
 
 export async function getStoredWordsNeedingEmbeddings() {
     const result = await sql<StoredWordEmbedding>`
@@ -40,13 +59,18 @@ export async function getStoredWordsNeedingEmbeddings() {
         WHERE Embeddings.embedding IS NULL
         LIMIT 100
     `;
-    return result.rows.map((row) => {
-        if (row.embedding && typeof row.embedding === 'string') {
-            row.embedding = JSON.parse(row.embedding);
-        }
+    return fixEmbeddingFromJson(result.rows);
+}
 
-        return row;
-    });
+export async function getRelatedWords(embedding: number[]): Promise<EmbeddingMatch[]> {
+    const result = await sql<EmbeddingMatch>`
+        SELECT word, embedding, (embedding <-> ${JSON.stringify(embedding)}) AS distance
+        FROM Embeddings
+        ORDER BY distance
+        LIMIT 30;
+    `
+    fixEmbeddingFromJson(result.rows);
+    return result.rows;
 }
 
 export async function putStoredWords(embeddings: StoredWordEmbedding[]) {

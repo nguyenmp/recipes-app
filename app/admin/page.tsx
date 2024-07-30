@@ -5,6 +5,7 @@ import { createNoteForRecipe, createRecipe, resetDatabaseTables } from '../lib/d
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { GenerateEmbeddings } from '../ui/generate_embeddings';
+import { SearchEmbeddings } from '../ui/search_embeddings';
 
 async function seedDatabase() {
     "use server";
@@ -44,6 +45,8 @@ export default function AdminPage() {
             </form>
 
             <GenerateEmbeddings />
+
+            <SearchEmbeddings />
 
         </main>
     );
