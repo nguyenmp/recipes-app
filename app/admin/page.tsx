@@ -4,6 +4,7 @@ import { PlaceholderData, recipes } from '../lib/placeholder-data';
 import { createNoteForRecipe, createRecipe, resetDatabaseTables } from '../lib/data';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { GenerateEmbeddings } from '../ui/generate_embeddings';
 
 async function seedDatabase() {
     "use server";
@@ -41,6 +42,8 @@ export default function AdminPage() {
             <form action={seedDatabase}>
                 <button type="submit" className="bg-slate-300 rounded p-4 active:bg-slate-600">Reset Database</button>
             </form>
+
+            <GenerateEmbeddings />
 
         </main>
     );

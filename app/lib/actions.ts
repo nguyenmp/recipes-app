@@ -2,9 +2,17 @@
 
 import { sql } from "@vercel/postgres";
 import { ShallowNote, ShallowRecipe } from "./definitions";
-import { createNoteForRecipe, createRecipe, updateNoteById, updateRecipeById } from "./data";
+import { createNoteForRecipe, createRecipe, getStoredWordsNeedingEmbeddings, putStoredWords, StoredWordEmbedding, updateNoteById, updateRecipeById } from "./data";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+
+export async function putWordEmbeddings(embeddings: StoredWordEmbedding[]) {
+    return await putStoredWords(embeddings);
+}
+
+export async function getWordsNeedingEmbeddings() {
+    return await getStoredWordsNeedingEmbeddings();
+}
 
 export async function saveRecipe(recipeId: number | null, formData: FormData) {
     console.log({...formData.keys()})
