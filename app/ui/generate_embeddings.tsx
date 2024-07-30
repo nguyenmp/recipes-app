@@ -15,7 +15,6 @@ import { ChangeEvent, useState } from 'react';
 import { getWordsNeedingEmbeddings, putWordEmbeddings } from '../lib/actions';
 import { StoredWordEmbedding } from '../lib/data';
 
-
 export function GenerateEmbeddings() {
     const [value, setValue] = useState<string>('');
     const [embeddings, setEmbeddings] = useState<StoredWordEmbedding[]>([]);
