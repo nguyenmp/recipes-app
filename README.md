@@ -6,7 +6,7 @@ First install dependencies
 
 ```bash
 npm install -g pnpm
-pnpm i
+pnpm i # pnpm specifically supports our patching system (pnpm patch)
 ```
 
 Then set up local env file.  Copy from https://vercel.com/mark-nguyens-projects/recipes-app/stores/postgres/store_Wiaioan0XOOZgW5I/guides and paste into `.env.local`.  This allows you to connect to the development server.
