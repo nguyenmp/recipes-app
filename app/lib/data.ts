@@ -132,7 +132,7 @@ export async function searchRecipesAndNotes(query?: string): Promise<StoredRecip
 }
 
 export async function getRecipes(): Promise<StoredRecipe[]> {
-    const result = await sql<StoredRecipe>`SELECT * FROM Recipes`;
+    const result = await sql<StoredRecipe>`SELECT * FROM Recipes ORDER BY RANDOM() LIMIT 20`;
     return result.rows;
 }
 
