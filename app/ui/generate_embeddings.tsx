@@ -19,35 +19,36 @@ import { StoredWordEmbedding } from '../lib/data';
 export function GenerateEmbeddings() {
     const [value, setValue] = useState<string>('');
     const [embeddings, setEmbeddings] = useState<StoredWordEmbedding[]>([]);
+    const [lastLogLine, setLastLogLine] = useState<string>('Not started yet');
 
     async function generateNewEmbeddings(wordsAndEmbeddings: StoredWordEmbedding[]) {
-        console.log('Creating pipeline');
-        let classifier = await pipeline('embeddings');
         const wordStructWithoutEmbeddings = wordsAndEmbeddings.filter((item) => item.embedding === null);
         if (wordStructWithoutEmbeddings.length === 0) {
-            console.log('No word that need embeddings generated found')
+            setLastLogLine('No word that need embeddings generated found')
             return;
         }
 
-        console.log('Generating embeddings');
+        setLastLogLine('Creating pipeline');
+        let classifier = await pipeline('embeddings');
+
+        setLastLogLine('Generating embeddings');
         const output = await classifier(wordStructWithoutEmbeddings.map((item) => item.word), {pooling: 'mean', normalize: true});
         wordStructWithoutEmbeddings.forEach((wordStruct, index) => {
             wordStruct.embedding = output.tolist()[index];
         });
 
-        console.log("output generated")
-        // console.log(output)
+        setLastLogLine("Embeddings generated")
         setEmbeddings([...wordsAndEmbeddings]);
 
-        console.log('Saving...')
+        setLastLogLine('Saving to database')
         await putWordEmbeddings(wordsAndEmbeddings);
-        console.log('saved');
 
+        setLastLogLine('Saved to database, restarting search');
         await handleOnClick()
     }
 
     async function handleOnClick() {
-        console.log('Fetching words');
+        setLastLogLine('Fetching words');
         const wordsAndEmbeddings = await getWordsNeedingEmbeddings();
         setEmbeddings(wordsAndEmbeddings);
         await generateNewEmbeddings(wordsAndEmbeddings)
@@ -59,10 +60,11 @@ export function GenerateEmbeddings() {
 
     return (
         <div>
-            <button onClick={handleOnClick}>Load Words and Embeddings</button>
+            <button className="bg-slate-300 rounded p-4 active:bg-slate-600" onClick={handleOnClick}>Load Words and Embeddings</button>
+            <p>Status: {lastLogLine}</p>
             <div>
-                <table>
-                    <caption>Words that need embeddings generated, open console for logs</caption>
+                <table className="w-full">
+                    <caption>Words that need embeddings generated</caption>
                     <thead>
                         <tr>
                             <th scope="col">Word</th>
@@ -73,7 +75,6 @@ export function GenerateEmbeddings() {
                         {
                             embeddings.map(
                                 (embedding) => {
-                                    // console.log(embedding.embedding);
                                     return (<tr key={embedding.word}>
                                         <th scope="row">{embedding.word}</th>
                                         <td>{embedding.embedding ? '[' + embedding.embedding.join(', ').substring(0, 100) + '...' + ']' : ''}</td>
