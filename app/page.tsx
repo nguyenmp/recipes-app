@@ -1,4 +1,6 @@
 import Link from "next/link"
+import { pipeline } from '@xenova/transformers';
+
 
 function ChemicalIcon() {
     // https://heroicons.com/solid
@@ -10,9 +12,13 @@ function ChemicalIcon() {
     )
 }
 
+
 export default async function Home() {
+    const classifier = await pipeline('embeddings');
+    const response = await classifier('HelloWorld');
     return (
         <div className="h-screen flex flex-col">
+            <p>{JSON.stringify(response.tolist()[0])}</p>
             <div className="m-auto text-center">
                 <p className="m-auto text-center p-4">A Recipe App for Mark Nguyen</p>
                 <ul className="list-decimal list-inside p-4">
