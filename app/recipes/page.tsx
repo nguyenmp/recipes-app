@@ -121,8 +121,8 @@ function queryWithOysterTerm(query: string, oysterTerm: string) {
   }
 }
 
-async function SuggestedTerms(params: {query: string}) {
-  const terms = getTermsFromQuery(params.query).map((term) => term.toLowerCase());
+async function getSuggestedTerms(query: string): Promise<string[]> {
+  const terms = getTermsFromQuery(query).map((term) => term.toLowerCase());
   const more_terms: string[] = [];
 
   // Add more terms by levenshtein distance
@@ -146,11 +146,15 @@ async function SuggestedTerms(params: {query: string}) {
   }
   similar_terms.sort((a, b) => b.distance - a.distance);
   more_terms.push(...similar_terms.map((similar_term) => similar_term.word).splice(0, 10));
+  return more_terms.filter((term) => !terms.includes(term));
+}
+
+async function SuggestedTerms(params: {terms: string[], query: string}) {
 
   return (
     <ul className="flex flex-row gap-4">
       {
-        more_terms.filter((term) => !terms.includes(term)).map((term: string) => {
+        params.terms.map((term: string) => {
           const urlparams = new URLSearchParams();
           urlparams.set('query', queryWithOysterTerm(params.query, term));
           const link = `?${urlparams.toString()}`;
@@ -165,14 +169,16 @@ export default async function Recipes({searchParams}: {searchParams: {query?: st
   const query = searchParams.query || '';
 
   let sortedRecipes = query ? await getSortedRecipesForQuery(query) : await getRecipesWithNotes();
-
+  const suggestedTerms = await getSuggestedTerms(query);
 
   return (
     <main>
       <Link href="/recipes/new">Create New Recipe</Link>
       <SearchBar />
-      <SuggestedTerms query={query} />
-      <Suspense key={query} fallback={<p>Loading...</p>}>
+      <Suspense key={query + '-suggestions'} fallback={<p>Loading...</p>}>
+        <SuggestedTerms terms={suggestedTerms} query={query} />
+      </Suspense>
+      <Suspense key={query + '-recipes'} fallback={<p>Loading...</p>}>
         <RecipesList recipes={sortedRecipes} />
       </Suspense>
     </main>
