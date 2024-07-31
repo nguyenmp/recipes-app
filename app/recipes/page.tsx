@@ -1,9 +1,9 @@
 
 import Link from "next/link";
-import { EmbeddingMatch, getMoreTerms, getRecipesWithNotes, getRelatedWords } from "../lib/data";
+import { EmbeddingMatch, getMoreTerms, getRecipesWithNotes, getRecipes, getRelatedWords } from "../lib/data";
 import { SearchBar } from "../ui/search";
 import { Suspense } from "react";
-import { DeepRecipe, StoredNote } from "../lib/definitions";
+import { DeepRecipe, StoredNote, StoredRecipe } from "../lib/definitions";
 import { pipeline } from "@xenova/transformers";
 import { withTimingAsync } from "../lib/utils";
 
@@ -70,7 +70,7 @@ function sortRecipesByRelevance(terms_list: string[], recipes: DeepRecipe[]): De
   return sorted.map((item) => item.recipe);
 }
 
-async function RecipesList(params: {recipes: DeepRecipe[]}) {
+async function RecipesList(params: {recipes: StoredRecipe[]}) {
   const recipes = params.recipes;
 
   if (recipes.length == 0) {
@@ -124,6 +124,7 @@ function queryWithOysterTerm(query: string, oysterTerm: string) {
 
 async function getSuggestedTerms(query: string): Promise<string[]> {
   const terms = getTermsFromQuery(query).map((term) => term.toLowerCase());
+  if (terms.length === 0) return [];
 
   // Add more terms by levenshtein distance
   const more_terms: string[] = []
@@ -169,7 +170,7 @@ async function SuggestedTerms(params: {terms: string[], query: string}) {
 export default async function Recipes({searchParams}: {searchParams: {query?: string}}) {
   const query = searchParams.query || '';
 
-  let sortedRecipes = await withTimingAsync('get all suggested recipes high level', async () => query ? await getSortedRecipesForQuery(query) : await getRecipesWithNotes());
+  const sortedRecipes = await withTimingAsync('get all suggested recipes high level', async () => query ? await getSortedRecipesForQuery(query) : await getRecipes());
 
   const suggestedTerms = await withTimingAsync('get all suggested terms high level', async () => await getSuggestedTerms(query));
 
