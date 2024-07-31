@@ -68,7 +68,7 @@ export async function getRelatedWords(embedding: number[]): Promise<EmbeddingMat
         SELECT word, embedding, (embedding <-> ${JSON.stringify(embedding)}) AS distance
         FROM Embeddings
         ORDER BY distance
-        LIMIT 30;
+        LIMIT 10;
     `
     fixEmbeddingFromJson(result.rows);
     return result.rows;
