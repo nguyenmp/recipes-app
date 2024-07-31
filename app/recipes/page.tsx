@@ -5,6 +5,7 @@ import { SearchBar } from "../ui/search";
 import { Suspense } from "react";
 import { DeepRecipe, StoredNote } from "../lib/definitions";
 import { pipeline } from "@xenova/transformers";
+import { withTimingAsync } from "../lib/utils";
 
 function getTermsFromQuery(query: string): string[] {
   const pattern = new RegExp('([a-zA-Z]+|[0-9\\.\\,]+)', 'g');
@@ -123,23 +124,25 @@ function queryWithOysterTerm(query: string, oysterTerm: string) {
 
 async function getSuggestedTerms(query: string): Promise<string[]> {
   const terms = getTermsFromQuery(query).map((term) => term.toLowerCase());
-  const more_terms: string[] = [];
 
   // Add more terms by levenshtein distance
-  for (const term of terms) {
-    const oyster = await getMoreTerms(term);
-    more_terms.push(...oyster);
-  }
+  const more_terms: string[] = []
+  await withTimingAsync('getting more terms from terms', async () => {
+    for (const term of terms) {
+      const oyster = await getMoreTerms(term);
+      more_terms.push(...oyster);
+    }
+  });
 
   // Add more terms by cosine similarity of word embeddings (semantic meaning)
   const similar_terms: EmbeddingMatch[] = [];
 
   // Just use the default model, but hard-code it so it doesn't change under us and log too much in our logs
-  const classifier = await pipeline('embeddings', 'Xenova/all-MiniLM-L6-v2');
+  const classifier = await withTimingAsync('create pipeline', async () => await pipeline('embeddings', 'Xenova/all-MiniLM-L6-v2'));
   for (const term of terms) {
-    const response = await classifier(term);
+    const response = await withTimingAsync('get embedding for term', async () => await classifier(term));
     const embedding = response.tolist()[0][0];
-    const matches = await getRelatedWords(embedding);
+    const matches = await withTimingAsync('get related words to embedding', async () => await getRelatedWords(embedding));
     similar_terms.push(...matches);
   }
   similar_terms.sort((a, b) => b.distance - a.distance);
@@ -164,18 +167,11 @@ async function SuggestedTerms(params: {terms: string[], query: string}) {
 }
 
 export default async function Recipes({searchParams}: {searchParams: {query?: string}}) {
-  performance.mark('start');
   const query = searchParams.query || '';
 
-  let sortedRecipes = query ? await getSortedRecipesForQuery(query) : await getRecipesWithNotes();
-  performance.mark('finished query')
+  let sortedRecipes = await withTimingAsync('get all suggested recipes high level', async () => query ? await getSortedRecipesForQuery(query) : await getRecipesWithNotes());
 
-  performance.mark('start terms')
-  const suggestedTerms = await getSuggestedTerms(query);
-  performance.mark('finish terms')
-
-  console.log(performance.measure('recipes', 'start', 'finished query'));
-  console.log(performance.measure('terms', 'start terms', 'finish terms'))
+  const suggestedTerms = await withTimingAsync('get all suggested terms high level', async () => await getSuggestedTerms(query));
 
   return (
     <main>

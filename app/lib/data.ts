@@ -1,5 +1,6 @@
-import { sql } from "@vercel/postgres";
+import { sql, createClient } from "@vercel/postgres";
 import { DeepRecipe, ShallowNote, ShallowRecipe, StoredNote, StoredRecipe } from "./definitions";
+import { withTimingAsync } from "./utils";
 
 export async function resetDatabaseTables() {
     await sql`DROP TABLE IF EXISTS Recipes CASCADE`;
@@ -86,7 +87,7 @@ export async function putStoredWords(embeddings: StoredWordEmbedding[]) {
 
 export async function getMoreTerms(term: string) : Promise<string[]> {
     term = term.toLowerCase();
-    const response = await sql<{word: string, levenshtein: number}>`
+    const request = sql<{word: string, levenshtein: number}>`
         SELECT word, levenshtein(Words.word, ${term}) as levenshtein
         FROM Words
 
@@ -97,6 +98,8 @@ export async function getMoreTerms(term: string) : Promise<string[]> {
         AND word NOT LIKE ${`%${term}%`}
         ORDER BY levenshtein(Words.word, ${term}) ASC
     `;
+
+    const response = await withTimingAsync("levenshtein query", async () => await request);
 
 
     const new_terms = response.rows.map((row) => row.word);
@@ -132,8 +135,10 @@ export async function searchRecipesAndNotes(query?: string): Promise<StoredRecip
 }
 
 export async function getRecipes(): Promise<StoredRecipe[]> {
-    const result = await sql<StoredRecipe>`SELECT * FROM Recipes ORDER BY RANDOM() LIMIT 20`;
-    return result.rows;
+    return await withTimingAsync('data.ts#getRecipes', async () => {
+        const result = await sql<StoredRecipe>`SELECT * FROM Recipes ORDER BY RANDOM() LIMIT 20`;
+        return result.rows;
+    });
 }
 
 export async function getRecipeById(id: number): Promise<DeepRecipe> {
