@@ -139,13 +139,13 @@ async function getSuggestedTerms(query: string): Promise<string[]> {
   const similar_terms: EmbeddingMatch[] = [];
 
   // Just use the default model, but hard-code it so it doesn't change under us and log too much in our logs
-  const classifier = await withTimingAsync('create pipeline', async () => await PipelineSingleton.getInstance());
-  for (const term of terms) {
-    const response = await withTimingAsync('get embedding for term', async () => await classifier(term));
-    const embedding = response.tolist()[0][0];
-    const matches = await withTimingAsync('get related words to embedding', async () => await getRelatedWords(embedding));
-    similar_terms.push(...matches);
-  }
+  // const classifier = await withTimingAsync('create pipeline', async () => await PipelineSingleton.getInstance());
+  // for (const term of terms) {
+  //   const response = await withTimingAsync('get embedding for term', async () => await classifier(term));
+  //   const embedding = response.tolist()[0][0];
+  //   const matches = await withTimingAsync('get related words to embedding', async () => await getRelatedWords(embedding));
+  //   similar_terms.push(...matches);
+  // }
   similar_terms.sort((a, b) => b.distance - a.distance);
   more_terms.push(...similar_terms.map((similar_term) => similar_term.word).splice(0, 10));
   return more_terms.filter((term) => !terms.includes(term));
