@@ -164,10 +164,18 @@ async function SuggestedTerms(params: {terms: string[], query: string}) {
 }
 
 export default async function Recipes({searchParams}: {searchParams: {query?: string}}) {
+  performance.mark('start');
   const query = searchParams.query || '';
 
   let sortedRecipes = query ? await getSortedRecipesForQuery(query) : await getRecipesWithNotes();
+  performance.mark('finished query')
+
+  performance.mark('start terms')
   const suggestedTerms = await getSuggestedTerms(query);
+  performance.mark('finish terms')
+
+  console.log(performance.measure('recipes', 'start', 'finished query'));
+  console.log(performance.measure('terms', 'start terms', 'finish terms'))
 
   return (
     <main>
