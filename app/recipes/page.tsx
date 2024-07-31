@@ -4,8 +4,8 @@ import { EmbeddingMatch, getMoreTerms, getRecipesWithNotes, getRecipes, getRelat
 import { SearchBar } from "../ui/search";
 import { Suspense } from "react";
 import { DeepRecipe, StoredNote, StoredRecipe } from "../lib/definitions";
-import { pipeline } from "@xenova/transformers";
 import { withTimingAsync } from "../lib/utils";
+import PipelineSingleton from "../lib/embeddings_pipeline";
 
 function getTermsFromQuery(query: string): string[] {
   const pattern = new RegExp('([a-zA-Z]+|[0-9\\.\\,]+)', 'g');
@@ -139,7 +139,7 @@ async function getSuggestedTerms(query: string): Promise<string[]> {
   const similar_terms: EmbeddingMatch[] = [];
 
   // Just use the default model, but hard-code it so it doesn't change under us and log too much in our logs
-  const classifier = await withTimingAsync('create pipeline', async () => await pipeline('embeddings', 'Xenova/all-MiniLM-L6-v2'));
+  const classifier = await withTimingAsync('create pipeline', async () => await PipelineSingleton.getInstance());
   for (const term of terms) {
     const response = await withTimingAsync('get embedding for term', async () => await classifier(term));
     const embedding = response.tolist()[0][0];
