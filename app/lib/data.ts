@@ -166,13 +166,13 @@ export async function getRecipesForTerm(term : string): Promise<StoredRecipeSear
     const response = await sql<StoredRecipeSearchMatch>`
         SELECT
             Recipes.*,
-            ARRAY_LENGTH(STRING_TO_ARRAY(LOWER(Recipes.name), 'pork'), 1) - 1 as name_matches,
-            SUM(ARRAY_LENGTH(STRING_TO_ARRAY(LOWER(Notes.content_markdown), 'pork'), 1)) - 1 as content_markdown_matches
+            ARRAY_LENGTH(STRING_TO_ARRAY(LOWER(Recipes.name), ${term}), 1) - 1 as name_matches,
+            SUM(ARRAY_LENGTH(STRING_TO_ARRAY(LOWER(Notes.content_markdown), ${term}), 1)) - 1 as content_markdown_matches
         FROM Notes
         JOIN Recipes
         ON Notes.recipe_id = Recipes.id
-        WHERE content_markdown ILIKE '%pork%'
-        OR Recipes.name ILIKE '%pork%'
+        WHERE content_markdown ILIKE ${`%${term}%`}
+        OR Recipes.name ILIKE ${`%${term}%`}
         GROUP BY Recipes.id
     `;
     return response.rows;
