@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function getRelatedWordsFromEmbedding(embedding: number[]) {
-    return getRelatedWords(embedding);
+    return getRelatedWords([embedding]);
 }
 
 export async function putWordEmbeddings(embeddings: StoredWordEmbedding[]) {
