@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { EmbeddingMatch, getMoreTerms, getRecipes, getRecipesForTerm } from "../lib/data";
+import { EmbeddingMatch, getMoreTerms, getRecipes, getRecipesForTerm, getRelatedWords } from "../lib/data";
 import { SearchBar } from "../ui/search";
 import { Suspense } from "react";
 import { DeepRecipe, StoredNote, StoredRecipe, StoredRecipeSearchMatch } from "../lib/definitions";
@@ -119,9 +119,22 @@ function queryWithOysterTerm(query: string, oysterTerm: string) {
   }
 }
 
-async function getSuggestedTerms(query: string): Promise<string[]> {
+async function getSemanticallyRelatedTerms(terms: string[]): Promise<string[]> {
+  // Just use the default model, but hard-code it so it doesn't change under us and log too much in our logs
+  const classifier = await withTimingAsync('create pipeline', async () => await PipelineSingleton.getInstance());
+  const response = await withTimingAsync('get embedding for terms', async () => await classifier(terms, {pooling: 'mean', normalize: true}));
+  const embeddings = response.tolist();
+  const similar_terms = await withTimingAsync('get related words to embedding', async () => await getRelatedWords(embeddings));
+  similar_terms.sort((a, b) => b.distance - a.distance);
+  return similar_terms.map((similar_term) => similar_term.word);
+}
+
+const getSuggestedTerms = async function (query: string): Promise<string[]> { return await withTimingAsync('getSuggestedTerms', async () => {
   const terms = getTermsFromQuery(query).map((term) => term.toLowerCase());
   if (terms.length === 0) return [];
+
+  // async promise so we parallelize the two operations:
+  const getSemanticallyRelatedTermsPromise = getSemanticallyRelatedTerms(terms);
 
   // Add more terms by levenshtein distance
   const more_terms: string[] = []
@@ -130,21 +143,11 @@ async function getSuggestedTerms(query: string): Promise<string[]> {
     more_terms.push(...oyster);
   });
 
-  // Add more terms by cosine similarity of word embeddings (semantic meaning)
-  const similar_terms: EmbeddingMatch[] = [];
+  const similar_terms = await getSemanticallyRelatedTermsPromise;
 
-  // Just use the default model, but hard-code it so it doesn't change under us and log too much in our logs
-  // const classifier = await withTimingAsync('create pipeline', async () => await PipelineSingleton.getInstance());
-  // for (const term of terms) {
-  //   const response = await withTimingAsync('get embedding for term', async () => await classifier(term));
-  //   const embedding = response.tolist()[0][0];
-  //   const matches = await withTimingAsync('get related words to embedding', async () => await getRelatedWords(embedding));
-  //   similar_terms.push(...matches);
-  // }
-  similar_terms.sort((a, b) => b.distance - a.distance);
-  more_terms.push(...similar_terms.map((similar_term) => similar_term.word).splice(0, 10));
+  more_terms.push(...similar_terms.splice(0, 10));
   return more_terms.filter((term) => !terms.includes(term));
-}
+})};
 
 async function SuggestedTerms(params: {terms: string[], query: string}) {
 
@@ -165,9 +168,10 @@ async function SuggestedTerms(params: {terms: string[], query: string}) {
 export default async function Recipes({searchParams}: {searchParams: {query?: string}}) {
   const query = searchParams.query || '';
 
+  // Do this work in parallel
+  const suggestedTermsPromise = getSuggestedTerms(query);
   const sortedRecipes = await withTimingAsync('get all suggested recipes high level', async () => query ? await getSortedRecipesForQuery(query) : await getRecipes());
-
-  const suggestedTerms = await withTimingAsync('get all suggested terms high level', async () => await getSuggestedTerms(query));
+  const suggestedTerms = await suggestedTermsPromise;
 
   return (
     <main>

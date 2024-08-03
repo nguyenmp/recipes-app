@@ -65,13 +65,11 @@ export async function getStoredWordsNeedingEmbeddings() {
     return fixEmbeddingFromJson(result.rows);
 }
 
-export async function getRelatedWords(embedding: number[]): Promise<EmbeddingMatch[]> {
-    const result = await sql<EmbeddingMatch>`
-        SELECT word, embedding, (embedding <-> ${JSON.stringify(embedding)}) AS distance
-        FROM Embeddings
-        ORDER BY distance
-        LIMIT 10;
-    `
+export async function getRelatedWords(embeddings: number[][]): Promise<EmbeddingMatch[]> {
+    const select_union = embeddings.map((embedding: number[]) => `SELECT word, embedding, (embedding <-> '${JSON.stringify(embedding)}') AS distance FROM Embeddings`).join(' UNION ')
+    const client = await db.connect();
+    const query = `${select_union} ORDER BY distance LIMIT 10`;
+    const result = await client.query<EmbeddingMatch>(query);
     fixEmbeddingFromJson(result.rows);
     return result.rows;
 }
