@@ -1,11 +1,12 @@
 
 import Link from "next/link";
-import { EmbeddingMatch, getMoreTerms, getRecipesWithNotes, getRecipes, getRelatedWords } from "../lib/data";
+import { EmbeddingMatch, getMoreTerms, getRecipes, getRecipesForTerm } from "../lib/data";
 import { SearchBar } from "../ui/search";
 import { Suspense } from "react";
-import { DeepRecipe, StoredNote, StoredRecipe } from "../lib/definitions";
+import { DeepRecipe, StoredNote, StoredRecipe, StoredRecipeSearchMatch } from "../lib/definitions";
 import { withTimingAsync } from "../lib/utils";
 import PipelineSingleton from "../lib/embeddings_pipeline";
+import assert from "assert";
 
 function getTermsFromQuery(query: string): string[] {
   const pattern = new RegExp('([a-zA-Z]+|[0-9\\.\\,]+)', 'g');
@@ -16,45 +17,46 @@ function getTermsFromQuery(query: string): string[] {
   return Array.from(terms_set);
 }
 
-function sortRecipesByRelevance(terms_list: string[], recipes: DeepRecipe[]): DeepRecipe[] {
-  const tf_by_term_by_document : {[term: string]: number}[] = new Array(recipes.length);
+function sortRecipesByRelevance(recipes_by_terms: Map<string, StoredRecipeSearchMatch[]>): StoredRecipeSearchMatch[] {
 
-  const documentFrequencies: number[] = new Array(terms_list.length).fill(0);
-  recipes.forEach((recipe: DeepRecipe, recipe_index: number) => {
-    terms_list.forEach((term: string, term_index: number) => {
-      const all_notes = recipe.notes.map((note: StoredNote) => note.content_markdown)
-      const content = [
-        recipe.name,
-        ...all_notes,
-      ].join(' ');
-      const term_matches = Array.from(content.matchAll(new RegExp(term, 'gi')));
-      if (term_matches.length > 0) {
-        documentFrequencies[term_index] += 1;
+  // Create aggregations that track "term frequency" and "document frequency" for each term
+  const recipes_by_id : Map<number, StoredRecipeSearchMatch> = new Map();
+  const tf_by_term_by_document : Map<number, {[term: string]: number}> = new Map();
+  const documentFrequencies_by_term: Map<string, number> = new Map();
+  recipes_by_terms.forEach((recipe_matches: StoredRecipeSearchMatch[], term: string) => {
+    recipe_matches.forEach((recipe_match) => {
+      recipes_by_id.set(recipe_match.id, recipe_match);
 
-        if (!(recipe_index in tf_by_term_by_document)) {
-          tf_by_term_by_document[recipe_index] = {};
-        }
-        const tf_by_term = tf_by_term_by_document[recipe_index];
-        if (!(term in tf_by_term)) {
-          tf_by_term[term] = 0;
-        }
+      // Increment document frequency for this term by 1
+      documentFrequencies_by_term.set(term, (documentFrequencies_by_term.get(term) ?? 0) + 1);
 
-        // 10 pts for each instance of term in title, title matches are high signal
-        tf_by_term[term] += 10 * (recipe.name.toLowerCase().split(term).length - 1);
-
-        // 1 pt for each instance of term in note
-        tf_by_term[term] += 1 * (all_notes.join(' ').toLowerCase().split(term).length - 1);
+      const tf_by_term = tf_by_term_by_document.get(recipe_match.id) ?? {};
+      if (!(term in tf_by_term)) {
+        tf_by_term[term] = 0;
       }
+
+      // 10 pts for each instance of term in title, title matches are high signal
+      tf_by_term[term] += 10 * recipe_match.name_matches;
+
+      // 1 pt for each instance of term in note
+      tf_by_term[term] += 1 * recipe_match.content_markdown_matches;
+
+      tf_by_term_by_document.set(recipe_match.id, tf_by_term);
     })
   });
 
-  const scores : {recipe: DeepRecipe, score: number}[] = recipes.map((recipe: DeepRecipe, recipe_index: number) => {
-    const tf_by_term = tf_by_term_by_document[recipe_index] || {};
+  // Now we can calculate "tf-idf" based on the aggregations
+  const terms_list = Array.from(recipes_by_terms.keys());
+  const num_recipes = tf_by_term_by_document.size;
+  const scores : {recipe: StoredRecipeSearchMatch, score: number}[] = Array.from(tf_by_term_by_document.entries()).map(([recipe_id, tf_by_term]) => {
+    const recipe = recipes_by_id.get(recipe_id);
+    assert(recipe, `No recipe found for id ${recipe_id}`);
+
     const scores_ = terms_list.map((term: string, term_index: number) => {
       const tf = (term in tf_by_term) ? tf_by_term[term] : 0;
-      const df = documentFrequencies[term_index];
+      const df = documentFrequencies_by_term.get(term) ?? 0;
       const idf_offset = 0.1;  // the IDF offset allows IDF to be non-zero allowing single term search to stll sort by document frequency
-      const idf = Math.log2((1 + recipes.length) / (1 + df) + idf_offset)
+      const idf = Math.log2((1 + num_recipes) / (1 + df) + idf_offset)
       const score = tf*idf;
       return score;
     });
@@ -92,20 +94,15 @@ async function RecipesList(params: {recipes: StoredRecipe[]}) {
   )
 }
 
-async function getSortedRecipesForQuery(query: string): Promise<DeepRecipe[]> {
+async function getSortedRecipesForQuery(query: string): Promise<StoredRecipeSearchMatch[]> {
   const terms_list = getTermsFromQuery(query);
 
-  // Query for each term and reduce by duplicate matches
-  const recipes_by_id: {[recipe_id: number]: DeepRecipe} = {};
-  (await Promise.all(terms_list.map(async (term: string) => await getRecipesWithNotes(term)))).forEach(
-    (recipes: DeepRecipe[]) => {
-      recipes.forEach((recipe: DeepRecipe) => recipes_by_id[recipe.id] = recipe)
-    }
-  )
-  const recipes = Object.values(recipes_by_id);
+  // Query for each term
+  const aggregate_matches = (await Promise.all(terms_list.map(async (term: string) => await getRecipesForTerm(term))))
+  const matches_by_term = new Map(terms_list.map<[string, StoredRecipeSearchMatch[]]>((term, index) => [term, aggregate_matches[index]]));
 
   // Then sort by relevancy
-  const sortedRecipes = sortRecipesByRelevance(terms_list, recipes);
+  const sortedRecipes = sortRecipesByRelevance(matches_by_term);
 
   return sortedRecipes;
 }
