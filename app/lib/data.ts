@@ -87,21 +87,29 @@ export async function putStoredWords(embeddings: StoredWordEmbedding[]) {
     }
 }
 
-export async function getMoreTerms(term: string) : Promise<string[]> {
-    term = term.toLowerCase();
-    const request = sql<{word: string, levenshtein: number}>`
-        SELECT word, levenshtein(Words.word, ${term}) as levenshtein
-        FROM Words
+export async function getMoreTerms(terms: string[]) : Promise<string[]> {
+    const select_clauses = terms.map((term) => {
+        term = term.toLowerCase();
+        const select_clause = `
+            SELECT word, levenshtein(Words.word, '${term}') as levenshtein
+            FROM Words
 
-        -- Limit levenshtein distance by half of the term, any more than half and it's a stretch...
-        WHERE levenshtein(Words.word, ${term}) < char_length(${term}) / 2
+            -- Limit levenshtein distance by half of the term, any more than half and it's a stretch...
+            WHERE levenshtein(Words.word, '${term}') < char_length('${term}') / 2
 
-        -- don't include self or any superstrings since we match by substring, so superstrings don't add any value
-        AND word NOT LIKE ${`%${term}%`}
-        ORDER BY levenshtein(Words.word, ${term}) ASC
-    `;
+            -- don't include self or any superstrings since we match by substring, so superstrings don't add any value
+            AND word NOT LIKE '%${term}%'
+        `;
+        return select_clause;
+    });
 
-    const response = await withTimingAsync("levenshtein query", async () => await request);
+    const query = select_clauses.join(' UNION ') + ' ORDER BY levenshtein ASC LIMIT 10'
+
+    const response = await withTimingAsync("levenshtein query", async () => {
+        const client = await db.connect();
+        const request = client.query<EmbeddingMatch>(query);
+        return await request;
+    });
 
 
     const new_terms = response.rows.map((row) => row.word);

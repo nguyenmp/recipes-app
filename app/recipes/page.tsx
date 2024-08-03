@@ -126,10 +126,8 @@ async function getSuggestedTerms(query: string): Promise<string[]> {
   // Add more terms by levenshtein distance
   const more_terms: string[] = []
   await withTimingAsync('getting more terms from terms', async () => {
-    for (const term of terms) {
-      const oyster = await getMoreTerms(term);
-      more_terms.push(...oyster);
-    }
+    const oyster = await getMoreTerms(terms);
+    more_terms.push(...oyster);
   });
 
   // Add more terms by cosine similarity of word embeddings (semantic meaning)
