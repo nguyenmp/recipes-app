@@ -3,6 +3,15 @@ import { DeepRecipe, ShallowNote, ShallowRecipe, StoredNote, StoredRecipe, Store
 import { withTimingAsync } from "./utils";
 import assert from "assert";
 
+/**
+ * This is a reasonable guess.  What we do is generate suggested terms from
+ * levenshtein distance as well as cosine similarity of word embeddings.
+ * Because we search multiple methods, we will very like get duplicates, which
+ * need to be reduced in code.  As such, need to query for more words, but not
+ * all words to reduce performance issues especially in vector search.
+ */
+const RELATED_WORDS_LIMIT = 30;
+
 export async function resetDatabaseTables() {
     await sql`DROP TABLE IF EXISTS Recipes CASCADE`;
     await sql`DROP TABLE IF EXISTS Notes CASCADE`;
@@ -78,7 +87,7 @@ export async function getRelatedWordsFromTerms(terms: string[]): Promise<Embeddi
         FROM Embeddings
         WHERE word NOT ILIKE '%${term}%' AND (SELECT embedding FROM Embeddings WHERE word = '${term}') IS NOT NULL
     `).join(' UNION ');
-    const query = `${select_union} ORDER BY distance ASC LIMIT 20`;
+    const query = `${select_union} ORDER BY distance ASC LIMIT ${RELATED_WORDS_LIMIT}`;
     const client = await db.connect();
     const response = await client.query<EmbeddingMatch>(query);
     fixEmbeddingFromJson(response.rows);
@@ -96,7 +105,7 @@ export async function getRelatedWordsFromTerms(terms: string[]): Promise<Embeddi
 export async function getRelatedWordsFromEmbeddings(embeddings: number[][]): Promise<EmbeddingMatch[]> {
     const select_union = embeddings.map((embedding: number[]) => `SELECT word, embedding, (embedding <-> '${JSON.stringify(embedding)}') AS distance FROM Embeddings`).join(' UNION ')
     const client = await db.connect();
-    const query = `${select_union} ORDER BY distance LIMIT 10`;
+    const query = `${select_union} ORDER BY distance LIMIT ${RELATED_WORDS_LIMIT}`;
     const result = await client.query<EmbeddingMatch>(query);
     fixEmbeddingFromJson(result.rows);
     return result.rows;
@@ -117,7 +126,7 @@ export async function getMoreTerms(terms: string[]) : Promise<LevenshteinMatch[]
     const select_clauses = terms.map((term) => {
         term = term.toLowerCase();
         const select_clause = `
-            SELECT word, levenshtein(Words.word, '${term}') as levenshtein
+            SELECT word, levenshtein(Words.word, '${term}') as distance
             FROM Words
 
             -- Limit levenshtein distance by half of the term, any more than half and it's a stretch...
@@ -129,7 +138,7 @@ export async function getMoreTerms(terms: string[]) : Promise<LevenshteinMatch[]
         return select_clause;
     });
 
-    const query = select_clauses.join(' UNION ') + ' ORDER BY levenshtein ASC LIMIT 10'
+    const query = select_clauses.join(' UNION ') + ` ORDER BY distance ASC LIMIT ${RELATED_WORDS_LIMIT}`;
 
     const response = await withTimingAsync("levenshtein query", async () => {
         const client = await db.connect();

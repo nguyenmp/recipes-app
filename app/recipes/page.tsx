@@ -149,36 +149,41 @@ async function SuggestedTerms(params: {levenshtein: LevenshteinMatch[], db_embed
     });
   }
 
+  const word_scores : Map<string, {levenshtein?: number, db_embedding?: number}> = new Map();
+  for (const match of params.levenshtein) {
+    const scores = word_scores.get(match.word) ?? {};
+    console.log(`Levenshtein of ${match.word} is ${match.distance}`);
+    scores.levenshtein = match.distance;
+    word_scores.set(match.word, scores);
+  }
+  for (const match of [...params.db_embeddings, ...realtime_embeddings]) {
+    const scores = word_scores.get(match.word) ?? {};
+    scores.db_embedding = match.distance;
+    word_scores.set(match.word, scores);
+  }
+
+  word_scores.forEach((word_score, word) => {
+    for (const term of terms) {
+      // Our existing search term would find a superset of the matching word, so don't show it as an option
+      if (word.includes(term)) word_scores.delete(word);
+    }
+  });
+
+  const suggested_words = Array.from(word_scores.entries()).toSorted(([_a_word, a], [_b_word, b]) => {return (((a.levenshtein ?? 200) - (b.levenshtein ?? 200)) + ((a.db_embedding ?? 100) - (b.db_embedding ?? 100)))});
+
   return (
-    <ul className="flex flex-row gap-4">
-      <li>Levenshtein: </li>
-      {
-        params.levenshtein.slice(0, 5).map((match: LevenshteinMatch) => {
-          const urlparams = new URLSearchParams();
-          urlparams.set('query', queryWithOysterTerm(params.query, match.word));
-          const link = `?${urlparams.toString()}`;
-          return <li data-word-source='levenshtein' key={`levenshtein-${match.word}`}><Link href={link}>+{match.word}</Link></li>
-        })
-      }
-      <li>DB Embeddings: </li>
-      {
-        params.db_embeddings.slice(0, 5).map((match: EmbeddingMatch) => {
-          const urlparams = new URLSearchParams();
-          urlparams.set('query', queryWithOysterTerm(params.query, match.word));
-          const link = `?${urlparams.toString()}`;
-          return <li data-word-source='db-embedding' key={`db-embedding-${match.word}`}><Link href={link}>+{match.word}</Link></li>
-        })
-      }
-      <li>Realtime Embeddings: </li>
-      {
-        realtime_embeddings.slice(0, 5).map((match: EmbeddingMatch) => {
-          const urlparams = new URLSearchParams();
-          urlparams.set('query', queryWithOysterTerm(params.query, match.word));
-          const link = `?${urlparams.toString()}`;
-          return <li data-word-source='realtime-embedding' key={`realtime-embedding-${match.word}`}><Link href={link}>+{match.word}</Link></li>
-        })
-      }
-    </ul>
+    <div className="max-w-screen overflow-y-auto py-4">
+      <ul className="flex flex-row gap-4">
+        {
+          suggested_words.map(([word, score]) => {
+            const urlparams = new URLSearchParams();
+            urlparams.set('query', queryWithOysterTerm(params.query, word));
+            const link = `?${urlparams.toString()}`;
+            return <li data-score-levenshtein={score.levenshtein} data-score-embedding={score.db_embedding} key={word}><Link href={link}>+{word}</Link></li>
+          })
+        }
+      </ul>
+    </div>
   );
 }
 
