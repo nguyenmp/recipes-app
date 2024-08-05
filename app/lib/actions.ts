@@ -2,12 +2,12 @@
 
 import { sql } from "@vercel/postgres";
 import { ShallowNote, ShallowRecipe } from "./definitions";
-import { createNoteForRecipe, createRecipe, getRelatedWords, getStoredWordsNeedingEmbeddings, putStoredWords, StoredWordEmbedding, updateNoteById, updateRecipeById } from "./data";
+import { createNoteForRecipe, createRecipe, getRelatedWordsFromEmbeddings, getStoredWordsNeedingEmbeddings, putStoredWords, StoredWordEmbedding, updateNoteById, updateRecipeById } from "./data";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function getRelatedWordsFromEmbedding(embedding: number[]) {
-    return getRelatedWords([embedding]);
+    return getRelatedWordsFromEmbeddings([embedding]);
 }
 
 export async function putWordEmbeddings(embeddings: StoredWordEmbedding[]) {

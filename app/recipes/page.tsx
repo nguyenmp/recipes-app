@@ -1,12 +1,13 @@
 
 import Link from "next/link";
-import { EmbeddingMatch, getMoreTerms, getRecipes, getRecipesForTerm, getRelatedWords } from "../lib/data";
+import { EmbeddingMatch, LevenshteinMatch, getMoreTerms, getRecipes, getRecipesForTerm, getRelatedWordsFromEmbeddings, getRelatedWordsFromTerms } from "../lib/data";
 import { SearchBar } from "../ui/search";
 import { Suspense } from "react";
 import { DeepRecipe, StoredNote, StoredRecipe, StoredRecipeSearchMatch } from "../lib/definitions";
 import { withTimingAsync } from "../lib/utils";
 import PipelineSingleton from "../lib/embeddings_pipeline";
 import assert from "assert";
+import { FeatureExtractionPipeline } from "@xenova/transformers";
 
 function getTermsFromQuery(query: string): string[] {
   const pattern = new RegExp('([a-zA-Z]+|[0-9\\.\\,]+)', 'g');
@@ -119,46 +120,62 @@ function queryWithOysterTerm(query: string, oysterTerm: string) {
   }
 }
 
-async function getSemanticallyRelatedTerms(terms: string[]): Promise<string[]> {
-  // Just use the default model, but hard-code it so it doesn't change under us and log too much in our logs
-  const classifier = await withTimingAsync('create pipeline', async () => await PipelineSingleton.getInstance());
-  const response = await withTimingAsync('get embedding for terms', async () => await classifier(terms, {pooling: 'mean', normalize: true}));
-  const embeddings = response.tolist();
-  const similar_terms = await withTimingAsync('get related words to embedding', async () => await getRelatedWords(embeddings));
-  similar_terms.sort((a, b) => b.distance - a.distance);
-  return similar_terms.map((similar_term) => similar_term.word);
-}
-
-const getSuggestedTerms = async function (query: string): Promise<string[]> { return await withTimingAsync('getSuggestedTerms', async () => {
+const getSuggestedTerms = async function (query: string): Promise<{levenshtein: LevenshteinMatch[], db_embeddings: EmbeddingMatch[]}> { return await withTimingAsync('getSuggestedTerms', async () => {
   const terms = getTermsFromQuery(query).map((term) => term.toLowerCase());
-  if (terms.length === 0) return [];
+  if (terms.length === 0) return {levenshtein: [], db_embeddings: []};
 
-  // async promise so we parallelize the two operations:
-  const getSemanticallyRelatedTermsPromise = getSemanticallyRelatedTerms(terms);
+  // More terms by saved embeddings, only works for words we've seen already
+  const getSemanticallyRelatedTermsPromise = withTimingAsync('get related words from terms', async () => getRelatedWordsFromTerms(terms));
 
-  // Add more terms by levenshtein distance
-  const more_terms: string[] = []
-  await withTimingAsync('getting more terms from terms', async () => {
-    const oyster = await getMoreTerms(terms);
-    more_terms.push(...oyster);
-  });
+  // More terms by levenshtein distance
+  const getLexicallySimilarTermsPromise = await withTimingAsync('getting more terms from terms via levenshtein', async () => await getMoreTerms(terms));
 
-  const similar_terms = await getSemanticallyRelatedTermsPromise;
+  // Async kick off both tasks and then await for both so it's parallel, since each can take a bit of time
+  const [levenshtein, db_embeddings] = await Promise.all([getLexicallySimilarTermsPromise, getSemanticallyRelatedTermsPromise]);
 
-  more_terms.push(...similar_terms.splice(0, 10));
-  return more_terms.filter((term) => !terms.includes(term));
+  return {levenshtein, db_embeddings};
 })};
 
-async function SuggestedTerms(params: {terms: string[], query: string}) {
+async function SuggestedTerms(params: {levenshtein: LevenshteinMatch[], db_embeddings: EmbeddingMatch[], generate_realtime_embeddings?: boolean, query: string}) {
+  const realtime_embeddings : EmbeddingMatch[] = [];
+  const terms = getTermsFromQuery(params.query);
+  if (params.generate_realtime_embeddings && terms.length > 0) {
+    await withTimingAsync('generate realtime embeddings for suggested terms', async () => {
+      const classifier : FeatureExtractionPipeline = await withTimingAsync('PipelineSingleton.getInstance', async () => PipelineSingleton.getInstance());
+      const embeddings = await withTimingAsync('generate embeddings in realtime', async () => classifier(terms, {pooling: 'mean', normalize: true}));
+
+      const matches = await withTimingAsync('query for related words from embeddings', async () => getRelatedWordsFromEmbeddings(embeddings.tolist()));
+      realtime_embeddings.push(...matches);
+    });
+  }
 
   return (
     <ul className="flex flex-row gap-4">
+      <li>Levenshtein: </li>
       {
-        params.terms.map((term: string) => {
+        params.levenshtein.slice(0, 5).map((match: LevenshteinMatch) => {
           const urlparams = new URLSearchParams();
-          urlparams.set('query', queryWithOysterTerm(params.query, term));
+          urlparams.set('query', queryWithOysterTerm(params.query, match.word));
           const link = `?${urlparams.toString()}`;
-          return <li key={term}><Link href={link}>+{term}</Link></li>
+          return <li data-word-source='levenshtein' key={`levenshtein-${match.word}`}><Link href={link}>+{match.word}</Link></li>
+        })
+      }
+      <li>DB Embeddings: </li>
+      {
+        params.db_embeddings.slice(0, 5).map((match: EmbeddingMatch) => {
+          const urlparams = new URLSearchParams();
+          urlparams.set('query', queryWithOysterTerm(params.query, match.word));
+          const link = `?${urlparams.toString()}`;
+          return <li data-word-source='db-embedding' key={`db-embedding-${match.word}`}><Link href={link}>+{match.word}</Link></li>
+        })
+      }
+      <li>Realtime Embeddings: </li>
+      {
+        realtime_embeddings.slice(0, 5).map((match: EmbeddingMatch) => {
+          const urlparams = new URLSearchParams();
+          urlparams.set('query', queryWithOysterTerm(params.query, match.word));
+          const link = `?${urlparams.toString()}`;
+          return <li data-word-source='realtime-embedding' key={`realtime-embedding-${match.word}`}><Link href={link}>+{match.word}</Link></li>
         })
       }
     </ul>
@@ -171,14 +188,14 @@ export default async function Recipes({searchParams}: {searchParams: {query?: st
   // Do this work in parallel
   const suggestedTermsPromise = getSuggestedTerms(query);
   const sortedRecipes = await withTimingAsync('get all suggested recipes high level', async () => query ? await getSortedRecipesForQuery(query) : await getRecipes());
-  const suggestedTerms = await suggestedTermsPromise;
+  const {levenshtein, db_embeddings} = await suggestedTermsPromise;
 
   return (
     <main>
       <Link href="/recipes/new">Create New Recipe</Link>
       <SearchBar />
-      <Suspense key={query + '-suggestions'} fallback={<p>Loading...</p>}>
-        <SuggestedTerms terms={suggestedTerms} query={query} />
+      <Suspense key={query + '-suggestions'} fallback={<SuggestedTerms levenshtein={levenshtein} db_embeddings={db_embeddings} query={query} />}>
+        <SuggestedTerms levenshtein={levenshtein} db_embeddings={db_embeddings} query={query} generate_realtime_embeddings={true} />
       </Suspense>
       <Suspense key={query + '-recipes'} fallback={<p>Loading...</p>}>
         <RecipesList recipes={sortedRecipes} />

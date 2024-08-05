@@ -2,7 +2,7 @@
 
 import { ChangeEvent, useState } from "react";
 import { pipeline } from '@xenova/transformers';
-import { EmbeddingMatch, getRelatedWords } from "../lib/data";
+import { EmbeddingMatch } from "../lib/data";
 import { getRelatedWordsFromEmbedding } from "../lib/actions";
 
 

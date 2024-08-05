@@ -32,6 +32,7 @@ export async function resetDatabaseTables() {
     await sql`CREATE EXTENSION IF NOT EXISTS fuzzystrmatch`
 }
 
+export type LevenshteinMatch = {word: string, distance: number};
 export type StoredWordEmbedding = {word: string, embedding: number[] | null};
 export type EmbeddingMatch = StoredWordEmbedding & {
     distance: number;
@@ -65,7 +66,34 @@ export async function getStoredWordsNeedingEmbeddings() {
     return fixEmbeddingFromJson(result.rows);
 }
 
-export async function getRelatedWords(embeddings: number[][]): Promise<EmbeddingMatch[]> {
+/**
+ * Similar to getRelatedWordsFromEmbeddings but only requires querying the
+ * database so timing can be anywhere from 30ms to 300ms, suitable for initial
+ * page load.  The negative of this method is that it only supports words in
+ * our database.  Unknown words are not supported.
+ */
+export async function getRelatedWordsFromTerms(terms: string[]): Promise<EmbeddingMatch[]> {
+    const select_union = terms.map((term: string) => `
+        SELECT word, embedding, embedding <-> (SELECT embedding FROM Embeddings WHERE word = '${term}' ) as distance
+        FROM Embeddings
+        WHERE word NOT ILIKE '%${term}%' AND (SELECT embedding FROM Embeddings WHERE word = '${term}') IS NOT NULL
+    `).join(' UNION ');
+    const query = `${select_union} ORDER BY distance ASC LIMIT 20`;
+    const client = await db.connect();
+    const response = await client.query<EmbeddingMatch>(query);
+    fixEmbeddingFromJson(response.rows);
+    return response.rows;
+}
+
+/**
+ * Supports searching for semantically similar words to the given embeddings.
+ * Compared to getRelatedWordsFromTerms, this function supports arbitrary
+ * words because we can generate embeddings for any word, but generating
+ * embeddings on Vercel's environment can take up to 3.5s.  It's far
+ * perferable to progressively enhance this information rather than block the
+ * initial render.
+ */
+export async function getRelatedWordsFromEmbeddings(embeddings: number[][]): Promise<EmbeddingMatch[]> {
     const select_union = embeddings.map((embedding: number[]) => `SELECT word, embedding, (embedding <-> '${JSON.stringify(embedding)}') AS distance FROM Embeddings`).join(' UNION ')
     const client = await db.connect();
     const query = `${select_union} ORDER BY distance LIMIT 10`;
@@ -85,7 +113,7 @@ export async function putStoredWords(embeddings: StoredWordEmbedding[]) {
     }
 }
 
-export async function getMoreTerms(terms: string[]) : Promise<string[]> {
+export async function getMoreTerms(terms: string[]) : Promise<LevenshteinMatch[]> {
     const select_clauses = terms.map((term) => {
         term = term.toLowerCase();
         const select_clause = `
@@ -105,18 +133,18 @@ export async function getMoreTerms(terms: string[]) : Promise<string[]> {
 
     const response = await withTimingAsync("levenshtein query", async () => {
         const client = await db.connect();
-        const request = client.query<EmbeddingMatch>(query);
+        const request = client.query<LevenshteinMatch>(query);
         return await request;
     });
 
 
-    const new_terms = response.rows.map((row) => row.word);
+    const new_terms = response.rows;
 
     // Reduce by substrings.  i.e. tomatoes => tomato and tomatos but tomato would cover tomatos
-    return new_terms.filter((new_term: string) => {
+    return new_terms.filter((match: LevenshteinMatch) => {
         for (const other_term of new_terms) {
-            if (new_term === other_term) continue;
-            if (new_term.includes(other_term)) {
+            if (match.word === other_term.word) continue;
+            if (match.word.includes(other_term.word)) {
                 return false;
             }
         }
