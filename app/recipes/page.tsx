@@ -152,7 +152,6 @@ async function SuggestedTerms(params: {levenshtein: LevenshteinMatch[], db_embed
   const word_scores : Map<string, {levenshtein?: number, db_embedding?: number}> = new Map();
   for (const match of params.levenshtein) {
     const scores = word_scores.get(match.word) ?? {};
-    console.log(`Levenshtein of ${match.word} is ${match.distance}`);
     scores.levenshtein = match.distance;
     word_scores.set(match.word, scores);
   }
