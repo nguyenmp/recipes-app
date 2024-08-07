@@ -42,6 +42,14 @@ We use playwright for end-to-end tests.
 pnpm exec playwright test [--ui]
 ```
 
+It's very noticable that tests can get weird sometimes so clean installing helps a lot:
+
+```
+rm -r .next/cache node_modules
+pnpm install
+pnpm dev
+```
+
 ## Updating Dependencies
 
 Try updating all dependencies first:
