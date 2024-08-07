@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { Page } from '@playwright/test'
+import assert from 'assert';
 
 const TEST_URL = 'http://localhost:3000/recipes';
 
@@ -47,4 +48,16 @@ test('dynamic (realtime) embeddings suggestions work', async ({ page }) => {
   // dynamic (realtime) embedding generation
   await expect(page.getByText('No results found')).toBeVisible();
   await testForSuggestedTerm(page, 'lobster', 'lobster');
+});
+
+test('home page is cached between loads, and reset when cache is cleared', async ({page}) => {
+  await page.goto(TEST_URL);
+  const firstRecipeName = await page.locator('a > h1').first().textContent()
+  await page.reload();
+  assert(firstRecipeName === await page.locator('a > h1').first().textContent(), 'Recipe changed unexpectedly without cache clearing');
+  await page.goto('http://localhost:3000/admin');
+  await page.getByText('Reset Cache').click();
+  await page.waitForURL('http://localhost:3000/');
+  await page.goto(TEST_URL);
+  assert(firstRecipeName !== await page.locator('a > h1').first().textContent(), 'Recipe did not change after clearing cache');
 });

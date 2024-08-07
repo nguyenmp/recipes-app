@@ -25,7 +25,7 @@ async function resetCache() {
     "use server";
     // https://nextjs.org/docs/app/api-reference/functions/revalidatePath#revalidating-all-data
     revalidatePath('/', 'layout')
-    redirect('');
+    redirect('/');
 }
 
 async function insertRecipe(recipe: PlaceholderData): Promise<Number> {
