@@ -32,6 +32,16 @@ Visit [http://localhost:3000/admin](http://localhost:3000/admin) and hit "Reset 
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Running Tests
+
+I'm just following the guide at https://nextjs.org/docs/app/building-your-application/testing
+
+We use playwright for end-to-end tests.
+
+```
+pnpm exec playwright test [--ui]
+```
+
 ## Updating Dependencies
 
 Try updating all dependencies first:
