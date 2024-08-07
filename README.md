@@ -9,7 +9,18 @@ npm install -g pnpm
 pnpm i # pnpm specifically supports our patching system (pnpm patch)
 ```
 
-Then set up local env file.  Copy from https://vercel.com/mark-nguyens-projects/recipes-app/stores/postgres/store_Wiaioan0XOOZgW5I/guides and paste into `.env.local`.  This allows you to connect to the development server.
+Then set up local env file for PostgreSQL and Cloudflare R2 (AWS S3 compatible blob storage).
+
+```bash
+# Install the vercel CLI
+pnpm i -g vercel
+
+# Link to the project (needs auth and permissions)
+vercel link
+
+# Download the environment variables necessary
+vercel env pull .env.local
+```
 
 Then, run the development server:
 
