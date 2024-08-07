@@ -39,6 +39,7 @@ I'm just following the guide at https://nextjs.org/docs/app/building-your-applic
 We use playwright for end-to-end tests.
 
 ```
+pnpm run dev
 pnpm exec playwright test [--ui]
 ```
 
