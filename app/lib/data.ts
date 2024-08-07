@@ -1,4 +1,4 @@
-import { sql, db } from "@vercel/postgres";
+import { sql, db, createClient } from "@vercel/postgres";
 import { DeepRecipe, ShallowNote, ShallowRecipe, StoredNote, StoredRecipe, StoredRecipeSearchMatch } from "./definitions";
 import { withTimingAsync } from "./utils";
 import assert from "assert";
@@ -88,10 +88,15 @@ export async function getRelatedWordsFromTerms(terms: string[]): Promise<Embeddi
         WHERE word NOT ILIKE '%${term}%' AND (SELECT embedding FROM Embeddings WHERE word = '${term}') IS NOT NULL
     `).join(' UNION ');
     const query = `${select_union} ORDER BY distance ASC LIMIT ${RELATED_WORDS_LIMIT}`;
-    const client = await db.connect();
-    const response = await client.query<EmbeddingMatch>(query);
-    fixEmbeddingFromJson(response.rows);
-    return response.rows;
+    const client = createClient();
+    await client.connect();
+    try {
+        const response = await client.query<EmbeddingMatch>(query);
+        fixEmbeddingFromJson(response.rows);
+        return response.rows;
+    } finally {
+        client.end();
+    }
 }
 
 /**
@@ -141,9 +146,14 @@ export async function getMoreTerms(terms: string[]) : Promise<LevenshteinMatch[]
     const query = select_clauses.join(' UNION ') + ` ORDER BY distance ASC LIMIT ${RELATED_WORDS_LIMIT}`;
 
     const response = await withTimingAsync("levenshtein query", async () => {
-        const client = await db.connect();
-        const request = client.query<LevenshteinMatch>(query);
-        return await request;
+        const client = createClient();
+        await client.connect();
+        try {
+            const request = client.query<LevenshteinMatch>(query);
+            return await request;
+        } finally {
+            client.end();
+        }
     });
 
 
