@@ -50,7 +50,7 @@ test('dynamic (realtime) embeddings suggestions work', async ({ page }) => {
   await testForSuggestedTerm(page, 'lobster', 'lobster');
 });
 
-test('home page is cached between loads, and reset when cache is cleared', async ({page}) => {
+test('recipes front page is cached between loads, and reset when cache is cleared', async ({page}) => {
   await page.goto(TEST_URL);
   const firstRecipeName = await page.locator('a > h1').first().textContent()
   await page.reload();
