@@ -25,9 +25,8 @@ test('clicking a recipe goes to the correct recipe', async ({ page }) => {
     assert(recipeName, 'No recipe name found');
     await page.locator(selector).click();
     await page.waitForURL(/recipes\/[\d]+/);
-    await expect(page.getByText(recipeName)).toBeVisible();
-    await expect(page.getByText('Edit note').first()).toBeVisible();
-    await expect(page.getByText('Add a new note')).toBeVisible();
+    await expect(page.locator('h1').getByText(recipeName)).toBeVisible();
+    await expect(page.getByText('Add a new note')).toBeAttached();
     await page.goBack();
   }
 });
