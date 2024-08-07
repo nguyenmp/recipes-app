@@ -32,17 +32,23 @@ Visit [http://localhost:3000/admin](http://localhost:3000/admin) and hit "Reset 
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Learn More
+## Updating Dependencies
 
-To learn more about Next.js, take a look at the following resources:
+Try updating all dependencies first:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# This ignores package range restrictions and installs latest of everything
+pnpm update --latest
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+You'll likely encounter some errors like eslint being mismatched.  As of right now, eslint is released to 9.8.0 but nextjs only supports 8.x.  Fix any errors like that manually and rerun with:
 
-## Deploy on Vercel
+```bash
+# This respects package range restrictions
+pnpm update
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Make sure to restart the development server, things get weird when you update dependencies while the server is running
+```bash
+rm -r .next/cache && pnpm dev
+```
