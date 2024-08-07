@@ -17,6 +17,30 @@ test('can search recipes', async ({ page }) => {
   await expect(page.getByText('Eggslut Copy Cat')).toBeVisible();
 });
 
+test('clicking a recipe goes to the correct recipe', async ({ page }) => {
+  await page.goto(TEST_URL);
+  for (let index = 1; index < 6; index++) {
+    const selector = `:nth-match(a > h1, ${index})`;
+    const recipeName = await page.locator(selector).textContent();
+    assert(recipeName, 'No recipe name found');
+    await page.locator(selector).click();
+    await page.waitForURL(/recipes\/[\d]+/);
+    await expect(page.getByText(recipeName)).toBeVisible();
+    await expect(page.getByText('Edit note').first()).toBeVisible();
+    await expect(page.getByText('Add a new note')).toBeVisible();
+    await page.goBack();
+  }
+});
+
+test('clicking a specific recipe goes to the correct recipe', async ({ page }) => {
+  await page.goto(TEST_URL);
+  await page.getByPlaceholder('Search here...').fill('blue corn waffle');
+  await page.getByText('Search', {exact: true}).click();
+  await page.getByText('Blue Corn Waffles / Pancakes').click();
+  await expect(page.getByText('https://www.eatingwell.com/recipe/7902149/blue-corn-waffles-rancheros/')).toBeVisible();
+  await expect(page.getByText('Note, it uses cornmeal instead')).toBeVisible();
+});
+
 async function testForSuggestedTerm(page: Page, term: string, expected_query: string) {
   // We use {force: true} here because this test fails on WebKit almost all the time
   await page.getByText(`+${term}`, {exact: true}).click({force: true});
