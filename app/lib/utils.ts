@@ -1,4 +1,7 @@
-export function withTiming<T>(lable: string, callable: () => T): T {
+
+export type NotPromise<T> = T extends Promise<infer ReturnType> ? never : T
+
+export function withTiming<T>(lable: string, callable: () => NotPromise<T>): T {
     console.log(`starting: ${lable}`);
     performance.mark(`start: ${lable}`);
     const result = callable();
