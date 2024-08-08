@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { Page } from '@playwright/test'
 import assert from 'assert';
 
-const TEST_URL = 'http://localhost:3000/admin';
+const TEST_URL = 'admin';
 
 test('can do client side embedding generation (for debugging)', async ({ page }) => {
   await page.goto(TEST_URL);

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-export const TEST_URL = 'http://localhost:3000/'
+export const TEST_URL = '/'
 
 test('can load and navigate to recipes', async ({ page }) => {
   await page.goto(TEST_URL);

@@ -51,6 +51,12 @@ pnpm install
 pnpm dev
 ```
 
+You can also run tests against production by changing `playwright.config.ts` to say:
+```diff
+-    baseURL: 'http://localhost:3000',
++    baseURL: 'https://recipes-app-lyart.vercel.app/',
+```
+
 ## Updating Dependencies
 
 Try updating all dependencies first:
