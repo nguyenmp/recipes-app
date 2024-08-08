@@ -5,13 +5,30 @@ import { constants } from "zlib";
 import assert from "assert";
 import { MarkdownPreview } from "./markdown";
 import { MarkdownEditorWithPreview } from "./markdown_editor";
+import {
+    S3Client,
+    GetObjectCommand,
+    ListObjectsCommand,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+
+
+const S3 = new S3Client({
+    region: "auto",
+    endpoint: process.env.CLOUDFLARE_R2_ENDPOINT!,
+    credentials: {
+        accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY!,
+    },
+});
+
 
 function getDateStringFromEpochSeconds(epoch_seconds: number): string {
     const date = new Date(epoch_seconds * 1000);
     return date.toLocaleString();
 }
 
-export function RecipeCard(recipe: DeepRecipe) {
+export async function RecipeCard(recipe: DeepRecipe) {
     return (
         <div className="m-10" key={`recipe-${recipe.id}`}>
             <Link href={`/recipes/${recipe.id}`}><h1 className="text-2xl pt-10">{recipe.name}</h1></Link>
@@ -22,6 +39,13 @@ export function RecipeCard(recipe: DeepRecipe) {
                         <Link className="text-xs" href={`/recipes/${recipe.id}/notes/${note.id}/edit`}>Edit Note</Link>
                     </div>
                     <MarkdownPreview content_markdown={note.content_markdown} />
+                    <div>
+                        <p>Images:</p>
+                        {note.attachments?.map(async (attachment: {name: string}) => {
+                            const imageUrl = await getSignedUrl(S3, new GetObjectCommand({Bucket: 'recipes-app-images', Key: attachment.name}), { expiresIn: 3600 })
+                            return <p><a href={imageUrl}>{attachment.name}</a></p>
+                        })}
+                    </div>
                 </div>
             })}
             <Link href={`/recipes/${recipe.id}/notes/new`}>Add a new note</Link>

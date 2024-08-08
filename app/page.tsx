@@ -1,21 +1,5 @@
 import Image from "next/image"
 import Link from "next/link"
-import {
-    S3Client,
-    GetObjectCommand,
-    ListObjectsCommand,
-} from "@aws-sdk/client-s3";
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-
-
-const S3 = new S3Client({
-    region: "auto",
-    endpoint: process.env.CLOUDFLARE_R2_ENDPOINT!,
-    credentials: {
-        accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY!,
-    },
-});
 
 
 function ChemicalIcon() {
@@ -30,12 +14,8 @@ function ChemicalIcon() {
 
 
 export default async function Home() {
-    const response = await S3.send(new ListObjectsCommand({Bucket: 'recipes-app-images'}));
-    const objectKey = response.Contents![0].Key;
-    const imageUrl = await getSignedUrl(S3, new GetObjectCommand({Bucket: 'recipes-app-images', Key: objectKey}), { expiresIn: 3600 })
     return (
         <div className="h-screen flex flex-col">
-            <img src={imageUrl} alt="Unknown Image" width="100%" height="auto" />
             <div className="m-auto text-center">
                 <p className="m-auto text-center p-4">A Recipe App for Mark Nguyen</p>
                 <ul className="list-decimal list-inside p-4">
