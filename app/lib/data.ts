@@ -171,24 +171,6 @@ export async function getMoreTerms(terms: string[]) : Promise<LevenshteinMatch[]
     })
 }
 
-export async function searchRecipesAndNotes(query?: string): Promise<StoredRecipe[]> {
-    const queryResult = await sql<StoredRecipe>`
-        SELECT Recipes.* FROM Notes
-        JOIN Recipes
-        ON Notes.recipe_id = Recipes.id
-        WHERE content_markdown ILIKE ${`%${query}%`}
-        OR Recipes.name ILIKE ${`%${query}%`}
-    `;
-
-    const map: {[key: number]: StoredRecipe} = {};
-
-    queryResult.rows.map((recipe: StoredRecipe) => {
-        map[recipe.id] = recipe;
-    });
-
-    return Object.values(map);
-}
-
 export async function getRecipes(): Promise<StoredRecipe[]> {
     return await withTimingAsync('data.ts#getRecipes', async () => {
         const result = await sql<StoredRecipe>`SELECT * FROM Recipes ORDER BY RANDOM() LIMIT 20`;
@@ -213,8 +195,8 @@ export async function getRecipesForTerm(term : string): Promise<StoredRecipeSear
             Recipes.*,
             ARRAY_LENGTH(STRING_TO_ARRAY(LOWER(Recipes.name), ${term}), 1) - 1 as name_matches,
             SUM(ARRAY_LENGTH(STRING_TO_ARRAY(LOWER(Notes.content_markdown), ${term}), 1)) - 1 as content_markdown_matches
-        FROM Notes
-        JOIN Recipes
+        FROM Recipes
+        LEFT JOIN Notes
         ON Notes.recipe_id = Recipes.id
         WHERE content_markdown ILIKE ${`%${term}%`}
         OR Recipes.name ILIKE ${`%${term}%`}
