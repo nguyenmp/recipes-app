@@ -43,7 +43,7 @@ export async function RecipeCard(recipe: DeepRecipe) {
                         <p>Images:</p>
                         {note.attachments?.map(async (attachment: {name: string}) => {
                             const imageUrl = await getSignedUrl(S3, new GetObjectCommand({Bucket: 'recipes-app-images', Key: attachment.name}), { expiresIn: 3600 })
-                            return <p><a href={imageUrl}>{attachment.name}</a></p>
+                            return <p key={attachment.name}><a href={imageUrl}>{attachment.name}</a></p>
                         })}
                     </div>
                 </div>
