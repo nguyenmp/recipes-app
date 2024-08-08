@@ -1203,7 +1203,15 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "![][image1]![][image2]\n\n",
+                content_markdown: "\n\n",
+                attachments: [
+                    {
+                        name: "image1.png",
+                    },
+                    {
+                        name: "image2.png",
+                    }
+                ]
             }
         ]
     },
@@ -1212,7 +1220,15 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "![][image3]  \n![][image4]\n\n",
+                content_markdown: "  \n\n\n",
+                attachments: [
+                    {
+                        name: "image3.png",
+                    },
+                    {
+                        name: "image4.png",
+                    }
+                ]
             }
         ]
     },
@@ -1373,7 +1389,12 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "Derived from Americas Test Kitchens Complete Vegetarian Cookbook\n\n![][image5]\n\n* [https://www.lovefrenchfood.com/mushroom-pate-recipe.html](https://www.lovefrenchfood.com/mushroom-pate-recipe.html)\\\\  \n  * Use bLack pepper   \n* [https://www.seasonedkitchen.com/mushroom-pate](https://www.seasonedkitchen.com/mushroom-pate)  \n  * Use nuts\n\n",
+                content_markdown: "Derived from Americas Test Kitchens Complete Vegetarian Cookbook\n\n\n\n* [https://www.lovefrenchfood.com/mushroom-pate-recipe.html](https://www.lovefrenchfood.com/mushroom-pate-recipe.html)\\\\  \n  * Use bLack pepper   \n* [https://www.seasonedkitchen.com/mushroom-pate](https://www.seasonedkitchen.com/mushroom-pate)  \n  * Use nuts\n\n",
+                attachments: [
+                    {
+                        name: "image5.png",
+                    }
+                ]
             },
             {
                 date_epoch_seconds: 1669446000,
@@ -1672,7 +1693,12 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1643871600,
-                content_markdown: "Inspired by Telef\u00e8ric of Los Gatos with Jenny on her b day \n\nBraised short rib rolled in puff pastry injected with gravy topped with mayo and fried sweet potatoes or something.  Definitely tastes shiitake, maybe the gravy?\n\nJenny wants to make\n\n![][image6]\n\n",
+                content_markdown: "Inspired by Telef\u00e8ric of Los Gatos with Jenny on her b day \n\nBraised short rib rolled in puff pastry injected with gravy topped with mayo and fried sweet potatoes or something.  Definitely tastes shiitake, maybe the gravy?\n\nJenny wants to make\n\n\n\n",
+                attachments: [
+                    {
+                        name: "image6.png",
+                    }
+                ]
             }
         ]
     },
@@ -1811,7 +1837,12 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "![][image7]\n\n",
+                content_markdown: "\n\n",
+                attachments: [
+                    {
+                        name: "image7.png",
+                    }
+                ]
             }
         ]
     },
@@ -2056,7 +2087,15 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "![][image8]![][image9]\n\nMods\n\n* Seasoned for 30 min early  \n* Sliced thinly the pork  \n* Serve with rice\n\n",
+                content_markdown: "\n\nMods\n\n* Seasoned for 30 min early  \n* Sliced thinly the pork  \n* Serve with rice\n\n",
+                attachments: [
+                    {
+                        name: "image8.png",
+                    },
+                    {
+                        name: "image9.png",
+                    }
+                ]
             }
         ]
     },
@@ -2092,7 +2131,24 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1656918000,
-                content_markdown: "Made for dinner BBQ with Melissa and David\n\nWu-mu noodles  \nCarrots, bean sprouts, cucumber  \nSauce: vinegar, sesame sauce (tamari paste?), sugar, soy sauce\n\n![][image10]![][image11]![][image12]![][image13]![][image14]\n\n",
+                content_markdown: "Made for dinner BBQ with Melissa and David\n\nWu-mu noodles  \nCarrots, bean sprouts, cucumber  \nSauce: vinegar, sesame sauce (tamari paste?), sugar, soy sauce\n\n\n\n",
+                attachments: [
+                    {
+                        name: "image10.png",
+                    },
+                    {
+                        name: "image11.png",
+                    },
+                    {
+                        name: "image12.png",
+                    },
+                    {
+                        name: "image13.png",
+                    },
+                    {
+                        name: "image14.png",
+                    }
+                ]
             }
         ]
     },
@@ -2690,15 +2746,30 @@ export const recipes: PlaceholderData[] = [
             {
                 date_epoch_seconds: 1593759600,
                 content_markdown: "Based on Samin Norset\u2019s Salt Fat Acid Heat \u201cGlazed Five-Spice Chicken\u201d.  Rachel Frost says it\u2019s hella good on salmon as briefly mentioned in the book.\n\n",
+                attachments: [
+                    {
+                        name: "image15.png",
+                    }
+                ]
             }
         ]
     },
     {
-        name: "![][image15]",
-        notes: []
+        name: "",
+        notes: [
+            {
+                date_epoch_seconds: 1593759600,
+                content_markdown: "",
+                attachments: [
+                    {
+                        name: "image16.png",
+                    }
+                ]
+            }
+        ]
     },
     {
-        name: "![][image16]",
+        name: "",
         notes: []
     },
     {

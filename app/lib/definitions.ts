@@ -18,6 +18,7 @@ export type StoredRecipeSearchMatch = StoredRecipe & {
 export type ShallowNote = {
     date_epoch_seconds: number;
     content_markdown: string;
+    attachments?: {name: string}[];
 }
 
 export type StoredNote = ShallowNote & {
