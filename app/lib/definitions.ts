@@ -18,10 +18,20 @@ export type StoredRecipeSearchMatch = StoredRecipe & {
 export type ShallowNote = {
     date_epoch_seconds: number;
     content_markdown: string;
-    attachments?: {name: string}[];
+    attachments?: ShallowAttachment[];
 }
 
-export type StoredNote = ShallowNote & {
+export type StoredNote = Omit<ShallowNote, 'attachments'> & {
     id: number;
     recipe_id: number;
+    attachments?: StoredAttachment[];
 }
+
+export type ShallowAttachment = {
+    name: string
+}
+
+export type StoredAttachment = ShallowAttachment & {
+    id: number,
+    note_id: number,
+};

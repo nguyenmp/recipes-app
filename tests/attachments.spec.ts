@@ -10,7 +10,7 @@ test('we can load images from an expected recipe', async ({ page }) => {
     await page.getByText("Dads Noodle Mix").click();
     for (const image_name of ['image10.png', 'image11.png', 'image12.png', 'image13.png', 'image14.png']) {
         const loadingPromise = page.waitForResponse(new RegExp('.*\.png\?.*'));
-        await page.getByText(image_name).click();
+        await page.getByAltText(image_name).click();
         await expect(page.locator('img')).toBeVisible();
         await loadingPromise
         const url = page.url();

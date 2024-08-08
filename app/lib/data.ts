@@ -1,5 +1,5 @@
 import { sql, db, createClient } from "@vercel/postgres";
-import { DeepRecipe, ShallowNote, ShallowRecipe, StoredNote, StoredRecipe, StoredRecipeSearchMatch } from "./definitions";
+import { DeepRecipe, ShallowAttachment, ShallowNote, ShallowRecipe, StoredAttachment, StoredNote, StoredRecipe, StoredRecipeSearchMatch } from "./definitions";
 import { withTimingAsync } from "./utils";
 import assert from "assert";
 
@@ -217,14 +217,14 @@ export async function createRecipe(recipe: ShallowRecipe): Promise<number> {
     return newRecipeId;
 }
 
-export async function getAttachmentsForRecipe(recipeId: number): Promise<Map<number, {name: string}[]>> {
-    const response = await sql<{id: number, name: string, note_id: number}>`
+export async function getAttachmentsForRecipe(recipeId: number): Promise<Map<number, StoredAttachment[]>> {
+    const response = await sql<StoredAttachment>`
         SELECT * FROM Attachments
         WHERE note_id IN (SELECT id FROM Notes WHERE recipe_id = ${recipeId})`;
-    const result : Map<number, {name: string}[]> = new Map();
+    const result : Map<number, StoredAttachment[]> = new Map();
     response.rows.forEach((row) => {
         const attachments = result.get(row.note_id) ?? [];
-        attachments.push({name: row.name});
+        attachments.push(row);
         result.set(row.note_id, attachments);
     })
     return result;
