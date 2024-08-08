@@ -5,7 +5,7 @@ import { constants } from "zlib";
 import assert from "assert";
 import { MarkdownPreview } from "./markdown";
 import { MarkdownEditorWithPreview } from "./markdown_editor";
-import { getImageSrcForKeyOfUserUploadedAttachment } from "../lib/utils";
+import { getImageSrcForKeyOfUserUploadedAttachment } from "../lib/s3";
 import { AttachmentsEditor, MaterializedAttachment } from "./attachments_editor";
 
 
