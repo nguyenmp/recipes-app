@@ -178,7 +178,7 @@ async function SuggestedTerms(params: {levenshtein: LevenshteinMatch[], db_embed
             const urlparams = new URLSearchParams();
             urlparams.set('query', queryWithOysterTerm(params.query, word));
             const link = `?${urlparams.toString()}`;
-            return <li data-score-levenshtein={score.levenshtein} data-score-embedding={score.db_embedding} key={word}><Link href={link}>+{word}</Link></li>
+            return <li data-score-levenshtein={score.levenshtein} data-score-embedding={score.db_embedding} key={word}><a href={link}>+{word}</a></li>
           })
         }
       </ul>
