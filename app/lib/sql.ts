@@ -20,6 +20,7 @@ function prepareTemplateString(stringArray: TemplateStringsArray, ...values: any
 
 export const sql: typeof vercel_postgres.sql = new Proxy(vercel_postgres.sql, {
     apply(target, thisArg, argArray) {
+        // @ts-ignore
         const preparedStatement = prepareTemplateString(...argArray);
         if (DEBUG) console.log(`Applying SQL on ${preparedStatement}`);
         return Reflect.apply(target, thisArg, argArray);
