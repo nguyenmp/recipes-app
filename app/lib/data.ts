@@ -77,6 +77,17 @@ export async function getStoredWordsNeedingEmbeddings() {
     return fixEmbeddingFromJson(result.rows);
 }
 
+export async function countWordsNeedingEmbeddings() {
+    const result = await sql<{count: number}>`
+        SELECT COUNT(*)
+        FROM Words
+        LEFT JOIN Embeddings
+        ON Embeddings.word = Words.word
+        WHERE Embeddings.embedding IS NULL
+    `;
+    return result.rows[0].count;
+}
+
 /**
  * Similar to getRelatedWordsFromEmbeddings but only requires querying the
  * database so timing can be anywhere from 30ms to 300ms, suitable for initial

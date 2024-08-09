@@ -1,11 +1,12 @@
 import { sql } from '@vercel/postgres'
 import { ShallowNote } from '../lib/definitions';
 import { PlaceholderData, recipes } from '../lib/placeholder-data';
-import { createNoteForRecipe, createRecipe, resetDatabaseTables } from '../lib/data';
+import { countWordsNeedingEmbeddings, createNoteForRecipe, createRecipe, getStoredWordsNeedingEmbeddings, putStoredWords, resetDatabaseTables } from '../lib/data';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { GenerateEmbeddings } from '../ui/generate_embeddings';
 import { SearchEmbeddings } from '../ui/search_embeddings';
+import PipelineSingletonClass from '../lib/embeddings_pipeline';
 
 async function seedDatabase() {
     "use server";
@@ -14,6 +15,8 @@ async function seedDatabase() {
     await resetDatabaseTables();
 
     await Promise.all(recipes.map(insertRecipe));
+
+    await rebuildWordsEmbeddings();
 
     // This invalidates all data
     // https://nextjs.org/docs/app/api-reference/functions/revalidatePath#revalidating-all-data
@@ -27,6 +30,25 @@ async function resetCache() {
     revalidatePath('/', 'layout')
     redirect('/');
 }
+
+async function rebuildWordsEmbeddings() {
+    // Server side version of GenerateEmbeddings
+    const classifier = await PipelineSingletonClass.getInstance();
+
+    const totalWords = await countWordsNeedingEmbeddings();
+    let handledWords = 0;
+    let storedWordEmbeddings = await getStoredWordsNeedingEmbeddings();
+    while (storedWordEmbeddings.length != 0) {
+        console.log(`Progress: ${handledWords}/${totalWords} ~ ${Math.round(handledWords / totalWords * 100)}%`)
+        const output = await classifier(storedWordEmbeddings.map((item) => item.word), {pooling: 'mean', normalize: true});
+        storedWordEmbeddings.forEach((wordStruct, index) => {
+            wordStruct.embedding = output.tolist()[index];
+        });
+        await putStoredWords(storedWordEmbeddings);
+        handledWords += storedWordEmbeddings.length;
+        storedWordEmbeddings = await getStoredWordsNeedingEmbeddings();
+    }
+};
 
 async function insertRecipe(recipe: PlaceholderData): Promise<Number> {
     const newRecipeId = await createRecipe(recipe);
