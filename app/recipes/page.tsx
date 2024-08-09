@@ -3,7 +3,7 @@ import Link from "next/link";
 import { EmbeddingMatch, LevenshteinMatch, getMoreTerms, getRecipes, getRecipesForTerm, getRelatedWordsFromEmbeddings, getRelatedWordsFromTerms } from "../lib/data";
 import { SearchBar } from "../ui/search";
 import { Suspense } from "react";
-import { DeepRecipe, StoredNote, StoredRecipe, StoredRecipeSearchMatch } from "../lib/definitions";
+import { DeepRecipe, SearchMatch, StoredNote, StoredRecipe, StoredRecipeSearchMatch } from "../lib/definitions";
 import { withTimingAsync } from "../lib/utils";
 import PipelineSingleton from "../lib/embeddings_pipeline";
 import assert from "assert";
@@ -18,14 +18,24 @@ function getTermsFromQuery(query: string): string[] {
   return Array.from(terms_set);
 }
 
-function sortRecipesByRelevance(recipes_by_terms: Map<string, StoredRecipeSearchMatch[]>): StoredRecipeSearchMatch[] {
+type ScoredRecipeMatch = StoredRecipe & {
+  matches_by_term: {[term: string]: SearchMatch & {term_score: number}};
+  total_score: number;
+}
+
+function sortRecipesByRelevance(recipes_by_terms: Map<string, StoredRecipeSearchMatch[]>): ScoredRecipeMatch[] {
 
   // Create aggregations that track "term frequency" and "document frequency" for each term
-  const recipes_by_id : Map<number, StoredRecipeSearchMatch> = new Map();
+  const all_recipes_by_id : Map<number, StoredRecipe> = new Map();
+  const recipes_by_id_by_term : Map<string, Map<number, StoredRecipeSearchMatch>> = new Map();
   const tf_by_term_by_document : Map<number, {[term: string]: number}> = new Map();
   const documentFrequencies_by_term: Map<string, number> = new Map();
   recipes_by_terms.forEach((recipe_matches: StoredRecipeSearchMatch[], term: string) => {
+    const recipes_by_id = recipes_by_id_by_term.get(term) ?? new Map<number, StoredRecipeSearchMatch>();
+    recipes_by_id_by_term.set(term, recipes_by_id);
+
     recipe_matches.forEach((recipe_match) => {
+      all_recipes_by_id.set(recipe_match.id, recipe_match);
       recipes_by_id.set(recipe_match.id, recipe_match);
 
       // Increment document frequency for this term by 1
@@ -49,31 +59,53 @@ function sortRecipesByRelevance(recipes_by_terms: Map<string, StoredRecipeSearch
   // Now we can calculate "tf-idf" based on the aggregations
   const terms_list = Array.from(recipes_by_terms.keys());
   const num_recipes = tf_by_term_by_document.size;
-  const scores : {recipe: StoredRecipeSearchMatch, score: number}[] = Array.from(tf_by_term_by_document.entries()).map(([recipe_id, tf_by_term]) => {
-    const recipe = recipes_by_id.get(recipe_id);
-    assert(recipe, `No recipe found for id ${recipe_id}`);
+  const scores : ScoredRecipeMatch[] = Array.from(tf_by_term_by_document.entries()).map(([recipe_id, tf_by_term]) => {
 
+    const matches_by_term : {[term: string]: SearchMatch & {term_score: number}} = {};
     const scores_ = terms_list.map((term: string, term_index: number) => {
+      // Locate the recipe match object for this recipe / term combo
+      const recipes_by_id = recipes_by_id_by_term.get(term);
+      const recipe = recipes_by_id?.get(recipe_id);
+
+      // calculate TF-IDF score
       const tf = (term in tf_by_term) ? tf_by_term[term] : 0;
       const df = documentFrequencies_by_term.get(term) ?? 0;
       const idf_offset = 0.1;  // the IDF offset allows IDF to be non-zero allowing single term search to stll sort by document frequency
-      const idf = Math.log2((1 + num_recipes) / (1 + df) + idf_offset)
+      const idf = Math.log10((1 + num_recipes) / (1 + df) + idf_offset)
       const score = tf*idf;
+
+      // Return score object
+      matches_by_term[term] = {
+        name_matches: recipe?.name_matches ?? 0,
+        content_markdown_matches: recipe?.content_markdown_matches ?? 0,
+        term_score: score,
+      };
       return score;
     });
-    recipe.name = recipe.name + ' ' + JSON.stringify(scores_);
+
     return {
-      recipe,
-      score: scores_.reduce((cum, val) => cum + val, 0)
+      name: all_recipes_by_id.get(recipe_id)!.name,
+      id: all_recipes_by_id.get(recipe_id)!.id,
+      matches_by_term,
+      total_score: scores_.reduce((cum, val) => cum + val, 0)
     };
   });
 
-  const sorted = scores.toSorted((a, b) => b.score - a.score);
-
-  return sorted.map((item) => item.recipe);
+  return scores.toSorted((a, b) => b.total_score - a.total_score);
 }
 
-async function RecipesList(params: {recipes: StoredRecipe[]}) {
+async function getSortedRecipesFrontpage(): Promise<ScoredRecipeMatch[]> {
+  const recipes = await getRecipes();
+  return recipes.map((recipe) => {
+    return {
+      ...recipe,
+      matches_by_term: {},
+      total_score: 0,
+    }
+  });
+}
+
+async function RecipesList(params: {recipes: ScoredRecipeMatch[], debug?: string}) {
   const recipes = params.recipes;
 
   if (recipes.length == 0) {
@@ -86,7 +118,12 @@ async function RecipesList(params: {recipes: StoredRecipe[]}) {
         recipes.map((recipe) => {
           return (
             <Link href={`/recipes/${recipe.id}`} key={recipe.id} className="hover:underline">
-              <h1 className="text-2xl m-10">{recipe.name}</h1>
+              <h1 className="text-2xl m-10">{recipe.name + (params.debug ? ` - ${recipe.total_score}` : '')}</h1>
+              { params.debug ? 
+                <div>
+                  <code className="whitespace-pre">{JSON.stringify(recipe.matches_by_term, null, '    ')}</code>
+                </div> : <></>
+              }
             </Link>
           );
         })
@@ -95,11 +132,13 @@ async function RecipesList(params: {recipes: StoredRecipe[]}) {
   )
 }
 
-async function getSortedRecipesForQuery(query: string): Promise<StoredRecipeSearchMatch[]> {
+async function getSortedRecipesForQuery(query: string): Promise<ScoredRecipeMatch[]> {
   const terms_list = getTermsFromQuery(query);
 
   // Query for each term
   const aggregate_matches = (await Promise.all(terms_list.map(async (term: string) => await getRecipesForTerm(term))))
+
+  // Zip them together into Map<term, matches>
   const matches_by_term = new Map(terms_list.map<[string, StoredRecipeSearchMatch[]]>((term, index) => [term, aggregate_matches[index]]));
 
   // Then sort by relevancy
@@ -136,7 +175,7 @@ const getSuggestedTerms = async function (query: string): Promise<{levenshtein: 
   return {levenshtein, db_embeddings};
 })};
 
-async function SuggestedTerms(params: {levenshtein: LevenshteinMatch[], db_embeddings: EmbeddingMatch[], generate_realtime_embeddings?: boolean, query: string}) {
+async function SuggestedTerms(params: {levenshtein: LevenshteinMatch[], db_embeddings: EmbeddingMatch[], generate_realtime_embeddings?: boolean, query: string, searchParams: Record<string, string>}) {
   const realtime_embeddings : EmbeddingMatch[] = [];
   const terms = getTermsFromQuery(params.query);
   if (params.generate_realtime_embeddings && terms.length > 0) {
@@ -176,7 +215,7 @@ async function SuggestedTerms(params: {levenshtein: LevenshteinMatch[], db_embed
         <p className="flex-shrink-0">Suggested Terms:</p>
         {
           suggested_words.map(([word, score]) => {
-            const urlparams = new URLSearchParams();
+            const urlparams = new URLSearchParams(params.searchParams);
             urlparams.set('query', queryWithOysterTerm(params.query, word));
             const link = `?${urlparams.toString()}`;
             return <li data-score-levenshtein={score.levenshtein} data-score-embedding={score.db_embedding} key={word}><a href={link} title={JSON.stringify(score)}>+{word}</a></li>
@@ -187,23 +226,23 @@ async function SuggestedTerms(params: {levenshtein: LevenshteinMatch[], db_embed
   );
 }
 
-export default async function Recipes({searchParams}: {searchParams: {query?: string}}) {
+export default async function Recipes({searchParams}: {searchParams: {query?: string, debug?: string}}) {
   const query = searchParams.query || '';
 
   // Do this work in parallel
   const suggestedTermsPromise = getSuggestedTerms(query);
-  const sortedRecipes = await withTimingAsync('get all suggested recipes high level', async () => query ? await getSortedRecipesForQuery(query) : await getRecipes());
+  const sortedRecipes: ScoredRecipeMatch[] = await withTimingAsync('get all suggested recipes high level', async () => query ? await getSortedRecipesForQuery(query) : await getSortedRecipesFrontpage());
   const {levenshtein, db_embeddings} = await suggestedTermsPromise;
 
   return (
     <main>
       <Link href="/recipes/new">Create New Recipe</Link>
       <SearchBar />
-      <Suspense key={query + '-suggestions'} fallback={<SuggestedTerms levenshtein={levenshtein} db_embeddings={db_embeddings} query={query} />}>
-        <SuggestedTerms levenshtein={levenshtein} db_embeddings={db_embeddings} query={query} generate_realtime_embeddings={true} />
+      <Suspense key={query + '-suggestions'} fallback={<SuggestedTerms levenshtein={levenshtein} db_embeddings={db_embeddings} query={query} searchParams={searchParams} />}>
+        <SuggestedTerms levenshtein={levenshtein} db_embeddings={db_embeddings} query={query} generate_realtime_embeddings={true} searchParams={searchParams} />
       </Suspense>
       <Suspense key={query + '-recipes'} fallback={<p>Loading...</p>}>
-        <RecipesList recipes={sortedRecipes} />
+        <RecipesList recipes={sortedRecipes} debug={searchParams.debug} />
       </Suspense>
     </main>
   );
