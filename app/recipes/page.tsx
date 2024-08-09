@@ -13,7 +13,7 @@ function getTermsFromQuery(query: string): string[] {
   const pattern = new RegExp('([a-zA-Z]+|[0-9\\.\\,]+)', 'g');
   const matches = query.matchAll(pattern);
   const terms_set = new Set(Array.from(matches).map((match: RegExpExecArray) => {
-    return match[0];
+    return match[0].toLowerCase();
   }));
   return Array.from(terms_set);
 }

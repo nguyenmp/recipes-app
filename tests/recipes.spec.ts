@@ -26,10 +26,25 @@ test('can search recipes', async ({ page }) => {
   await page.goto(TEST_URL);
   await page.getByPlaceholder('Search here...').fill('tomatoes and eggs');
   await page.getByText('Search').click();
-  await expect(page.getByText('Deviled Eggs')).toBeVisible();
-  await expect(page.getByText('Boiled Eggs')).toBeVisible();
-  await expect(page.getByText('Eggslut Copy Cat')).toBeVisible();
+
+  // These are high ranked matches so they should be way up top
+  await expect(page.getByText('Deviled Eggs')).toBeInViewport();
+  await expect(page.getByText('Boiled Eggs')).toBeInViewport();
+  await expect(page.getByText('Eggslut Copy Cat')).toBeInViewport();
+
+  // This is a low ranked match so it should be way near the bottom (off screen)
+  await expect(page.getByText('Fried Egg Quesadilla By Sam Sifton')).not.toBeInViewport();
 });
+
+test('a very specific almost exact match should rank number one (also capital letters)', async ({ page }) => {
+    // Search for Jenny's Dad's Noodle Mix which has 5 images
+    await page.goto('recipes');
+    await page.getByPlaceholder('Search here...').fill("Jenny's Dad's Noodle Mix");
+    await page.getByText('Search').click();
+    await expect(page.getByText("Dads Noodle Mix")).toBeInViewport();
+    // It should be the top result
+    await expect(page.locator(':nth-match(a > h1, 1)')).toContainText('Jenny’s Dads Noodle Mix')
+})
 
 test('clicking a recipe goes to the correct recipe', async ({ page }) => {
   await page.goto(TEST_URL);
