@@ -2,7 +2,7 @@
 
 import { sql } from "@vercel/postgres";
 import { ShallowNote, ShallowRecipe } from "./definitions";
-import { createNoteForRecipe, createRecipe, getRelatedWordsFromEmbeddings, getStoredWordsNeedingEmbeddings, putStoredWords, StoredWordEmbedding, updateNoteById, updateRecipeById } from "./data";
+import { addAttachmentforNote, createNoteForRecipe, createRecipe, getRelatedWordsFromEmbeddings, getStoredWordsNeedingEmbeddings, putStoredWords, StoredWordEmbedding, updateNoteById, updateRecipeById } from "./data";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -50,6 +50,12 @@ export async function saveNote(recipeId: number, noteId: number | null, formData
         noteId = await createNoteForRecipe(recipeId, note);
     } else {
         await updateNoteById(noteId, note);
+    }
+
+    const new_attachment_name = formData.get('new_attachment')?.toString();
+    console.log(`new_attachment_name: ${new_attachment_name}`);
+    if (new_attachment_name) {
+        await addAttachmentforNote(noteId, {name: new_attachment_name});
     }
 
     revalidatePath(`/recipes/${recipeId}/notes/${noteId}/edit`);

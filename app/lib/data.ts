@@ -256,12 +256,16 @@ export async function updateNoteById(id: number, data: ShallowNote) {
     `
 }
 
+export async function addAttachmentforNote(note_id: number, attachment: ShallowAttachment) {
+    await sql`INSERT INTO Attachments (note_id, name) VALUES (${note_id}, ${attachment.name})`
+}
+
 export async function createNoteForRecipe(recipeId: number, note: ShallowNote): Promise<number> {
     const result = await sql`INSERT INTO Notes (recipe_id, date_epoch_seconds, content_markdown) VALUES (${recipeId}, ${note.date_epoch_seconds}, ${note.content_markdown}) RETURNING id;`
     const newNoteId = result.rows[0]['id'];
 
     for (const attachment of note.attachments ?? []) {
-        await sql`INSERT INTO Attachments (note_id, name) VALUES (${newNoteId}, ${attachment.name})`
+        addAttachmentforNote(newNoteId, attachment);
     }
 
     return newNoteId;

@@ -1,22 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { Page } from '@playwright/test'
 import assert from 'assert';
+import {createNewRecipe, generateRandomString} from './utils'
 
 const TEST_URL = '/recipes';
-
-/**
- * Note, we don't use uuid because it contains numbers and dashes, which
- * results in a highly likely string that is broken into many small queries
- */
-function generateRandomString(length: number): string {
-  return Array.from(Array(length), () => {
-    const low = 'a'.charCodeAt(0);
-    const high = 'z'.charCodeAt(0);
-    const result = String.fromCharCode(Math.round((Math.random() * (high - low)) + low));
-    if (Math.random() < 0.5) return result.toUpperCase();
-    return result;
-  }).join('');
-}
 
 test('can load recipes', async ({ page }) => {
   await page.goto(TEST_URL);
@@ -120,14 +107,7 @@ test('create a new recipe, we should be able to find it and the content', async 
   await page.goto(TEST_URL);
 
   // Create a new recipe
-  const recipe_name = generateRandomString(40);
-  await page.getByText('Create New Recipe').click();
-  await page.waitForURL('/recipes/new');
-  await page.getByLabel('Name').fill(recipe_name);
-  await page.getByText('Save New Recipe').click();
-
-  await page.waitForURL(new RegExp('/recipes/[0-9]'));
-  const recipeUrl = page.url();
+  const recipe = await createNewRecipe(page);
 
   // Add a note
   const note_content = generateRandomString(40);
@@ -137,43 +117,38 @@ test('create a new recipe, we should be able to find it and the content', async 
   await page.getByText('Save New Note').click();
 
   // New note should be visible
-  await page.waitForURL(recipeUrl);
-  await expect(page.getByText(recipe_name)).toBeVisible();
+  await page.waitForURL(recipe.url);
+  await expect(page.getByText(recipe.name)).toBeVisible();
   await expect(page.getByText(note_content)).toBeVisible();
 
   // Search by that recipe
   await page.goto(TEST_URL);
-  await page.getByPlaceholder('Search here...').fill(recipe_name.slice(4, 19));
+  await page.getByPlaceholder('Search here...').fill(recipe.name.slice(4, 19));
   await page.getByText('Search').click();
-  await expect(page.getByText(recipe_name)).toBeVisible();
+  await expect(page.getByText(recipe.name)).toBeVisible();
 
   // Search by that note
   await page.goto(TEST_URL);
   await page.getByPlaceholder('Search here...').fill(note_content.slice(14, 30));
   await page.getByText('Search').click();
-  await expect(page.getByText(recipe_name)).toBeVisible();
+  await expect(page.getByText(recipe.name)).toBeVisible();
 });
 
 test('edit a recipe should invalidate cache and searches', async ({ page }) => {
   await page.goto(TEST_URL);
 
   // Create a new recipe
-  const old_recipe_name = generateRandomString(40);
-  await page.getByText('Create New Recipe').click();
-  await page.waitForURL('/recipes/new');
-  await page.getByLabel('Name').fill(old_recipe_name);
-  await page.getByText('Save New Recipe').click();
-  await expect(page.getByText('Add a new note')).toBeVisible();
+  const old_recipe = await createNewRecipe(page);
 
   // Recipe should be visible in search
   await page.goto(TEST_URL);
-  await page.getByPlaceholder('Search here...').fill(old_recipe_name.slice(4, 19));
+  await page.getByPlaceholder('Search here...').fill(old_recipe.name.slice(4, 19));
   await page.getByText('Search').click();
-  await expect(page.getByText(old_recipe_name)).toBeVisible();
+  await expect(page.getByText(old_recipe.name)).toBeVisible();
 
   // Edit recipe name
   const new_recipe_name = generateRandomString(40);
-  await page.getByText(old_recipe_name).click();
+  await page.getByText(old_recipe.name).click();
   await page.getByText('Edit Recipe').click();
   await page.getByLabel('Name').fill(new_recipe_name);
   await page.getByText('Save Recipe').click();
@@ -182,7 +157,7 @@ test('edit a recipe should invalidate cache and searches', async ({ page }) => {
   await expect(page.getByText('Add a new note')).toBeVisible();
 
   // This is an assertion, we should not see the old recipe name, we should only see the new one
-  await expect(page.getByText(old_recipe_name)).toBeVisible({visible: false});
+  await expect(page.getByText(old_recipe.name)).toBeVisible({visible: false});
   await expect(page.getByText(new_recipe_name)).toBeVisible();
 
   // We should be able to serch by the new name
@@ -190,11 +165,11 @@ test('edit a recipe should invalidate cache and searches', async ({ page }) => {
   await page.getByPlaceholder('Search here...').fill(new_recipe_name.slice(4, 19));
   await page.getByText('Search').click();
   await expect(page.getByText(new_recipe_name)).toBeVisible();
-  await expect(page.getByText(old_recipe_name)).toBeVisible({visible: false});
+  await expect(page.getByText(old_recipe.name)).toBeVisible({visible: false});
 
   // But not the old one
   await page.goto(TEST_URL);
-  await page.getByPlaceholder('Search here...').fill(old_recipe_name);
+  await page.getByPlaceholder('Search here...').fill(old_recipe.name);
   await page.getByText('Search').click();
   await expect(page.getByText('No results found')).toBeVisible();
 });
@@ -204,11 +179,7 @@ test('add and edit a note should invalidate cache and searches', async ({ page }
   await page.goto(TEST_URL);
 
   // Create a new recipe
-  const recipe_name = generateRandomString(40);
-  await page.getByText('Create New Recipe').click();
-  await page.waitForURL('/recipes/new');
-  await page.getByLabel('Name').fill(recipe_name);
-  await page.getByText('Save New Recipe').click();
+  const recipe = await createNewRecipe(page);
 
   const old_note_content = generateRandomString(40);
   await page.getByText('Add a new note').click();
@@ -231,7 +202,7 @@ test('add and edit a note should invalidate cache and searches', async ({ page }
   await page.goto(TEST_URL);
   await page.getByPlaceholder('Search here...').fill(new_note_content.slice(4, 19));
   await page.getByText('Search').click();
-  await expect(page.getByText(recipe_name)).toBeVisible();
+  await expect(page.getByText(recipe.name)).toBeVisible();
 
   // But not the old one
   await page.goto(TEST_URL);
@@ -245,11 +216,7 @@ test('edit a notes time should change order', async ({ page }) => {
   await page.goto(TEST_URL);
 
   // Create a new recipe
-  const recipe_name = generateRandomString(40);
-  await page.getByText('Create New Recipe').click();
-  await page.waitForURL('/recipes/new');
-  await page.getByLabel('Name').fill(recipe_name);
-  await page.getByText('Save New Recipe').click();
+  const recipe = await createNewRecipe(page);
 
   // Make a first note some time in the past
   const note_1 = generateRandomString(40);

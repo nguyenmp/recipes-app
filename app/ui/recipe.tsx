@@ -31,6 +31,18 @@ async function materializedAttachmentsForNote(note: ShallowNote): Promise<Materi
     return materializedAttachments;
 }
 
+export function AttachmentsViewer(params: {attachments?: MaterializedAttachment[]}) {
+    return (
+        <div className="max-w-screen overflow-y-auto">
+            <div className="flex flex-row">
+                {params.attachments?.map((attachment) => {
+                    return <a key={attachment.name} className='flex-shrink-0' href={attachment.img_src}><img className='h-96 max-h-[50vh] w-auto' src={attachment.img_src} alt={attachment.name} /></a>
+                })}
+            </div>
+        </div>
+    )
+}
+
 export async function RecipeCard(recipe: DeepRecipe) {
     const materializedAttachmentsByNoteId = await materializeAttachmentsForRecipe(recipe);
 
@@ -44,7 +56,7 @@ export async function RecipeCard(recipe: DeepRecipe) {
                         <Link className="text-xs" href={`/recipes/${recipe.id}/notes/${note.id}/edit`}>Edit Note</Link>
                     </div>
                     <MarkdownPreview content_markdown={note.content_markdown} />
-                    <AttachmentsEditor attachments={materializedAttachmentsByNoteId.get(note.id)} />
+                    <AttachmentsViewer attachments={materializedAttachmentsByNoteId.get(note.id)} />
                 </div>
             })}
             <Link href={`/recipes/${recipe.id}/notes/new`}>Add a new note</Link>
@@ -97,7 +109,7 @@ export async function EditNote(params: { note?: ShallowNote }) {
             </div>
             <MarkdownEditorWithPreview content_markdown={params.note?.content_markdown} />
             <AttachmentsEditor attachments={materializedattachments} />
-            <button type="submit">Save {params.note ? "" : "New "} Note</button>
+            <button className="m-auto p-4" type="submit">Save {params.note ? "" : "New "} Note</button>
         </div>
     );
 }
