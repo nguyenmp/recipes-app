@@ -72,7 +72,7 @@ test('clicking a specific recipe goes to the correct recipe', async ({ page }) =
 test.describe('suggested terms', () => {
   async function testForSuggestedTerm(page: Page, term: string, expected_query: string) {
     // We use {force: true} here because this test fails on WebKit almost all the time
-    await page.getByText(`+${term}`, {exact: true}).click({force: true});
+    await page.getByText(`+${term}`, {exact: true}).click();
     await expect(page).toHaveURL(new RegExp(`[=+]${term}[+]?`));
     await expect(page.getByPlaceholder('Search here...')).toHaveValue(expected_query);
   }
@@ -173,7 +173,7 @@ test('edit a recipe should invalidate cache and searches', async ({ page }) => {
 
   // Edit recipe name
   const new_recipe_name = generateRandomString(40);
-  await page.getByText(old_recipe_name).click({force: true});
+  await page.getByText(old_recipe_name).click();
   await page.getByText('Edit Recipe').click();
   await page.getByLabel('Name').fill(new_recipe_name);
   await page.getByText('Save Recipe').click();

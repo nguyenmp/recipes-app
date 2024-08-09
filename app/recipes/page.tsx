@@ -173,6 +173,7 @@ async function SuggestedTerms(params: {levenshtein: LevenshteinMatch[], db_embed
   return (
     <div className="max-w-screen overflow-y-auto py-4">
       <ul className="flex flex-row gap-4">
+        <p className="flex-shrink-0">Suggested Terms:</p>
         {
           suggested_words.map(([word, score]) => {
             const urlparams = new URLSearchParams();
