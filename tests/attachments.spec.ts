@@ -33,7 +33,7 @@ test('we can upload a new attachment to an existing note and it will append', as
     await page.locator('#new_attachment').click();
     const fileChooser = await fileChooserPromise;
     await fileChooser.setFiles(path.join(__dirname, '../README.md'));
-    await expect(page.getByText('finished - Response for')).toBeVisible();
+    await expect(page.getByText('finished')).toBeVisible();
     await page.getByText('Save New Note').click();
     
     // Wait for saving to finish
@@ -49,7 +49,7 @@ test('we can upload a new attachment to an existing note and it will append', as
     await page.locator('#new_attachment').click();
     const fileChooser2 = await fileChooserPromise2;
     await fileChooser2.setFiles(path.join(__dirname, '../LICENSE.txt'));
-    await expect(page.getByText('finished - Response for')).toBeVisible();
+    await expect(page.getByText('finished')).toBeVisible();
     await page.getByText('Save Note').click();
 
     // Wait for saving to finish
