@@ -30,8 +30,7 @@ export function AttachmentsEditor(params: { attachments?: MaterializedAttachment
         const storageInformation: ResponseData = await (await fetch('/api', {method: 'POST', body: JSON.stringify({file_name: selectedFile.name})})).json();
         setDisplayText(`PUTing to ${storageInformation.key} via ${storageInformation.url}`)
         setUploadStatus('uploading')
-        selectedFile.key = storageInformation.key;
-        selectedFile.url = storageInformation.url;
+        Object.assign(selectedFile, storageInformation);
         setSelectedFile(selectedFile);
         const blob = new Blob([selectedFile]);
         const response = await fetch(storageInformation.url, {method: 'PUT', body: blob})
