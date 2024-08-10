@@ -27,7 +27,7 @@ export function Links(params: {content_markdown: string}) {
             <p>Links:</p>
             <ul>
                 {Array.from(links).map((element, index) => {
-                    return <li key={index}>{element.href ?? element.attributes.href}</li>
+                    return <li key={index}>{element.href ?? (element.attributes as any).href}</li>
                 })}
             </ul>
         </div>
