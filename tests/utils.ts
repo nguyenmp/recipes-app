@@ -16,11 +16,11 @@ export function generateRandomString(length: number): string {
     }).join('');
 }
 
-export async function createNewRecipe(page: Page): Promise<{name: string, id: number, url: string}> {
+export async function createNewRecipe(page: Page, name?: string): Promise<{name: string, id: number, url: string}> {
     await page.goto(RECIPES_LINK);
 
     // Create a new recipe
-    const name = generateRandomString(40);
+    if (name === undefined) name = generateRandomString(40);
     await page.getByText('Create New Recipe').click();
     await page.waitForURL('/recipes/new');
     await page.getByLabel('Name').fill(name);

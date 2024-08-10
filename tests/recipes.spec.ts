@@ -23,6 +23,15 @@ test('can search recipes', async ({ page }) => {
   await expect(page.getByText('Fried Egg Quesadilla By Sam Sifton')).not.toBeInViewport();
 });
 
+test('autoload search results by typing', async ({ page }) => {
+  await page.goto(TEST_URL);
+  await page.getByPlaceholder('Search here...').fill('tomatoes and eggs');
+  await expect(page.getByText('Deviled Eggs')).toBeInViewport();
+  await expect(page.getByText('Ramen')).not.toBeInViewport();
+  await page.getByPlaceholder('Search here...').fill('ramen');
+  await expect(page.getByText('Ramen Salad')).toBeInViewport();
+});
+
 test('a very specific almost exact match should rank number one (also capital letters)', async ({ page }) => {
     // Search for Jenny's Dad's Noodle Mix which has 5 images
     await page.goto('recipes');
@@ -38,10 +47,9 @@ test('clicking a recipe goes to the correct recipe', async ({ page }) => {
   for (let index = 1; index < 6; index++) {
     const selector = `:nth-match(a > h1, ${index})`;
     const recipeName = await page.locator(selector).textContent();
-    assert(recipeName, 'No recipe name found');
     await page.locator(selector).click();
     await page.waitForURL(/recipes\/[\d]+/);
-    await expect(page.locator('h1').getByText(recipeName)).toBeVisible();
+    await expect(page.locator('h1').getByText(recipeName ?? '')).toBeVisible();
     await expect(page.getByText('Add a new note')).toBeAttached();
     await page.goBack();
   }

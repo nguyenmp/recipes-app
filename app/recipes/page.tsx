@@ -237,7 +237,9 @@ export default async function Recipes({searchParams}: {searchParams: {query?: st
   return (
     <main>
       <Link href="/recipes/new">Create New Recipe</Link>
-      <SearchBar />
+      <Suspense>
+        <SearchBar />
+      </Suspense>
       <Suspense key={query + '-suggestions'} fallback={<SuggestedTerms levenshtein={levenshtein} db_embeddings={db_embeddings} query={query} searchParams={searchParams} />}>
         <SuggestedTerms levenshtein={levenshtein} db_embeddings={db_embeddings} query={query} generate_realtime_embeddings={true} searchParams={searchParams} />
       </Suspense>
