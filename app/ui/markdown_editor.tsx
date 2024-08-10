@@ -1,7 +1,38 @@
 "use client";
 
+import showdown from "showdown";
+
 import { ChangeEvent, useState } from "react";
 import { MarkdownPreview } from "./markdown";
+
+
+function getHtmlAsDocument(html: string): Document {
+    if (typeof process !== 'undefined' && process?.release?.name === 'node') {
+        const HTMLParser = require('node-html-parser');
+        const root = HTMLParser.parse(html);
+        return root;
+    } else {
+        const parser = new DOMParser();
+        return parser.parseFromString(html, 'text/html');
+    }
+}
+
+export function Links(params: {content_markdown: string}) {
+    const html_string = new showdown.Converter({ simplifiedAutoLink: true }).makeHtml(params.content_markdown || '');
+    const document = getHtmlAsDocument(html_string);
+    const links = document.querySelectorAll('a');
+
+    return (
+        <div>
+            <p>Links:</p>
+            <ul>
+                {Array.from(links).map((element, index) => {
+                    return <li key={index}>{element.href ?? element.attributes.href}</li>
+                })}
+            </ul>
+        </div>
+    )
+}
 
 export function MarkdownEditorWithPreview(params: { content_markdown?: string, placeholder?: string }) {
     const [contentMarkdown, setContentMarkdown] = useState<string>(params.content_markdown || '');
@@ -24,6 +55,7 @@ export function MarkdownEditorWithPreview(params: { content_markdown?: string, p
                     <p>Automatic preview requires JavaScript to be enabled.</p>
                 </noscript>
                 <MarkdownPreview content_markdown={contentMarkdown} />
+                <Links content_markdown={contentMarkdown}/>
             </div>
         </div>
     );
