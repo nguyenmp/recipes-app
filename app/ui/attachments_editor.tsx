@@ -17,6 +17,7 @@ type Status = 'idle' | 'preparing' | 'uploading' | 'finished' | 'error';
 export function AttachmentsEditor(params: { note?: ShallowNote, attachments?: MaterializedAttachment[] }) {
     const [selectedFiles, setSelectedFiles] = useState<SelectedFile[]>([]);
     const [uploadStatuses, setUploadStatuses] = useState<Status[]>([])
+    const [isCancelled, setIsCancelled] = useState<boolean[]>([]);
 
     async function handleChange(event: ChangeEvent<HTMLInputElement>) {
         const files : FileList | null= event.target.files;
@@ -63,8 +64,13 @@ export function AttachmentsEditor(params: { note?: ShallowNote, attachments?: Ma
 
     }
 
+    async function removePendingAttachment(index: number) {
+        isCancelled[index] = true;
+        setIsCancelled(Array.from(isCancelled));
+    }
+
     // If any attachment is not finished uploading, then UI should disable the save button
-    const disabled = uploadStatuses.filter((status) => status != 'finished').length > 0;
+    const disabled = uploadStatuses.filter((status, index) => status != 'finished' && !isCancelled[index]).length > 0;
 
     return (
         <div>
@@ -74,9 +80,11 @@ export function AttachmentsEditor(params: { note?: ShallowNote, attachments?: Ma
 
             <div className="flex flex-row overflow-y-auto">
                 {selectedFiles.map((file: SelectedFile, index: number) => {
+                    if (isCancelled[index]) return;
                     const status = uploadStatuses[index];
                     return (
                         <div key={index} className='flex-shrink-0'>
+                            <button onClick={removePendingAttachment.bind(null, index)} type="button" >Remove</button>
                             <img className='w-96 max-h-[50vh] h-auto' src={URL.createObjectURL(file)} alt={file.name} />
                             <p>{status}</p>
                             {status === 'finished' && <input type="text" name="new_attachment" defaultValue={file.key} hidden />}
