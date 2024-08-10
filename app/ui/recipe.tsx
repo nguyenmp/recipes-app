@@ -100,6 +100,7 @@ export async function EditNote(params: { note?: ShallowNote }) {
     const epoch_seconds = maybe_note ? maybe_note.date_epoch_seconds : Date.now() / 1000;
     const dateFieldValue = getDateTimeFieldValueFromEpochSeconds(epoch_seconds);
     const materializedattachments = maybe_note ? await materializedAttachmentsForNote(maybe_note) : [];
+
     return (
         <div className="flex flex-col space-y-4">
             <p>{dateFieldValue}</p>
@@ -108,8 +109,7 @@ export async function EditNote(params: { note?: ShallowNote }) {
                 <input className="border bg-slate-200 p-2" type="datetime-local" id="datetime" name="datetime" defaultValue={dateFieldValue} />
             </div>
             <MarkdownEditorWithPreview content_markdown={params.note?.content_markdown} />
-            <AttachmentsEditor attachments={materializedattachments} />
-            <button className="m-auto p-4" type="submit">Save {params.note ? "" : "New "} Note</button>
+            <AttachmentsEditor attachments={materializedattachments} note={maybe_note} />
         </div>
     );
 }

@@ -19,7 +19,6 @@ export async function getWordsNeedingEmbeddings() {
 }
 
 export async function saveRecipe(recipeId: number | null, formData: FormData) {
-    console.log({...formData.keys()})
     const recipeName = formData.get('name')!.toString();
 
     const recipe : ShallowRecipe = {
@@ -52,10 +51,9 @@ export async function saveNote(recipeId: number, noteId: number | null, formData
         await updateNoteById(noteId, note);
     }
 
-    const new_attachment_name = formData.get('new_attachment')?.toString();
-    console.log(`new_attachment_name: ${new_attachment_name}`);
-    if (new_attachment_name) {
-        await addAttachmentforNote(noteId, {name: new_attachment_name});
+    const new_attachment_names = formData.getAll('new_attachment');
+    for (const new_attachment_name of new_attachment_names) {
+        await addAttachmentforNote(noteId, {name: new_attachment_name.toString()});
     }
 
     revalidatePath(`/recipes/${recipeId}/notes/${noteId}/edit`);
