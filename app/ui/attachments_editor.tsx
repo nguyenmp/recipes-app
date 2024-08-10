@@ -110,12 +110,12 @@ export function AttachmentsEditor(params: {attachments: MaterializedAttachment[]
             <div className="max-w-screen overflow-y-auto">
                 <div className="flex flex-row">
                     {params.attachments?.map((attachment : MaterializedAttachment, index) => {
-                        if (isRemoved[index]) return <input type='text' name='remove_attachment' value={attachment.name} hidden />;
+                        if (isRemoved[index]) return <input key={index} type='text' name='remove_attachment' value={attachment.name} hidden />;
 
                         return (
-                            <div>
+                            <div key={index}>
                                 <button onClick={removeAttachment.bind(null, index)} type="button" >Remove</button>
-                                <AttachmentView key={index} attachment={attachment} />
+                                <AttachmentView attachment={attachment} />
                             </div>
                         )
                     })}
