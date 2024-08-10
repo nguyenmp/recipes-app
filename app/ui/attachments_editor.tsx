@@ -3,7 +3,7 @@
 import { ChangeEvent, useState } from "react";
 import { ShallowAttachment, ShallowNote } from "../lib/definitions";
 import { ResponseData } from "../api/route";
-import { AttachmentsViewer } from "./recipe";
+import { AttachmentsViewer, AttachmentView } from "./recipe";
 import assert from "assert";
 
 export type MaterializedAttachment = ShallowAttachment & {
@@ -14,7 +14,7 @@ export type SelectedFile = File & Partial<ResponseData>;
 
 type Status = 'idle' | 'preparing' | 'uploading' | 'finished' | 'error';
 
-export function AttachmentsEditor(params: { note?: ShallowNote, attachments?: MaterializedAttachment[] }) {
+export function AttachmentsUploader(params: { note?: ShallowNote }) {
     const [selectedFiles, setSelectedFiles] = useState<SelectedFile[]>([]);
     const [uploadStatuses, setUploadStatuses] = useState<Status[]>([])
     const [isCancelled, setIsCancelled] = useState<boolean[]>([]);
@@ -74,10 +74,9 @@ export function AttachmentsEditor(params: { note?: ShallowNote, attachments?: Ma
 
     return (
         <div>
-            <AttachmentsViewer attachments={params.attachments}/>
+            <p>New Attachments:</p>
             {/* Input field without name won't be submitted, this is okay, we submit the key instead of the file since we upload directly to S3 on client side */}
             <input type="file" id="new_attachment" multiple={true} onChange={handleChange} />
-
             <div className="flex flex-row overflow-y-auto">
                 {selectedFiles.map((file: SelectedFile, index: number) => {
                     if (isCancelled[index]) return;
@@ -95,4 +94,33 @@ export function AttachmentsEditor(params: { note?: ShallowNote, attachments?: Ma
             <button className="m-auto p-4" type="submit" disabled={disabled} >{disabled ? "Waiting for upload before we" : "" } Save {!params.note ? "New " : ""} Note</button>
         </div>
     );
+}
+
+export function AttachmentsEditor(params: {attachments: MaterializedAttachment[]}) {
+    const [isRemoved, setIsRemoved] = useState<boolean[]>(new Array(params.attachments.length).fill(false));
+
+    async function removeAttachment(index: number) {
+        isRemoved[index] = true;
+        setIsRemoved(Array.from(isRemoved));
+    }
+
+    return (
+        <div>
+            <p>Existing Attachments:</p>
+            <div className="max-w-screen overflow-y-auto">
+                <div className="flex flex-row">
+                    {params.attachments?.map((attachment : MaterializedAttachment, index) => {
+                        if (isRemoved[index]) return <input type='text' name='remove_attachment' value={attachment.name} hidden />;
+
+                        return (
+                            <div>
+                                <button onClick={removeAttachment.bind(null, index)} type="button" >Remove</button>
+                                <AttachmentView key={index} attachment={attachment} />
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
+        </div>
+    )
 }

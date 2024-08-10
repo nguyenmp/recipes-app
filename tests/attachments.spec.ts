@@ -35,7 +35,7 @@ test('we can upload a new attachment to an existing note and it will append', as
     await fileChooser.setFiles(path.join(__dirname, '../README.md'));
     await expect(page.getByText('finished')).toBeVisible();
     await page.getByText('Save New Note').click();
-    
+
     // Wait for saving to finish
     await expect(page.getByText('Edit Recipe')).toBeVisible();
 
@@ -56,5 +56,71 @@ test('we can upload a new attachment to an existing note and it will append', as
     await expect(page.getByText('Edit Recipe')).toBeVisible();
 
     await expect(page.getByAltText('README.md')).toBeInViewport();
+    await expect(page.getByAltText('LICENSE.txt')).toBeInViewport();
+});
+
+test('upload two attachments at once', async ({ page }) => {
+    await page.goto('recipes');
+
+    // Create a new recipe to test with
+    const recipe = await createNewRecipe(page);
+    await page.getByText('Add a new note').click();
+
+    // add a single attachment
+    const fileChooserPromise = page.waitForEvent('filechooser');
+    await page.locator('#new_attachment').click();
+    const fileChooser = await fileChooserPromise;
+    await fileChooser.setFiles([
+        path.join(__dirname, '../README.md'),
+        path.join(__dirname, '../LICENSE.txt'),
+    ]);
+    await expect(page.getByText('finished')).toHaveCount(2);
+    await page.getByText('Save New Note').click();
+
+    // Wait for saving to finish
+    await expect(page.getByText('Edit Recipe')).toBeVisible();
+
+    await expect(page.getByAltText('README.md')).toBeInViewport();
+    await expect(page.getByAltText('LICENSE.txt')).toBeInViewport();
+});
+
+
+test('upload one, then replace with another', async ({ page }) => {
+    await page.goto('recipes');
+
+    // Create a new recipe to test with
+    const recipe = await createNewRecipe(page);
+    await page.getByText('Add a new note').click();
+
+    // add a single attachment
+    const fileChooserPromise = page.waitForEvent('filechooser');
+    await page.locator('#new_attachment').click();
+    const fileChooser = await fileChooserPromise;
+    await fileChooser.setFiles(path.join(__dirname, '../README.md'));
+    await expect(page.getByText('finished')).toBeVisible();
+    await page.getByText('Save New Note').click();
+
+    // Wait for saving to finish
+    await expect(page.getByText('Edit Recipe')).toBeVisible();
+
+    // Ensure the attachment was uploaded and rendered
+    await expect(page.getByAltText('README.md')).toBeInViewport();
+
+    // Edit the existing attachment and add a new file
+    await page.getByText('Edit Note').click();
+
+    // Remove existing attachment and add a new one
+    await page.getByText('Remove').click();
+    const fileChooserPromise2 = page.waitForEvent('filechooser');
+    await page.locator('#new_attachment').click();
+    const fileChooser2 = await fileChooserPromise2;
+    await fileChooser2.setFiles(path.join(__dirname, '../LICENSE.txt'));
+    await expect(page.getByText('finished')).toBeVisible();
+    await page.getByText('Save Note').click();
+
+    // Wait for saving to finish
+    await expect(page.getByText('Edit Recipe')).toBeVisible();
+
+    await expect(page.getByAltText('README.md')).not.toBeVisible();
     await expect(page.getByAltText('LICENSE.txt')).toBeInViewport();
 });

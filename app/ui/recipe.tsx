@@ -6,7 +6,7 @@ import assert from "assert";
 import { MarkdownPreview } from "./markdown";
 import { MarkdownEditorWithPreview } from "./markdown_editor";
 import { getImageSrcForKeyOfUserUploadedAttachment } from "../lib/s3";
-import { AttachmentsEditor, MaterializedAttachment } from "./attachments_editor";
+import { AttachmentsEditor, AttachmentsUploader, MaterializedAttachment } from "./attachments_editor";
 
 
 function getDateStringFromEpochSeconds(epoch_seconds: number): string {
@@ -31,12 +31,19 @@ async function materializedAttachmentsForNote(note: ShallowNote): Promise<Materi
     return materializedAttachments;
 }
 
+export function AttachmentView(params: {attachment: MaterializedAttachment}) {
+    const attachment = params.attachment;
+    return <a key={attachment.name} className='flex-shrink-0' href={attachment.img_src}>
+        <img className='h-96 max-h-[50vh] w-auto' src={attachment.img_src} alt={attachment.name} />
+    </a>
+}
+
 export function AttachmentsViewer(params: {attachments?: MaterializedAttachment[]}) {
     return (
         <div className="max-w-screen overflow-y-auto">
             <div className="flex flex-row">
-                {params.attachments?.map((attachment) => {
-                    return <a key={attachment.name} className='flex-shrink-0' href={attachment.img_src}><img className='h-96 max-h-[50vh] w-auto' src={attachment.img_src} alt={attachment.name} /></a>
+                {params.attachments?.map((attachment : MaterializedAttachment, index) => {
+                    return <AttachmentView key={index} attachment={attachment} />
                 })}
             </div>
         </div>
@@ -109,7 +116,8 @@ export async function EditNote(params: { note?: ShallowNote }) {
                 <input className="border bg-slate-200 p-2" type="datetime-local" id="datetime" name="datetime" defaultValue={dateFieldValue} />
             </div>
             <MarkdownEditorWithPreview content_markdown={params.note?.content_markdown} />
-            <AttachmentsEditor attachments={materializedattachments} note={maybe_note} />
+            <AttachmentsEditor attachments={materializedattachments} />
+            <AttachmentsUploader note={maybe_note} />
         </div>
     );
 }
