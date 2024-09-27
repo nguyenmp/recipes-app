@@ -77,15 +77,17 @@ export async function getStoredWordsNeedingEmbeddings() {
     return fixEmbeddingFromJson(result.rows);
 }
 
-export async function countWordsNeedingEmbeddings() {
-    const result = await sql<{count: number}>`
-        SELECT COUNT(*)
+export async function countWordsNeedingEmbeddings(): Promise<{missingCount: number, totalCount: number}> {
+    const result = await sql<{'totalcount': number, 'missingcount': number}>`
+        SELECT COUNT(*) as totalcount, count(*) FILTER (WHERE embedding IS NULL) AS missingcount
         FROM Words
         LEFT JOIN Embeddings
         ON Embeddings.word = Words.word
-        WHERE Embeddings.embedding IS NULL
     `;
-    return result.rows[0].count;
+    return {
+        missingCount: result.rows[0].missingcount,
+        totalCount: result.rows[0].totalcount,
+    };
 }
 
 /**

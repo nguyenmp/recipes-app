@@ -35,17 +35,18 @@ async function rebuildWordsEmbeddings() {
     // Server side version of GenerateEmbeddings
     const classifier = await PipelineSingletonClass.getInstance();
 
-    const totalWords = await countWordsNeedingEmbeddings();
+    const {missingCount, totalCount} = await countWordsNeedingEmbeddings();
     let handledWords = 0;
     let storedWordEmbeddings = await getStoredWordsNeedingEmbeddings();
     while (storedWordEmbeddings.length != 0) {
-        console.log(`Progress: ${handledWords}/${totalWords} ~ ${Math.round(handledWords / totalWords * 100)}%`)
+        console.log(`Progress: ${handledWords}/${missingCount} ~ ${Math.round(handledWords / missingCount * 100)}%`)
         const output = await classifier(storedWordEmbeddings.map((item) => item.word), {pooling: 'mean', normalize: true});
         storedWordEmbeddings.forEach((wordStruct, index) => {
             wordStruct.embedding = output.tolist()[index];
         });
         await putStoredWords(storedWordEmbeddings);
         handledWords += storedWordEmbeddings.length;
+        revalidatePath('/admin')
         storedWordEmbeddings = await getStoredWordsNeedingEmbeddings();
     }
 };
@@ -62,7 +63,8 @@ async function insertNoteForRecipe(recipeId: Number, note: ShallowNote): Promise
     return await createNoteForRecipe(recipeId.valueOf(), note);
 }
 
-export default function AdminPage() {
+export default async function AdminPage() {
+    const embeddingsMetadata = await countWordsNeedingEmbeddings();
     return (
         <main>
             <h1>Admin Page</h1>
@@ -74,6 +76,8 @@ export default function AdminPage() {
             <form action={resetCache}>
                 <button type="submit" className="bg-slate-300 rounded p-4 active:bg-slate-600">Reset Cache</button>
             </form>
+
+            Embeddings missing: {embeddingsMetadata.missingCount} out of {embeddingsMetadata.totalCount}.
 
             <GenerateEmbeddings />
 
