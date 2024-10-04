@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { EmbeddingMatch, LevenshteinMatch, getMoreTerms, getRecipes, getRecipesForTerm, getRelatedWordsFromEmbeddings, getRelatedWordsFromTerms } from "../lib/data";
+import { EmbeddingMatch, LevenshteinMatch, StoredWordEmbedding, getMoreTerms, getRecipes, getRecipesForTerm, getRelatedWordsFromEmbeddings, getRelatedWordsFromTerms, getTermsFromQuery } from "../lib/data";
 import { SearchBar } from "../ui/search";
 import { Suspense } from "react";
 import { DeepRecipe, SearchMatch, StoredNote, StoredRecipe, StoredRecipeSearchMatch } from "../lib/definitions";
@@ -8,15 +8,6 @@ import { withTimingAsync } from "../lib/utils";
 import PipelineSingleton from "../lib/embeddings_pipeline";
 import assert from "assert";
 import { FeatureExtractionPipeline } from "@xenova/transformers";
-
-function getTermsFromQuery(query: string): string[] {
-  const pattern = new RegExp('([a-zA-Z]+|[0-9\\.\\,]+)', 'g');
-  const matches = query.matchAll(pattern);
-  const terms_set = new Set(Array.from(matches).map((match: RegExpExecArray) => {
-    return match[0].toLowerCase();
-  }));
-  return Array.from(terms_set);
-}
 
 type ScoredRecipeMatch = StoredRecipe & {
   matches_by_term: {[term: string]: SearchMatch & {term_score: number}};
@@ -84,8 +75,7 @@ function sortRecipesByRelevance(recipes_by_terms: Map<string, StoredRecipeSearch
     });
 
     return {
-      name: all_recipes_by_id.get(recipe_id)!.name,
-      id: all_recipes_by_id.get(recipe_id)!.id,
+      ...all_recipes_by_id.get(recipe_id)!,
       matches_by_term,
       total_score: scores_.reduce((cum, val) => cum + val, 0)
     };
@@ -159,7 +149,7 @@ function queryWithOysterTerm(query: string, oysterTerm: string) {
   }
 }
 
-const getSuggestedTerms = async function (query: string): Promise<{levenshtein: LevenshteinMatch[], db_embeddings: EmbeddingMatch[]}> { return await withTimingAsync('getSuggestedTerms', async () => {
+const getSuggestedTerms = async function (query: string): Promise<{levenshtein: LevenshteinMatch[], db_embeddings: EmbeddingMatch<StoredWordEmbedding>[]}> { return await withTimingAsync('getSuggestedTerms', async () => {
   const terms = getTermsFromQuery(query).map((term) => term.toLowerCase());
   if (terms.length === 0) return {levenshtein: [], db_embeddings: []};
 
@@ -175,8 +165,8 @@ const getSuggestedTerms = async function (query: string): Promise<{levenshtein: 
   return {levenshtein, db_embeddings};
 })};
 
-async function SuggestedTerms(params: {levenshtein: LevenshteinMatch[], db_embeddings: EmbeddingMatch[], generate_realtime_embeddings?: boolean, query: string, searchParams: Record<string, string>}) {
-  const realtime_embeddings : EmbeddingMatch[] = [];
+async function SuggestedTerms(params: {levenshtein: LevenshteinMatch[], db_embeddings: EmbeddingMatch<StoredWordEmbedding>[], generate_realtime_embeddings?: boolean, query: string, searchParams: Record<string, string>}) {
+  const realtime_embeddings : EmbeddingMatch<StoredWordEmbedding>[] = [];
   const terms = getTermsFromQuery(params.query);
   if (params.generate_realtime_embeddings && terms.length > 0) {
     await withTimingAsync('generate realtime embeddings for suggested terms', async () => {

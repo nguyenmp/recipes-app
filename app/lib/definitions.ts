@@ -4,6 +4,7 @@ export type DeepRecipe = StoredRecipe & {
 
 export type ShallowRecipe = {
     name: string;
+    embedding: number[] | null;
 }
 
 export type StoredRecipe = ShallowRecipe & {

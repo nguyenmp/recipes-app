@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres'
 import { ShallowNote } from '../lib/definitions';
 import { PlaceholderData, recipes } from '../lib/placeholder-data';
-import { countWordsNeedingEmbeddings, createNoteForRecipe, createRecipe, getStoredWordsNeedingEmbeddings, putStoredWords, resetDatabaseTables } from '../lib/data';
+import { countRecipesNeedingEmbeddings, countWordsNeedingEmbeddings, createNoteForRecipe, createRecipe, getRecipeById, getStoredRecipesNeedingEmbeddings, getStoredWordsNeedingEmbeddings, getTermsFromQuery, putStoredWords, resetDatabaseTables, updateRecipeById } from '../lib/data';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { GenerateEmbeddings } from '../ui/generate_embeddings';
@@ -17,6 +17,7 @@ async function seedDatabase() {
     await Promise.all(recipes.map(insertRecipe));
 
     await rebuildWordsEmbeddings();
+    await rebuildRecipeEmbeddings();
 
     // This invalidates all data
     // https://nextjs.org/docs/app/api-reference/functions/revalidatePath#revalidating-all-data
@@ -51,6 +52,32 @@ async function rebuildWordsEmbeddings() {
     }
 };
 
+async function rebuildRecipeEmbeddings() {
+    // Server side version of GenerateEmbeddings
+    const classifier = await PipelineSingletonClass.getInstance();
+
+    const {missingCount, totalCount} = await countRecipesNeedingEmbeddings();
+    let handledRecipes = 0;
+    let storedRecipeEmbeddings = await getStoredRecipesNeedingEmbeddings();
+    while (storedRecipeEmbeddings.length != 0) {
+        for (let index = 0; index < storedRecipeEmbeddings.length; index += 1) {
+            console.log(`Progress: ${handledRecipes}/${missingCount} ~ ${Math.round(handledRecipes / missingCount * 100)}%`)
+            const recipe = storedRecipeEmbeddings[index];
+            const deepRecipe = await getRecipeById(recipe.id);
+            const content = [
+                deepRecipe.name,
+                ...deepRecipe.notes,
+            ].join(' ');
+            const output = await classifier(content, {pooling: 'mean', normalize: true});
+            recipe.embedding = output.tolist()[0];
+            await updateRecipeById(recipe.id, recipe);
+            handledRecipes += 1;
+        }
+        revalidatePath('/admin')
+        storedRecipeEmbeddings = await getStoredRecipesNeedingEmbeddings();
+    }
+}
+
 async function insertRecipe(recipe: PlaceholderData): Promise<Number> {
     const newRecipeId = await createRecipe(recipe);
 
@@ -64,7 +91,8 @@ async function insertNoteForRecipe(recipeId: Number, note: ShallowNote): Promise
 }
 
 export default async function AdminPage() {
-    const embeddingsMetadata = await countWordsNeedingEmbeddings();
+    const wordEmbeddingsMetadata = await countWordsNeedingEmbeddings();
+    const recipeEmbeddingsMetadata = await countRecipesNeedingEmbeddings();
     return (
         <main>
             <h1>Admin Page</h1>
@@ -77,7 +105,11 @@ export default async function AdminPage() {
                 <button type="submit" className="bg-slate-300 rounded p-4 active:bg-slate-600">Reset Cache</button>
             </form>
 
-            Embeddings missing: {embeddingsMetadata.missingCount} out of {embeddingsMetadata.totalCount}.
+            <h1>Embeddings missings</h1>
+            <ul>
+                <li>{wordEmbeddingsMetadata.missingCount} out of {wordEmbeddingsMetadata.totalCount} words</li>
+                <li>{recipeEmbeddingsMetadata.missingCount} out of {recipeEmbeddingsMetadata.totalCount} words</li>
+            </ul>
 
             <GenerateEmbeddings />
 

@@ -21,7 +21,7 @@ export async function resetDatabaseTables() {
     await sql`DROP VIEW IF EXISTS Words`;
     await sql`DROP EXTENSION IF EXISTS fuzzystrmatch`;
 
-    await sql`CREATE TABLE IF NOT EXISTS Recipes (id BIGSERIAL PRIMARY KEY, name VARCHAR(255))`
+    await sql`CREATE TABLE IF NOT EXISTS Recipes (id BIGSERIAL PRIMARY KEY, name VARCHAR(255), embedding VECTOR(384))`
     await sql`CREATE TABLE IF NOT EXISTS Notes (id BIGSERIAL PRIMARY KEY, recipe_id BIGINT NOT NULL REFERENCES Recipes(id), date_epoch_seconds BIGINT, content_markdown TEXT)`
     await sql`CREATE INDEX IF NOT EXISTS Notes_Recipe_Id ON Notes (recipe_id)`;
     await sql`CREATE TABLE IF NOT EXISTS Attachments (id BIGSERIAL PRIMARY KEY, name VARCHAR(255), note_id BIGINT NOT NULL REFERENCES Notes(id))`;
@@ -45,7 +45,7 @@ export async function resetDatabaseTables() {
 
 export type LevenshteinMatch = {word: string, distance: number};
 export type StoredWordEmbedding = {word: string, embedding: number[] | null};
-export type EmbeddingMatch = StoredWordEmbedding & {
+export type EmbeddingMatch<T> = T & {
     distance: number;
 }
 
@@ -55,7 +55,7 @@ export type EmbeddingMatch = StoredWordEmbedding & {
  * When we pull it back out, it's a string, but it's easier to work with an
  * array of numbers so we decode it instead and use this function for consistency.
  */
-function fixEmbeddingFromJson(rows: StoredWordEmbedding[]) {
+function fixEmbeddingFromJson<T extends {embedding: number[] | null}>(rows: T[]): T[] {
     return rows.map((row) => {
         if (row.embedding && typeof row.embedding === 'string') {
             row.embedding = JSON.parse(row.embedding);
@@ -77,6 +77,16 @@ export async function getStoredWordsNeedingEmbeddings() {
     return fixEmbeddingFromJson(result.rows);
 }
 
+export async function getStoredRecipesNeedingEmbeddings(): Promise<StoredRecipe[]> {
+    const result = await sql<StoredRecipe>`
+        SELECT *
+        FROM Recipes
+        WHERE Recipes.embedding IS NULL
+        LIMIT 100
+    `;
+    return fixEmbeddingFromJson(result.rows);
+}
+
 export async function countWordsNeedingEmbeddings(): Promise<{missingCount: number, totalCount: number}> {
     const result = await sql<{'totalcount': number, 'missingcount': number}>`
         SELECT COUNT(*) as totalcount, count(*) FILTER (WHERE embedding IS NULL) AS missingcount
@@ -90,20 +100,43 @@ export async function countWordsNeedingEmbeddings(): Promise<{missingCount: numb
     };
 }
 
+export async function countRecipesNeedingEmbeddings(): Promise<{missingCount: number, totalCount: number}> {
+    const result = await sql<{'totalcount': number, 'missingcount': number}>`
+        SELECT COUNT(*) as totalcount, count(*) FILTER (WHERE embedding IS NULL) AS missingcount
+        FROM Recipes
+    `;
+    return {
+        missingCount: result.rows[0].missingcount,
+        totalCount: result.rows[0].totalcount,
+    };
+}
+
 /**
  * Similar to getRelatedWordsFromEmbeddings but only requires querying the
  * database so timing can be anywhere from 30ms to 300ms, suitable for initial
  * page load.  The negative of this method is that it only supports words in
  * our database.  Unknown words are not supported.
  */
-export async function getRelatedWordsFromTerms(terms: string[]): Promise<EmbeddingMatch[]> {
+export async function getRelatedWordsFromTerms(terms: string[]): Promise<EmbeddingMatch<StoredWordEmbedding>[]> {
     const select_union = terms.map((term: string) => `
         SELECT word, embedding, embedding <-> (SELECT embedding FROM Embeddings WHERE word = '${term}' ) as distance
         FROM Embeddings
         WHERE word NOT ILIKE '%${term}%' AND (SELECT embedding FROM Embeddings WHERE word = '${term}') IS NOT NULL
     `).join(' UNION ');
     const query = `${select_union} ORDER BY distance ASC LIMIT ${RELATED_WORDS_LIMIT}`;
-    const response = await sql_query<EmbeddingMatch>(query);
+    const response = await sql_query<EmbeddingMatch<StoredWordEmbedding>>(query);
+    fixEmbeddingFromJson(response.rows);
+    return response.rows;
+}
+
+export async function getRelatedRecipesFromRecipe(recipe_id: number): Promise<EmbeddingMatch<StoredRecipe>[]> {
+    const response = await sql<EmbeddingMatch<StoredRecipe>>`
+        SELECT *, embedding <-> (SELECT embedding FROM Recipes WHERE id = ${recipe_id}) as distance
+        FROM Recipes
+        WHERE id != ${recipe_id}
+        ORDER BY distance ASC
+        LIMIT 15
+    `;
     fixEmbeddingFromJson(response.rows);
     return response.rows;
 }
@@ -116,10 +149,10 @@ export async function getRelatedWordsFromTerms(terms: string[]): Promise<Embeddi
  * perferable to progressively enhance this information rather than block the
  * initial render.
  */
-export async function getRelatedWordsFromEmbeddings(embeddings: number[][]): Promise<EmbeddingMatch[]> {
+export async function getRelatedWordsFromEmbeddings(embeddings: number[][]): Promise<EmbeddingMatch<StoredWordEmbedding>[]> {
     const select_union = embeddings.map((embedding: number[]) => `SELECT word, embedding, (embedding <-> '${JSON.stringify(embedding)}') AS distance FROM Embeddings`).join(' UNION ')
     const query = `${select_union} ORDER BY distance LIMIT ${RELATED_WORDS_LIMIT}`;
-    const result = await sql_query<EmbeddingMatch>(query);
+    const result = await sql_query<EmbeddingMatch<StoredWordEmbedding>>(query);
     fixEmbeddingFromJson(result.rows);
     return result.rows;
 }
@@ -175,7 +208,7 @@ export async function getMoreTerms(terms: string[]) : Promise<LevenshteinMatch[]
 
 export async function getRecipes(): Promise<StoredRecipe[]> {
     return await withTimingAsync('data.ts#getRecipes', async () => {
-        const result = await sql<StoredRecipe>`SELECT * FROM Recipes ORDER BY RANDOM() LIMIT 20`;
+        const result = await sql<StoredRecipe>`SELECT * FROM Recipes ORDER BY RANDOM()`;
         return result.rows;
     });
 }
@@ -208,7 +241,7 @@ export async function getRecipesForTerm(term : string): Promise<StoredRecipeSear
 }
 
 export async function updateRecipeById(id: number, data: ShallowRecipe) {
-    await sql`UPDATE Recipes SET name = ${data.name} WHERE id=${id}`
+    await sql`UPDATE Recipes SET name = ${data.name}, embedding = ${JSON.stringify(data.embedding)} WHERE id=${id}`
 }
 
 export async function createRecipe(recipe: ShallowRecipe): Promise<number> {
@@ -275,4 +308,13 @@ export async function createNoteForRecipe(recipeId: number, note: ShallowNote): 
     }
 
     return newNoteId;
+}
+
+export function getTermsFromQuery(query: string): string[] {
+    const pattern = new RegExp('([a-zA-Z]+|[0-9\\.\\,]+)', 'g');
+    const matches = query.matchAll(pattern);
+    const terms_set = new Set(Array.from(matches).map((match: RegExpExecArray) => {
+      return match[0].toLowerCase();
+    }));
+    return Array.from(terms_set);
 }
