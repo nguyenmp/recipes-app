@@ -14,7 +14,7 @@ export default async function Page({ params }: { params: { recipe_id: string } }
             {RecipeCard(recipe)}
             <p>Related Recipes:</p>
             {relatedRecipes.map((relatedRecipe) => {
-                return <li className="list-disc list-inside m-2 p-2"><Link href={`/recipes/${relatedRecipe.id}`} title={`${relatedRecipe.distance}`}>{relatedRecipe.name}</Link></li>
+                return <li key={relatedRecipe.id} className="list-disc list-inside m-2 p-2"><Link href={`/recipes/${relatedRecipe.id}`} title={`${relatedRecipe.distance}`}>{relatedRecipe.name}</Link></li>
             })}
         </div>
     );
