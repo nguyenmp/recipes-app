@@ -241,10 +241,14 @@ export async function getRecipesForTerm(term : string): Promise<StoredRecipeSear
 }
 
 export async function updateRecipeById(id: number, data: ShallowRecipe) {
-    await sql`UPDATE Recipes SET name = ${data.name}, embedding = ${JSON.stringify(data.embedding)} WHERE id=${id}`
+    await sql`UPDATE Recipes SET name = ${data.name} WHERE id=${id}`
 }
 
-export async function createRecipe(recipe: ShallowRecipe): Promise<number> {
+export async function updateRecipeEmbeddingById(id: number, embedding: number[]) {
+    await sql`UPDATE Recipes SET embedding = ${JSON.stringify(embedding)} WHERE id=${id}`
+}
+
+export async function createRecipe(recipe: Omit<ShallowRecipe, 'embedding'>): Promise<number> {
     const result = await sql`INSERT INTO recipes (name) VALUES (${recipe.name}) RETURNING id;`
     const newRecipeId = result.rows[0]['id'];
     return newRecipeId;

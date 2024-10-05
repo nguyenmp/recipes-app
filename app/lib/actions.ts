@@ -20,6 +20,7 @@ export async function getWordsNeedingEmbeddings() {
 
 export async function saveRecipe(recipeId: number | null, formData: FormData) {
     const recipeName = formData.get('name')!.toString();
+    const rawEmbedding = formData.get('embedding')?.toString();
 
     const recipe : ShallowRecipe = {
         name: recipeName,

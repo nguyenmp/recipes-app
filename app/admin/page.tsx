@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres'
 import { ShallowNote } from '../lib/definitions';
 import { PlaceholderData, recipes } from '../lib/placeholder-data';
-import { countRecipesNeedingEmbeddings, countWordsNeedingEmbeddings, createNoteForRecipe, createRecipe, getRecipeById, getStoredRecipesNeedingEmbeddings, getStoredWordsNeedingEmbeddings, getTermsFromQuery, putStoredWords, resetDatabaseTables, updateRecipeById } from '../lib/data';
+import { countRecipesNeedingEmbeddings, countWordsNeedingEmbeddings, createNoteForRecipe, createRecipe, getRecipeById, getStoredRecipesNeedingEmbeddings, getStoredWordsNeedingEmbeddings, getTermsFromQuery, putStoredWords, resetDatabaseTables, updateRecipeById, updateRecipeEmbeddingById } from '../lib/data';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { GenerateEmbeddings } from '../ui/generate_embeddings';
@@ -69,8 +69,8 @@ async function rebuildRecipeEmbeddings() {
                 ...deepRecipe.notes,
             ].join(' ');
             const output = await classifier(content, {pooling: 'mean', normalize: true});
-            recipe.embedding = output.tolist()[0];
-            await updateRecipeById(recipe.id, recipe);
+            const embedding = output.tolist()[0];
+            await updateRecipeEmbeddingById(recipe.id, embedding);
             handledRecipes += 1;
         }
         revalidatePath('/admin')

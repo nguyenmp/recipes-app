@@ -2,14 +2,14 @@
 
 import { ChangeEvent, useState } from "react";
 import { pipeline } from '@xenova/transformers';
-import { EmbeddingMatch } from "../lib/data";
+import { EmbeddingMatch, StoredWordEmbedding } from "../lib/data";
 import { getRelatedWordsFromEmbedding } from "../lib/actions";
 
 
 export function SearchEmbeddings() {
     const [embedding, setEmbedding] = useState<number[] | null>(null);
     const [query, setQuery] = useState<string>('');
-    const [relatedWords, setRelatedWords] = useState<EmbeddingMatch[]>([]);
+    const [relatedWords, setRelatedWords] = useState<EmbeddingMatch<StoredWordEmbedding>[]>([]);
 
     async function handleOnChange(event: ChangeEvent<HTMLInputElement>) {
         const classifier = await pipeline('embeddings');

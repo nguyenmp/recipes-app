@@ -4,11 +4,11 @@ export type DeepRecipe = StoredRecipe & {
 
 export type ShallowRecipe = {
     name: string;
-    embedding: number[] | null;
 }
 
 export type StoredRecipe = ShallowRecipe & {
     id: number;
+    embedding: number[] | null;
 }
 
 export type SearchMatch = {
