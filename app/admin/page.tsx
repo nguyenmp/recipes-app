@@ -7,6 +7,9 @@ import { redirect } from 'next/navigation';
 import { GenerateEmbeddings } from '../ui/generate_embeddings';
 import { SearchEmbeddings } from '../ui/search_embeddings';
 import PipelineSingletonClass from '../lib/embeddings_pipeline';
+import showdown from "showdown";
+import {JSDOM} from "jsdom";
+import { withTiming, withTimingAsync } from '../lib/utils';
 
 async function seedDatabase() {
     "use server";
@@ -93,6 +96,18 @@ async function insertNoteForRecipe(recipeId: Number, note: ShallowNote): Promise
 export default async function AdminPage() {
     const wordEmbeddingsMetadata = await countWordsNeedingEmbeddings();
     const recipeEmbeddingsMetadata = await countRecipesNeedingEmbeddings();
+
+    const contents = await withTimingAsync('Query', async () => await sql<{content_markdown: string}>`SELECT content_markdown FROM Notes`);
+    const links = contents.rows.flatMap((row) => {
+        console.log('Processing row');
+        const html = new showdown.Converter({ simplifiedAutoLink: true }).makeHtml(row.content_markdown);
+        const dom = new JSDOM(html);
+        console.log('Links!');
+        return Array.from(dom.window.document.querySelectorAll("a")).map((anchor) => {
+            return anchor.href;
+        });
+    });
+
     return (
         <main>
             <h1>Admin Page</h1>
@@ -114,6 +129,12 @@ export default async function AdminPage() {
             <GenerateEmbeddings />
 
             <SearchEmbeddings />
+
+            <div>
+                {links.map((link, index) => {
+                    return <p><a key={index} href={link}>{link}</a></p>
+                })}
+            </div>
 
         </main>
     );
