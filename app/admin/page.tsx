@@ -99,10 +99,8 @@ export default async function AdminPage() {
 
     const contents = await withTimingAsync('Query', async () => await sql<{content_markdown: string}>`SELECT content_markdown FROM Notes`);
     const links = contents.rows.flatMap((row) => {
-        console.log('Processing row');
         const html = new showdown.Converter({ simplifiedAutoLink: true }).makeHtml(row.content_markdown);
         const dom = new JSDOM(html);
-        console.log('Links!');
         return Array.from(dom.window.document.querySelectorAll("a")).map((anchor) => {
             return anchor.href;
         });
