@@ -130,7 +130,7 @@ export default async function AdminPage() {
 
             <div>
                 {links.map((link, index) => {
-                    return <p><a key={index} href={link}>{link}</a></p>
+                    return <p key={index}><a href={link}>{link}</a></p>
                 })}
             </div>
 
