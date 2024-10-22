@@ -10,12 +10,10 @@
 const nextConfig = {
 
     // Override the default webpack configuration
-    experimental: {
-        serverComponentsExternalPackages: [
-            "sharp",
-            "onnxruntime-node",
-        ],
-    },
+    serverExternalPackages: [
+        "sharp",
+        "onnxruntime-node",
+    ],
 
     // Override the default webpack configuration
     webpack: (config) => {
