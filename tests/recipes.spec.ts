@@ -103,12 +103,12 @@ test('recipes front page is cached between loads, and reset when cache is cleare
   await page.goto(TEST_URL);
   const firstRecipeName = await page.locator('a > h1').first().textContent()
   await page.reload();
-  assert(firstRecipeName === await page.locator('a > h1').first().textContent(), 'Recipe changed unexpectedly without cache clearing');
+  assert(firstRecipeName === (await page.locator('a > h1').first().textContent()), 'Recipe changed unexpectedly without cache clearing');
   await page.goto('/admin');
   await page.getByText('Reset Cache').click();
   await page.waitForURL('/');
   await page.goto(TEST_URL);
-  assert(firstRecipeName !== await page.locator('a > h1').first().textContent(), 'Recipe did not change after clearing cache');
+  assert(firstRecipeName !== (await page.locator('a > h1').first().textContent()), 'Recipe did not change after clearing cache');
 });
 
 test('create a new recipe, we should be able to find it and the content', async ({ page }) => {

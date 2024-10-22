@@ -3,7 +3,8 @@ import { RecipeCard } from "@/app/ui/recipe";
 import Link from "next/link";
 
 
-export default async function Page({ params }: { params: { recipe_id: string } }) {
+export default async function Page(props: { params: Promise<{ recipe_id: string }> }) {
+    const params = await props.params;
     const id = Number(params.recipe_id);
     const recipe = await getRecipeById(id);
     const relatedRecipes = await getRelatedRecipesFromRecipe(id);

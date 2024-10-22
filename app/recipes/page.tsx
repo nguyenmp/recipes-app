@@ -216,7 +216,8 @@ async function SuggestedTerms(params: {levenshtein: LevenshteinMatch[], db_embed
   );
 }
 
-export default async function Recipes({searchParams}: {searchParams: {query?: string, debug?: string}}) {
+export default async function Recipes(props: {searchParams: Promise<{query?: string, debug?: string}>}) {
+  const searchParams = await props.searchParams;
   const query = searchParams.query || '';
 
   // Do this work in parallel

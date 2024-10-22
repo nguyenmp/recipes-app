@@ -6,7 +6,11 @@ import { EditNote } from "@/app/ui/recipe";
 
 
 
-export default async function Page({ params, searchParams }: { params: { recipe_id: string, note_id: string }, searchParams: Partial<ShallowNote> }) {
+export default async function Page(
+    props: { params: Promise<{ recipe_id: string, note_id: string }>, searchParams: Promise<Partial<ShallowNote>> }
+) {
+    const searchParams = await props.searchParams;
+    const params = await props.params;
     // Load note from DB first
     const note = await getNoteById(Number(params.note_id))
 

@@ -4,7 +4,8 @@ import { EditNote, RecipeCard } from "@/app/ui/recipe";
 
 
 
-export default async function Page({ params }: { params: { recipe_id: string } }) {
+export default async function Page(props: { params: Promise<{ recipe_id: string }> }) {
+    const params = await props.params;
     const recipe_id = Number(params.recipe_id);
     const formAction = saveNote.bind(null, recipe_id, null);
     return (
