@@ -77,3 +77,7 @@ Make sure to restart the development server, things get weird when you update de
 ```bash
 rm -r .next/cache && pnpm dev
 ```
+
+## Importing data and updating placeholder-data.ts
+
+See `scripts/process.py`.
