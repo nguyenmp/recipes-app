@@ -133,6 +133,10 @@ def loop(index):
     else:
         if len(current['notes']) == 0 and line.strip() == '':
             return
+        
+        # Remove excess markdown escaping for markdown lines
+        line = re.sub(r'\\&', '&', line)
+
         # A note to append, append to the latest note or create a new one as needed
         print('Appending to last note')
         existing_note = get_last_note_or_create(current)["content_markdown"]
