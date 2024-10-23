@@ -1,26 +1,12 @@
 "use client";
 
-import showdown from "showdown";
-
 import { ChangeEvent, useState } from "react";
 import { MarkdownPreview } from "./markdown";
+import { getLinksFromMarkdown } from "../lib/utils";
 
-
-function getHtmlAsDocument(html: string): Document {
-    if (typeof process !== 'undefined' && process?.release?.name === 'node') {
-        const HTMLParser = require('node-html-parser');
-        const root = HTMLParser.parse(html);
-        return root;
-    } else {
-        const parser = new DOMParser();
-        return parser.parseFromString(html, 'text/html');
-    }
-}
 
 export function Links(params: {content_markdown: string}) {
-    const html_string = new showdown.Converter({ simplifiedAutoLink: true }).makeHtml(params.content_markdown || '');
-    const document = getHtmlAsDocument(html_string);
-    const links = document.querySelectorAll('a');
+    const links = getLinksFromMarkdown(params.content_markdown);
 
     return (
         <div>
