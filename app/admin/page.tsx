@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres'
 import { ShallowNote } from '../lib/definitions';
 import { PlaceholderData, recipes } from '../lib/placeholder-data';
-import { countRecipesNeedingEmbeddings, countWordsNeedingEmbeddings, createNoteForRecipe, createRecipe, getRecipeById, getStoredRecipesNeedingEmbeddings, getStoredWordsNeedingEmbeddings, getTermsFromQuery, putStoredWords, resetDatabaseTables, updateRecipeById, updateRecipeEmbeddingById } from '../lib/data';
+import { archiveLinks, countRecipesNeedingEmbeddings, countWordsNeedingEmbeddings, createNoteForRecipe, createRecipe, getRecipeById, getStoredRecipesNeedingEmbeddings, getStoredWordsNeedingEmbeddings, getTermsFromQuery, putStoredWords, resetDatabaseTables, updateRecipeById, updateRecipeEmbeddingById } from '../lib/data';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { GenerateEmbeddings } from '../ui/generate_embeddings';
@@ -11,14 +11,22 @@ import showdown from "showdown";
 import {JSDOM} from "jsdom";
 import { withTiming, withTimingAsync } from '../lib/utils';
 
+const SERIAL_OPERATIONS = false;
+
 async function seedDatabase() {
     "use server";
     console.log('Seed Database')
 
     await resetDatabaseTables();
 
-    await Promise.all(recipes.map(insertRecipe));
-
+    if (SERIAL_OPERATIONS) {
+        for (const recipe of recipes) {
+            await insertRecipe(recipe);
+        }
+    } else {
+        await Promise.all(recipes.map(insertRecipe));
+    }
+    await archiveLinks();
     await rebuildWordsEmbeddings();
     await rebuildRecipeEmbeddings();
 
@@ -84,7 +92,13 @@ async function rebuildRecipeEmbeddings() {
 async function insertRecipe(recipe: PlaceholderData): Promise<Number> {
     const newRecipeId = await createRecipe(recipe);
 
-    recipe.notes.map(insertNoteForRecipe.bind(null, newRecipeId))
+    if (SERIAL_OPERATIONS) {
+        for (const note of recipe.notes) {
+            await insertNoteForRecipe(newRecipeId, note);
+        }
+    } else {
+        recipe.notes.map(insertNoteForRecipe.bind(null, newRecipeId));
+    }
 
     return newRecipeId;
 }

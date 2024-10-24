@@ -21,7 +21,7 @@ export async function withTimingAsync<T>(lable: string, callable: () => Promise<
     return result;
 }
 
-function getHtmlAsDocument(html: string): Document {
+export function getHtmlAsDocument(html: string): Document {
     if (typeof process !== 'undefined' && process?.release?.name === 'node') {
         const HTMLParser = require('node-html-parser');
         const root = HTMLParser.parse(html);
@@ -37,6 +37,38 @@ export function getLinksFromMarkdown(content_markdown: string): HTMLAnchorElemen
     const document = getHtmlAsDocument(html_string);
     const links = document.querySelectorAll('a');
     return Array.from(links);
+}
+
+export async function get(url: string, headers: { [key: string]: string }): Promise<string> {
+    const options: https.RequestOptions = {
+        headers,
+        timeout: 60000, // in ms
+    }
+
+    return new Promise((resolve, reject) => {
+        const req = https.get(url, options, (res) => {
+            const body: Uint8Array[] = []
+            res.on('data', (chunk) => body.push(chunk))
+            res.on('end', () => {
+                const resString = Buffer.concat(body).toString()
+                if (res.statusCode == undefined || res.statusCode < 200 || res.statusCode > 299) {
+                    return reject(new Error(`HTTP status code ${res.statusCode} from ${url}`))
+                }
+
+                resolve(resString)
+            })
+        })
+
+        req.on('error', (err) => {
+            reject(err)
+        })
+
+        req.on('timeout', () => {
+            req.destroy()
+            reject(new Error('Request time out'))
+        })
+        req.end()
+    })
 }
 
 export async function post(url: string, data: Object, headers: { [key: string]: string }): Promise<string> {
