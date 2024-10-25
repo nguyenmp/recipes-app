@@ -1,4 +1,3 @@
-import { sql } from '@vercel/postgres'
 import { ShallowNote } from '../lib/definitions';
 import { PlaceholderData, recipes } from '../lib/placeholder-data';
 import { archiveLinks, countRecipesNeedingEmbeddings, countWordsNeedingEmbeddings, createNoteForRecipe, createRecipe, getRecipeById, getStoredRecipesNeedingEmbeddings, getStoredWordsNeedingEmbeddings, getTermsFromQuery, putStoredWords, resetDatabaseTables, updateRecipeById, updateRecipeEmbeddingById } from '../lib/data';
@@ -11,6 +10,7 @@ import showdown from "showdown";
 import {JSDOM} from "jsdom";
 import { withTiming, withTimingAsync } from '../lib/utils';
 import { Suspense } from 'react';
+import { sql } from '../lib/sql';
 
 const SERIAL_OPERATIONS = false;
 
@@ -108,7 +108,7 @@ async function insertNoteForRecipe(recipeId: Number, note: ShallowNote): Promise
     return await createNoteForRecipe(recipeId.valueOf(), note);
 }
 
-export async function EmbeddingsMetadata() {
+async function EmbeddingsMetadata() {
     const wordEmbeddingsMetadata = await countWordsNeedingEmbeddings();
     const recipeEmbeddingsMetadata = await countRecipesNeedingEmbeddings();
     return (
@@ -122,7 +122,7 @@ export async function EmbeddingsMetadata() {
     );
 }
 
-export async function AllTheLinks() {
+async function AllTheLinks() {
     const contents = await withTimingAsync('Query', async () => await sql<{content_markdown: string}>`SELECT content_markdown FROM Notes`);
     const links = contents.rows.flatMap((row) => {
         const html = new showdown.Converter({ simplifiedAutoLink: true }).makeHtml(row.content_markdown);

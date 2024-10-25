@@ -31,6 +31,11 @@ export async function resetDatabaseTables() {
     await sql`DROP TABLE IF EXISTS NoteLinks CASCADE`;
     await sql`DROP VIEW IF EXISTS Words`;
     await sql`DROP EXTENSION IF EXISTS fuzzystrmatch`;
+    await sql`DROP EXTENSION IF EXISTS vector`;
+
+    // https://vercel.com/docs/storage/vercel-postgres/supported-postgresql-extensions#installing-an-extension
+    await sql`CREATE EXTENSION IF NOT EXISTS fuzzystrmatch`
+    await sql`CREATE EXTENSION IF NOT EXISTS vector`
 
     await sql`CREATE TABLE IF NOT EXISTS Recipes (id BIGSERIAL PRIMARY KEY, name VARCHAR(255), embedding VECTOR(384))`
     await sql`CREATE TABLE IF NOT EXISTS Notes (id BIGSERIAL PRIMARY KEY, recipe_id BIGINT NOT NULL REFERENCES Recipes(id), date_epoch_seconds BIGINT, content_markdown TEXT)`
@@ -54,8 +59,6 @@ export async function resetDatabaseTables() {
     `
 
 
-    // https://vercel.com/docs/storage/vercel-postgres/supported-postgresql-extensions#installing-an-extension
-    await sql`CREATE EXTENSION IF NOT EXISTS fuzzystrmatch`
 }
 
 export type LevenshteinMatch = {word: string, distance: number};
