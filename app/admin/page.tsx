@@ -10,6 +10,7 @@ import PipelineSingletonClass from '../lib/embeddings_pipeline';
 import showdown from "showdown";
 import {JSDOM} from "jsdom";
 import { withTiming, withTimingAsync } from '../lib/utils';
+import { Suspense } from 'react';
 
 const SERIAL_OPERATIONS = false;
 
@@ -107,10 +108,21 @@ async function insertNoteForRecipe(recipeId: Number, note: ShallowNote): Promise
     return await createNoteForRecipe(recipeId.valueOf(), note);
 }
 
-export default async function AdminPage() {
+export async function EmbeddingsMetadata() {
     const wordEmbeddingsMetadata = await countWordsNeedingEmbeddings();
     const recipeEmbeddingsMetadata = await countRecipesNeedingEmbeddings();
+    return (
+        <div>
+            <h1>Embeddings missings</h1>
+            <ul>
+                <li>{wordEmbeddingsMetadata.missingCount} out of {wordEmbeddingsMetadata.totalCount} words</li>
+                <li>{recipeEmbeddingsMetadata.missingCount} out of {recipeEmbeddingsMetadata.totalCount} words</li>
+            </ul>
+        </div>
+    );
+}
 
+export async function AllTheLinks() {
     const contents = await withTimingAsync('Query', async () => await sql<{content_markdown: string}>`SELECT content_markdown FROM Notes`);
     const links = contents.rows.flatMap((row) => {
         const html = new showdown.Converter({ simplifiedAutoLink: true }).makeHtml(row.content_markdown);
@@ -120,6 +132,16 @@ export default async function AdminPage() {
         });
     });
 
+    return (
+        <div>
+            {links.map((link, index) => {
+                return <p key={index}><a href={link}>{link}</a></p>
+            })}
+        </div>
+    );
+}
+
+export default async function AdminPage() {
     return (
         <main>
             <h1>Admin Page</h1>
@@ -132,21 +154,13 @@ export default async function AdminPage() {
                 <button type="submit" className="bg-slate-300 rounded p-4 active:bg-slate-600">Reset Cache</button>
             </form>
 
-            <h1>Embeddings missings</h1>
-            <ul>
-                <li>{wordEmbeddingsMetadata.missingCount} out of {wordEmbeddingsMetadata.totalCount} words</li>
-                <li>{recipeEmbeddingsMetadata.missingCount} out of {recipeEmbeddingsMetadata.totalCount} words</li>
-            </ul>
+            <Suspense><EmbeddingsMetadata /></Suspense>
 
             <GenerateEmbeddings />
 
             <SearchEmbeddings />
 
-            <div>
-                {links.map((link, index) => {
-                    return <p key={index}><a href={link}>{link}</a></p>
-                })}
-            </div>
+            <Suspense><AllTheLinks /></Suspense>
 
         </main>
     );
