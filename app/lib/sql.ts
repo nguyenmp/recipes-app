@@ -62,5 +62,5 @@ export const sql: typeof vercel_postgres.sql = new Proxy(vercel_postgres.sql, {
 
 export async function query<ResultType extends QueryResultRow>(rawQuery: string, values? : QueryConfigValues<any[]>): Promise<QueryResult<ResultType>> {
     if (DEBUG) console.log(`Applying SQL on ${rawQuery} with ${JSON.stringify(values)}`);
-    return connectionPool.query(rawQuery, values?.length ?? 0  > 0 ? values : undefined);
+    return connectionPool.query(rawQuery, values);
 }
