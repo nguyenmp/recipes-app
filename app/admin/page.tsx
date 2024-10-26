@@ -1,6 +1,6 @@
 import { ShallowNote } from '../lib/definitions';
 import { PlaceholderData, recipes } from '../lib/placeholder-data';
-import { archiveLinks, countRecipesNeedingEmbeddings, countWordsNeedingEmbeddings, createNoteForRecipe, createRecipe, getRecipeById, getStoredRecipesNeedingEmbeddings, getStoredWordsNeedingEmbeddings, getTermsFromQuery, putStoredWords, resetDatabaseTables, updateRecipeById, updateRecipeEmbeddingById } from '../lib/data';
+import { archiveLinks, countRecipesNeedingEmbeddings, countWordsNeedingEmbeddings, createNoteForRecipe, createRecipe, getRecipeById, getStoredRecipesNeedingEmbeddings, getStoredWordsNeedingEmbeddings, getTermsFromQuery, pullExistingLinks, putStoredWords, resetDatabaseTables, updateRecipeById, updateRecipeEmbeddingById } from '../lib/data';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { GenerateEmbeddings } from '../ui/generate_embeddings';
@@ -28,6 +28,7 @@ async function seedDatabase() {
         await Promise.all(recipes.map(insertRecipe));
     }
     await archiveLinks();
+    await pullExistingLinks();
     await rebuildWordsEmbeddings();
     await rebuildRecipeEmbeddings();
 

@@ -1,6 +1,7 @@
 import { sql, query as sql_query } from "./sql";
 import { DeepRecipe, ShallowAttachment, ShallowNote, ShallowRecipe, StoredAttachment, StoredNote, StoredRecipe, StoredRecipeSearchMatch } from "./definitions";
-import { getLinksFromMarkdown, getUrlFromHTMLAnchorElement, post, withTimingAsync } from "./utils";
+import { getLinksFromMarkdown, getUrlFromHTMLAnchorElement, get, post, withTimingAsync } from "./utils";
+import {sync_content_from_archive} from "../api/archive_webhook/route";
 import assert from "assert";
 
 export const ARCHIVE_BOX_API_KEY = process.env.ARCHIVE_BOX_API_KEY!;
@@ -381,6 +382,27 @@ export async function archiveLinks(): Promise<void> {
         "X-ArchiveBox-API-Key": ARCHIVE_BOX_API_KEY,
         Host: ARCHIVE_BOX_HOST,
     })
+}
+
+export async function pullExistingLinks(page: number = 0): Promise<void> {
+    console.log('Pulling links from archivebox')
+    const response_text = await get(`${ARCHIVE_BOX_URL}/api/v1/core/snapshots?with_archiveresults=false&page=${page}`, {
+        "X-ArchiveBox-API-Key": ARCHIVE_BOX_API_KEY,
+        Host: ARCHIVE_BOX_HOST,
+    });
+
+    const response_json = JSON.parse(response_text);
+
+    for (const item of response_json.items) {
+        try {
+            await sync_content_from_archive(item.timestamp);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    if (response_json.page === response_json.total_pages - 1) return;
+    pullExistingLinks(page + 1);
 }
 
 export async function addLinkContent(url: string, content: string, extractor_type: string, timestamp: number) {

@@ -1,4 +1,5 @@
 import { addLinkContent, ARCHIVE_BOX_API_KEY, ARCHIVE_BOX_HOST, ARCHIVE_BOX_URL } from '@/app/lib/data';
+import { sql } from '@/app/lib/sql';
 import { get, getHtmlAsDocument } from '@/app/lib/utils';
 import assert from 'assert';
 import { NextRequest } from 'next/server';
@@ -183,10 +184,15 @@ async function archivebox_get(endpoint: string): Promise<string> {
   });
 }
 
-async function sync_content_from_archive(archive_timestamp_seconds_epoch: string) {
+export async function sync_content_from_archive(archive_timestamp_seconds_epoch: string) {
   const index_data = JSON.parse(await archivebox_get(`/archive/${archive_timestamp_seconds_epoch}/index.json`));
 
   const url = index_data['url'];
+
+  // Verify that this is a link we actually care about.  Technically we can
+  // recieve the webhook for any link, even ones we don't submit.  So check!
+  const result = await sql`SELECT id FROM Links WHERE url = ${url}`;
+  if (result.rowCount === 0) return;
 
   for (const extractor_type of Object.keys(MAPPING)) {
     console.log(`Running extractor ${extractor_type} for url ${url}`)
