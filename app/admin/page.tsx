@@ -9,8 +9,8 @@ import PipelineSingletonClass from '../lib/embeddings_pipeline';
 import showdown from "showdown";
 import {JSDOM} from "jsdom";
 import { withTiming, withTimingAsync } from '../lib/utils';
-import { Suspense } from 'react';
 import { sql } from '../lib/sql';
+import { ErrorBoundary } from '../ui/error_boundary';
 
 const SERIAL_OPERATIONS = false;
 
@@ -155,13 +155,13 @@ export default async function AdminPage() {
                 <button type="submit" className="bg-slate-300 rounded p-4 active:bg-slate-600">Reset Cache</button>
             </form>
 
-            <Suspense><EmbeddingsMetadata /></Suspense>
+            <ErrorBoundary fallback={<p>Something went wrong</p>}><EmbeddingsMetadata /></ErrorBoundary>
 
             <GenerateEmbeddings />
 
             <SearchEmbeddings />
 
-            <Suspense><AllTheLinks /></Suspense>
+            <ErrorBoundary fallback={<p>Something went wrong</p>}><AllTheLinks /></ErrorBoundary>
 
         </main>
     );
