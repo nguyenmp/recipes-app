@@ -81,3 +81,19 @@ rm -r .next/cache && pnpm dev
 ## Importing data and updating placeholder-data.ts
 
 See `scripts/process.py`.
+
+## Resetting production database
+
+We can't hit the reset button on production easily because we have 6 seconds per request (based on lambdas).
+
+I want to self-host but I can't seem to get onnxruntime-node to work on docker.
+
+So temporary workaround is to run local development reset against production database:
+
+```
+vercel env pull --environment=production .env.local
+pnpm build && pnpm start
+http://localhost:3000/admin
+Hit reset
+vercel env pull .env.local
+```
