@@ -11,6 +11,7 @@ import {JSDOM} from "jsdom";
 import { withTiming, withTimingAsync } from '../lib/utils';
 import { sql } from '../lib/sql';
 import { ErrorBoundary } from '../ui/error_boundary';
+import { cookies } from 'next/headers';
 
 const SERIAL_OPERATIONS = false;
 
@@ -110,6 +111,7 @@ async function insertNoteForRecipe(recipeId: Number, note: ShallowNote): Promise
 }
 
 async function EmbeddingsMetadata() {
+    const cookieStore = await cookies(); // Do this to prevent SSR because below code can break.
     const wordEmbeddingsMetadata = await countWordsNeedingEmbeddings();
     const recipeEmbeddingsMetadata = await countRecipesNeedingEmbeddings();
     return (
@@ -124,6 +126,7 @@ async function EmbeddingsMetadata() {
 }
 
 async function AllTheLinks() {
+    const cookieStore = await cookies(); // Do this to prevent SSR because below code can break.
     const contents = await withTimingAsync('Query', async () => await sql<{content_markdown: string}>`SELECT content_markdown FROM Notes`);
     const links = contents.rows.flatMap((row) => {
         const html = new showdown.Converter({ simplifiedAutoLink: true }).makeHtml(row.content_markdown);

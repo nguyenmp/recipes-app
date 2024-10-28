@@ -2,19 +2,19 @@
 
 import React from "react";
 
-export class ErrorBoundary extends React.Component {
-    constructor(props) {
+export class ErrorBoundary extends React.Component<{children: JSX.Element, fallback: JSX.Element}, {hasError: boolean}> {
+    constructor(props: {children: JSX.Element, fallback: JSX.Element}) {
       super(props)
    
       // Define a state variable to track whether is an error or not
       this.state = { hasError: false }
     }
-    static getDerivedStateFromError(error) {
+    static getDerivedStateFromError(error: any) {
       // Update state so the next render will show the fallback UI
    
       return { hasError: true }
     }
-    componentDidCatch(error, errorInfo) {
+    componentDidCatch(error: any, errorInfo: any) {
       // You can use your own error logging service here
       console.log({ error, errorInfo })
     }
