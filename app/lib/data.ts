@@ -248,8 +248,8 @@ export async function getRecipesForTerm(term : string): Promise<StoredRecipeSear
         SELECT
             Recipes.*,
             ARRAY_LENGTH(STRING_TO_ARRAY(LOWER(Recipes.name), ${term}), 1) - 1 as name_matches,
-            SUM(ARRAY_LENGTH(STRING_TO_ARRAY(LOWER(Notes.content_markdown), 'kale'), 1)) / COUNT(Notes.id) - 1 as content_markdown_matches,
-            SUM(ARRAY_LENGTH(STRING_TO_ARRAY(LOWER(LinkContents.link_content), 'kale'), 1)) - COUNT(LinkContents.ctid) as link_content_matches
+            SUM(ARRAY_LENGTH(STRING_TO_ARRAY(LOWER(Notes.content_markdown), ${term}), 1)) / COUNT(Notes.id) - 1 as content_markdown_matches,
+            SUM(ARRAY_LENGTH(STRING_TO_ARRAY(LOWER(LinkContents.link_content), ${term}), 1)) - COUNT(LinkContents.ctid) as link_content_matches
         FROM Recipes
         LEFT JOIN Notes
         ON Notes.recipe_id = Recipes.id
@@ -259,7 +259,7 @@ export async function getRecipesForTerm(term : string): Promise<StoredRecipeSear
         ON LinkContents.link_id = NoteLinks.link_id
         WHERE content_markdown ILIKE ${`%${term}%`}
         OR Recipes.name ILIKE ${`%${term}%`}
-        OR linkcontents.link_content ILIKE '%kale%'
+        OR linkcontents.link_content ILIKE ${`%${term}%`}
         GROUP BY Recipes.id
     `;
     return response.rows;
