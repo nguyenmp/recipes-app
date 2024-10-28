@@ -14,6 +14,7 @@ export type StoredRecipe = ShallowRecipe & {
 export type SearchMatch = {
     name_matches: number;
     content_markdown_matches: number;
+    link_content_matches: number;
 }
 
 export type StoredRecipeSearchMatch = StoredRecipe & SearchMatch;

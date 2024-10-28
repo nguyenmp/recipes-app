@@ -43,6 +43,9 @@ function sortRecipesByRelevance(recipes_by_terms: Map<string, StoredRecipeSearch
       // 1 pt for each instance of term in note
       tf_by_term[term] += 1 * recipe_match.content_markdown_matches;
 
+      // 0.1 pt for each instance of term in note
+      tf_by_term[term] += 0.1 * recipe_match.link_content_matches;
+
       tf_by_term_by_document.set(recipe_match.id, tf_by_term);
     })
   });
@@ -69,6 +72,7 @@ function sortRecipesByRelevance(recipes_by_terms: Map<string, StoredRecipeSearch
       matches_by_term[term] = {
         name_matches: recipe?.name_matches ?? 0,
         content_markdown_matches: recipe?.content_markdown_matches ?? 0,
+        link_content_matches: recipe?.link_content_matches ?? 0,
         term_score: score,
       };
       return score;
