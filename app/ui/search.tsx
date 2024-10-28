@@ -24,7 +24,7 @@ export function SearchBar() {
     return (
         <form className="flex flex-row">
             {Array.from(searchParams).filter(([key, value]) => key != 'query').map(([key, value], index) => {
-                return <input key={index} type="text" name={key} hidden={true} defaultValue={value} />
+                return <input key={index} type="text" name={key} hidden={true} defaultValue={value} readOnly={true} />
             })}
             <input type="text" name="query" className="flex-grow border-4 m-2 p-2" defaultValue={searchParams.get(QUERY_KEY)?.toString()} onChange={(event) => handleSearch(event.target.value)} placeholder="Search here..."/>
             <input type="submit" className="m-2 p-2 bg-red-200" value="Search" />
