@@ -29,30 +29,35 @@ function sortRecipesByRelevance(recipes_by_terms: Map<string, StoredRecipeSearch
       all_recipes_by_id.set(recipe_match.id, recipe_match);
       recipes_by_id.set(recipe_match.id, recipe_match);
 
-      // Increment document frequency for this term by 1
-      documentFrequencies_by_term.set(term, (documentFrequencies_by_term.get(term) ?? 0) + 1);
-
       const tf_by_term = tf_by_term_by_document.get(recipe_match.id) ?? {};
       if (!(term in tf_by_term)) {
         tf_by_term[term] = 0;
       }
 
       // 10 pts for each instance of term in title, title matches are high signal
-      tf_by_term[term] += 10 * recipe_match.name_matches;
+      const name_increment = 10 * recipe_match.name_matches;
+      tf_by_term[term] += name_increment;
 
       // 1 pt for each instance of term in note
-      tf_by_term[term] += 1 * recipe_match.content_markdown_matches;
+      const note_increment = 1 * recipe_match.content_markdown_matches;
+      tf_by_term[term] += note_increment;
 
       // 0.1 pt for each instance of term in note
-      tf_by_term[term] += 0.1 * recipe_match.link_content_matches;
+      const link_increment =  0.1 * recipe_match.link_content_matches;
+      tf_by_term[term] += link_increment;
 
       tf_by_term_by_document.set(recipe_match.id, tf_by_term);
+
+      // Increment document frequency for this term by 1
+      const df_increment = name_increment + note_increment + link_increment;
+      documentFrequencies_by_term.set(term, (documentFrequencies_by_term.get(term) ?? 0) + df_increment);
     })
   });
 
   // Now we can calculate "tf-idf" based on the aggregations
   const terms_list = Array.from(recipes_by_terms.keys());
   const num_recipes = tf_by_term_by_document.size;
+  const total_df = documentFrequencies_by_term.values().reduce((prev, curr) => prev + curr, 0);
   const scores : ScoredRecipeMatch[] = Array.from(tf_by_term_by_document.entries()).map(([recipe_id, tf_by_term]) => {
 
     const matches_by_term : {[term: string]: SearchMatch & {term_score: number}} = {};
@@ -65,8 +70,9 @@ function sortRecipesByRelevance(recipes_by_terms: Map<string, StoredRecipeSearch
       const tf = (term in tf_by_term) ? tf_by_term[term] : 0;
       const df = documentFrequencies_by_term.get(term) ?? 0;
       const idf_offset = 0.1;  // the IDF offset allows IDF to be non-zero allowing single term search to stll sort by document frequency
-      const idf = Math.log10((1 + num_recipes) / (1 + df) + idf_offset)
-      const score = tf*idf;
+      const idf = Math.log2((1 + total_df) / (1 + df) + idf_offset)
+      const score = tf*idf*idf; // Note I square IDF because I really want document frequency to deminish term values
+      console.log(`For ${term}: tf = ${tf}, df = ${df}, idf = ${idf}, score = ${score}`)
 
       // Return score object
       matches_by_term[term] = {

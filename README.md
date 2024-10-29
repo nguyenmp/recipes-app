@@ -97,3 +97,7 @@ http://localhost:3000/admin
 Hit reset
 vercel env pull .env.local
 ```
+
+## Test cases I like
+
+white rice - my personal recipes should be on top
