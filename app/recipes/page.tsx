@@ -57,7 +57,9 @@ function sortRecipesByRelevance(recipes_by_terms: Map<string, StoredRecipeSearch
   // Now we can calculate "tf-idf" based on the aggregations
   const terms_list = Array.from(recipes_by_terms.keys());
   const num_recipes = tf_by_term_by_document.size;
-  const total_df = documentFrequencies_by_term.values().reduce((prev, curr) => prev + curr, 0);
+  console.log('documentFrequencies_by_term.values');
+  console.log(documentFrequencies_by_term.values());
+  const total_df = Array.from(documentFrequencies_by_term.values()).reduce((prev, curr) => prev + curr, 0);
   const scores : ScoredRecipeMatch[] = Array.from(tf_by_term_by_document.entries()).map(([recipe_id, tf_by_term]) => {
 
     const matches_by_term : {[term: string]: SearchMatch & {term_score: number}} = {};
