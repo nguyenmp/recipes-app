@@ -7,9 +7,6 @@ import assert from "assert";
 export const ARCHIVE_BOX_API_KEY = process.env.ARCHIVE_BOX_API_KEY!;
 export const ARCHIVE_BOX_URL = process.env.ARCHIVE_BOX_URL!;
 export const ARCHIVE_BOX_HOST = process.env.ARCHIVE_BOX_HOST!;
-assert(ARCHIVE_BOX_API_KEY, "ARCHIVE_BOX_API_KEY was not specified, but required");
-assert(ARCHIVE_BOX_URL, "ARCHIVE_BOX_URL was not specified, but required");
-assert(ARCHIVE_BOX_HOST, "ARCHIVE_BOX_HOST was not specified, but required");
 
 /**
  * This is a reasonable guess.  What we do is generate suggested terms from
