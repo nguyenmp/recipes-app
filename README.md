@@ -32,6 +32,15 @@ Visit [http://localhost:3000/admin](http://localhost:3000/admin) and hit "Reset 
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Running in docker
+
+```
+docker build --platform=linux/amd64 -t recipes-app-docker .
+docker run -it -p 3000:3000 --platform=linux/amd64 -v ./.env.local.docker:/app/.env.local:ro recipes-app-docker
+```
+
+Relies on other services (like postgres) already up from vps-management.  That folder has the docker-compose file.
+
 ## Running Tests
 
 I'm just following the guide at https://nextjs.org/docs/app/building-your-application/testing
