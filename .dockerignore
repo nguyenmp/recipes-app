@@ -1,0 +1,7 @@
+.next
+.pnpm-store
+.vercel
+.vscode
+node_modules
+playwright-report
+test-results
