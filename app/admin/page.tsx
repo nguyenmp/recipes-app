@@ -120,7 +120,7 @@ async function EmbeddingsMetadata() {
             <h1>Embeddings missings</h1>
             <ul>
                 <li>{wordEmbeddingsMetadata.missingCount} out of {wordEmbeddingsMetadata.totalCount} words</li>
-                <li>{recipeEmbeddingsMetadata.missingCount} out of {recipeEmbeddingsMetadata.totalCount} words</li>
+                <li>{recipeEmbeddingsMetadata.missingCount} out of {recipeEmbeddingsMetadata.totalCount} recipes</li>
             </ul>
         </div>
     );
