@@ -12,6 +12,7 @@ import { withTiming, withTimingAsync } from '../lib/utils';
 import { sql } from '../lib/sql';
 import { ErrorBoundary } from '../ui/error_boundary';
 import { cookies } from 'next/headers';
+import { Suspense } from 'react';
 
 const SERIAL_OPERATIONS = false;
 
@@ -158,13 +159,13 @@ export default async function AdminPage() {
                 <button type="submit" className="bg-slate-300 rounded p-4 active:bg-slate-600">Reset Cache</button>
             </form>
 
-            <ErrorBoundary fallback={<p>Something went wrong</p>}><EmbeddingsMetadata /></ErrorBoundary>
+            <ErrorBoundary fallback={<p>Something went wrong with Embeddings Metadata</p>}><Suspense fallback={<p>Loading Embeddings Metadata</p>}><EmbeddingsMetadata /></Suspense></ErrorBoundary>
 
             <GenerateEmbeddings />
 
             <SearchEmbeddings />
 
-            <ErrorBoundary fallback={<p>Something went wrong</p>}><AllTheLinks /></ErrorBoundary>
+            <ErrorBoundary fallback={<p>Something went wrong with All The Links</p>}><Suspense fallback={<p>Loading All The Links</p>}><AllTheLinks /></Suspense></ErrorBoundary>
 
         </main>
     );
