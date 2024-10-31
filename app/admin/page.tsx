@@ -7,7 +7,7 @@ import { GenerateEmbeddings } from '../ui/generate_embeddings';
 import { SearchEmbeddings } from '../ui/search_embeddings';
 import PipelineSingletonClass from '../lib/embeddings_pipeline';
 import showdown from "showdown";
-import {DOMParser} from 'linkedom';
+import {DOMParser, HTMLAnchorElement} from 'linkedom';
 import { withTiming, withTimingAsync } from '../lib/utils';
 import { sql } from '../lib/sql';
 import { ErrorBoundary } from '../ui/error_boundary';
@@ -133,7 +133,7 @@ async function AllTheLinks() {
         const markdown_converter = new showdown.Converter({ simplifiedAutoLink: true });
         const html = withTiming('makeHtml', () => markdown_converter.makeHtml(row.content_markdown));
         const document = withTiming('DOMParser', () => (new DOMParser).parseFromString(html, 'text/html'));
-        return withTiming('querySelectorAll', () => Array.from(document.querySelectorAll("a")).map((anchor) => {
+        return withTiming('querySelectorAll', () => (Array.from(document.querySelectorAll("a")) as HTMLAnchorElement[]).map((anchor) => {
             return anchor.href;
         }));
     });
