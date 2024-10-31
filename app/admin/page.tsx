@@ -7,7 +7,7 @@ import { GenerateEmbeddings } from '../ui/generate_embeddings';
 import { SearchEmbeddings } from '../ui/search_embeddings';
 import PipelineSingletonClass from '../lib/embeddings_pipeline';
 import showdown from "showdown";
-import {JSDOM} from "jsdom";
+import {DOMParser} from 'linkedom';
 import { withTiming, withTimingAsync } from '../lib/utils';
 import { sql } from '../lib/sql';
 import { ErrorBoundary } from '../ui/error_boundary';
@@ -130,11 +130,12 @@ async function AllTheLinks() {
     const cookieStore = await cookies(); // Do this to prevent SSR because below code can break.
     const contents = await withTimingAsync('Query', async () => await sql<{content_markdown: string}>`SELECT content_markdown FROM Notes`);
     const links = contents.rows.flatMap((row) => {
-        const html = new showdown.Converter({ simplifiedAutoLink: true }).makeHtml(row.content_markdown);
-        const dom = new JSDOM(html);
-        return Array.from(dom.window.document.querySelectorAll("a")).map((anchor) => {
+        const markdown_converter = new showdown.Converter({ simplifiedAutoLink: true });
+        const html = withTiming('makeHtml', () => markdown_converter.makeHtml(row.content_markdown));
+        const document = withTiming('DOMParser', () => (new DOMParser).parseFromString(html, 'text/html'));
+        return withTiming('querySelectorAll', () => Array.from(document.querySelectorAll("a")).map((anchor) => {
             return anchor.href;
-        });
+        }));
     });
 
     return (
