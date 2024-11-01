@@ -2,7 +2,7 @@ import { spawnSync } from "child_process";
 import { sql, query as sql_query } from "./sql";
 import { createInterface } from "readline";
 
-export const migrations = [
+export const MIGRATIONS = [
     // Create the migrations table to keep track of how far migrations have come along
     [
         `CREATE TABLE IF NOT EXISTS Migrations (timestamp TIMESTAMPTZ NOT NULL, index INTEGER);`,
@@ -78,9 +78,9 @@ async function getCurrentMigrationIndex() : Promise<number | null> {
 export async function run_migrations() {
     // Find any pending migrations
     const currentMigrationIndex = await getCurrentMigrationIndex();
-    const pendingMigrations = migrations.entries().filter(([index, statements]) => {
+    const pendingMigrations = Array.from(MIGRATIONS.entries().filter(([index, statements]) => {
         return currentMigrationIndex === null || index > currentMigrationIndex;
-    });
+    }));
 
     if (Array.from(pendingMigrations).length === 0) {
         console.log('No migrations to run, already up to date');
@@ -99,9 +99,10 @@ export async function run_migrations() {
 
 }
 
-async function migrate(migrations: IteratorObject<[number, string[]]>) {
+async function migrate(selected_migrations: Array<[number, string[]]>) {
+    console.log(`Running ${selected_migrations.length} migrations out of ${MIGRATIONS.length}`);
     // Execute migration twice (for indepodence test)
-    for (const migration of migrations) {
+    for (const migration of selected_migrations) {
         const [migration_index, statements] = migration;
         console.log(`Running migration ${migration_index}`);
         for (const [statement_index, statement] of statements.entries()) {
