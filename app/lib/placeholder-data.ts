@@ -154,7 +154,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "Interesting suggestion to make tamale casserole.  [https://www.reddit.com/r/Cooking/comments/27q0i4/been\\_thinking\\_about\\_tamales/](https://www.reddit.com/r/Cooking/comments/27q0i4/been\\_thinking\\_about\\_tamales/) sounds great for family party food or.\n\nConsider above recipe for maza .  No need to oil pan because dough is oily.  Bottom will be crispy and top will be broiled.  Should meat or dough be on top?  Experiment.\n\n",
+                content_markdown: "Interesting suggestion to make tamale casserole.  [https://www.reddit.com/r/Cooking/comments/27q0i4/been\\_thinking\\_about\\_tamales/](https://www.reddit.com/r/Cooking/comments/27q0i4/been_thinking_about_tamales/) sounds great for family party food or.\n\nConsider above recipe for maza .  No need to oil pan because dough is oily.  Bottom will be crispy and top will be broiled.  Should meat or dough be on top?  Experiment.\n\n",
             }
         ]
     },
@@ -271,7 +271,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://www.americastestkitchen.com/recipes/9383-weeknight-tagliatelle-with-bolognese-sauce?pac=y2%2FnHeeaiVN81J3UcXyBOS7UG6ylG3JWdVZH5E9DGhU%3D&extcode=NSAKK13FB&utm\\_source=facebook&utm\\_medium=photo&utm\\_content=tagliatelle&utm\\_campaign=atkthanksgiving&fbclid=IwAR1cf4D6Lr0goOoQRu5ZGSvF7O-SI0BL21LR0sXUrvekx0Eq98t24xAtPcA](https://www.americastestkitchen.com/recipes/9383-weeknight-tagliatelle-with-bolognese-sauce?pac=y2%2FnHeeaiVN81J3UcXyBOS7UG6ylG3JWdVZH5E9DGhU%3D&extcode=NSAKK13FB&utm\\_source=facebook&utm\\_medium=photo&utm\\_content=tagliatelle&utm\\_campaign=atkthanksgiving&fbclid=IwAR1cf4D6Lr0goOoQRu5ZGSvF7O-SI0BL21LR0sXUrvekx0Eq98t24xAtPcA)\n\nGATHER YOUR INGREDIENTS  \n1 pound 93 percent lean ground beef  \n2 tablespoons water  \n\u00bc teaspoon baking soda  \nSalt and pepper  \n4 cups beef broth  \n6 ounces pancetta, chopped coarse  \n1 onion, chopped coarse  \n1 large carrot, peeled and chopped coarse  \n1 celery rib, chopped coarse  \n1 tablespoon unsalted butter  \n1 tablespoon extra-virgin olive oil  \n3 tablespoons tomato paste  \n1 cup dry red wine  \n1 ounce Parmesan cheese, grated (1/2 cup), plus extra for serving  \n1 pound tagliatelle\n\nKEY EQUIPMENT  \nFood Processors  \nDutch Ovens  \nMeasuring Spoons  \nBEFORE YOU BEGIN  \nIf you use our recommended beef broth, Better Than Bouillon Roasted Beef Base, you can skip step 2 and make a concentrated broth by adding 4 teaspoons paste to 2 cups water. To ensure the best flavor, be sure to brown the pancetta-vegetable mixture in step 4 until the fond on the bottom of the pot is quite dark. The cooked sauce will look thin but will thicken once tossed with the pasta. Tagliatelle is a long, flat, dry egg pasta that is about 1/4 inch wide; if you can\u2019t find it, you can substitute pappardelle. Substituting other pasta may result in a too-wet sauce.  \nINSTRUCTIONS\n\n1. Toss beef with water, baking soda, and 1/4 teaspoon pepper in bowl until thoroughly combined. Set aside.  \n2. While beef sits, bring broth to boil over high heat in large pot (this pot will be used to cook pasta in step 6\\) and cook until reduced to 2 cups, about 15 minutes; set aside.  \n3. Pulse pancetta in food processor until finely chopped, 15 to 20 pulses. Add onion, carrot, and celery and pulse until vegetables are finely chopped and mixture has paste-like consistency, 12 to 15 pulses, scraping down sides of bowl as needed.  \n4. Heat butter and oil in large Dutch oven over medium-high heat until shimmering. When foaming subsides, add pancetta-vegetable mixture and 1/4 teaspoon pepper and cook, stirring occasionally, until liquid has evaporated, about 8 minutes. Spread mixture in even layer in bottom of pot and continue to cook, stirring every couple of minutes, until very dark browned bits form on bottom of pot, 7 to 12 minutes longer. Stir in tomato paste and cook until paste is rust-colored and bottom of pot is dark brown, 1 to 2 minutes.  \n5. Reduce heat to medium, add beef, and cook, using wooden spoon to break meat into pieces no larger than 1/4 inch, until beef has just lost its raw pink color, 4 to 7 minutes. Stir in wine, scraping up any browned bits, and bring to simmer. Cook until wine has evaporated and sauce has thickened, about 5 minutes. Stir in broth and Parmesan. Return sauce to simmer; cover, reduce heat to low, and simmer for 30 minutes (sauce will look thin). Remove from heat and season with salt and pepper to taste.  \n6. Rinse pot that held broth. While sauce simmers, bring 4 quarts water to boil in now-empty pot. Add pasta and 1 tablespoon salt and cook, stirring occasionally, until al dente. Reserve 1/4 cup cooking water, then drain pasta. Add pasta to pot with sauce and toss to combine. Adjust sauce consistency with reserved cooking water as needed. Transfer to platter or individual bowls and serve, passing extra Parmesan separately.\n\n",
+                content_markdown: "[https://www.americastestkitchen.com/recipes/9383-weeknight-tagliatelle-with-bolognese-sauce?pac=y2%2FnHeeaiVN81J3UcXyBOS7UG6ylG3JWdVZH5E9DGhU%3D&extcode=NSAKK13FB&utm\\_source=facebook&utm\\_medium=photo&utm\\_content=tagliatelle&utm\\_campaign=atkthanksgiving&fbclid=IwAR1cf4D6Lr0goOoQRu5ZGSvF7O-SI0BL21LR0sXUrvekx0Eq98t24xAtPcA](https://www.americastestkitchen.com/recipes/9383-weeknight-tagliatelle-with-bolognese-sauce?pac=y2%2FnHeeaiVN81J3UcXyBOS7UG6ylG3JWdVZH5E9DGhU%3D&extcode=NSAKK13FB&utm_source=facebook&utm_medium=photo&utm_content=tagliatelle&utm_campaign=atkthanksgiving&fbclid=IwAR1cf4D6Lr0goOoQRu5ZGSvF7O-SI0BL21LR0sXUrvekx0Eq98t24xAtPcA)\n\nGATHER YOUR INGREDIENTS  \n1 pound 93 percent lean ground beef  \n2 tablespoons water  \n\u00bc teaspoon baking soda  \nSalt and pepper  \n4 cups beef broth  \n6 ounces pancetta, chopped coarse  \n1 onion, chopped coarse  \n1 large carrot, peeled and chopped coarse  \n1 celery rib, chopped coarse  \n1 tablespoon unsalted butter  \n1 tablespoon extra-virgin olive oil  \n3 tablespoons tomato paste  \n1 cup dry red wine  \n1 ounce Parmesan cheese, grated (1/2 cup), plus extra for serving  \n1 pound tagliatelle\n\nKEY EQUIPMENT  \nFood Processors  \nDutch Ovens  \nMeasuring Spoons  \nBEFORE YOU BEGIN  \nIf you use our recommended beef broth, Better Than Bouillon Roasted Beef Base, you can skip step 2 and make a concentrated broth by adding 4 teaspoons paste to 2 cups water. To ensure the best flavor, be sure to brown the pancetta-vegetable mixture in step 4 until the fond on the bottom of the pot is quite dark. The cooked sauce will look thin but will thicken once tossed with the pasta. Tagliatelle is a long, flat, dry egg pasta that is about 1/4 inch wide; if you can\u2019t find it, you can substitute pappardelle. Substituting other pasta may result in a too-wet sauce.  \nINSTRUCTIONS\n\n1. Toss beef with water, baking soda, and 1/4 teaspoon pepper in bowl until thoroughly combined. Set aside.  \n2. While beef sits, bring broth to boil over high heat in large pot (this pot will be used to cook pasta in step 6\\) and cook until reduced to 2 cups, about 15 minutes; set aside.  \n3. Pulse pancetta in food processor until finely chopped, 15 to 20 pulses. Add onion, carrot, and celery and pulse until vegetables are finely chopped and mixture has paste-like consistency, 12 to 15 pulses, scraping down sides of bowl as needed.  \n4. Heat butter and oil in large Dutch oven over medium-high heat until shimmering. When foaming subsides, add pancetta-vegetable mixture and 1/4 teaspoon pepper and cook, stirring occasionally, until liquid has evaporated, about 8 minutes. Spread mixture in even layer in bottom of pot and continue to cook, stirring every couple of minutes, until very dark browned bits form on bottom of pot, 7 to 12 minutes longer. Stir in tomato paste and cook until paste is rust-colored and bottom of pot is dark brown, 1 to 2 minutes.  \n5. Reduce heat to medium, add beef, and cook, using wooden spoon to break meat into pieces no larger than 1/4 inch, until beef has just lost its raw pink color, 4 to 7 minutes. Stir in wine, scraping up any browned bits, and bring to simmer. Cook until wine has evaporated and sauce has thickened, about 5 minutes. Stir in broth and Parmesan. Return sauce to simmer; cover, reduce heat to low, and simmer for 30 minutes (sauce will look thin). Remove from heat and season with salt and pepper to taste.  \n6. Rinse pot that held broth. While sauce simmers, bring 4 quarts water to boil in now-empty pot. Add pasta and 1 tablespoon salt and cook, stirring occasionally, until al dente. Reserve 1/4 cup cooking water, then drain pasta. Add pasta to pot with sauce and toss to combine. Adjust sauce consistency with reserved cooking water as needed. Transfer to platter or individual bowls and serve, passing extra Parmesan separately.\n\n",
             }
         ]
     },
@@ -334,7 +334,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "Idk Jenny makes this often [https://thewoksoflife.com/twice-cooked-pork/\\#recipe](https://thewoksoflife.com/twice-cooked-pork/\\#recipe)\n\nBut one insight I have is to bake the pork instead of fry since frying pops so much\n\nMaybe consider sous vide the pork belly instead of boil\n\n",
+                content_markdown: "Idk Jenny makes this often [https://thewoksoflife.com/twice-cooked-pork/\\#recipe](https://thewoksoflife.com/twice-cooked-pork/#recipe)\n\nBut one insight I have is to bake the pork instead of fry since frying pops so much\n\nMaybe consider sous vide the pork belly instead of boil\n\n",
             }
         ]
     },
@@ -382,7 +382,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://www.reddit.com/r/Cooking/comments/cgbc7u/im\\_cooking\\_one\\_meal\\_from\\_every\\_state\\_in\\_the/](https://www.reddit.com/r/Cooking/comments/cgbc7u/im\\_cooking\\_one\\_meal\\_from\\_every\\_state\\_in\\_the/)\n\n",
+                content_markdown: "[https://www.reddit.com/r/Cooking/comments/cgbc7u/im\\_cooking\\_one\\_meal\\_from\\_every\\_state\\_in\\_the/](https://www.reddit.com/r/Cooking/comments/cgbc7u/im_cooking_one_meal_from_every_state_in_the/)\n\n",
             }
         ]
     },
@@ -391,7 +391,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://www.reddit.com/r/Cooking/comments/gu6xfh/nearly\\_every\\_suggestion\\_i\\_got\\_for\\_my\\_every/?utm\\_source=share&utm\\_medium=ios\\_app&utm\\_name=iossmf](https://www.reddit.com/r/Cooking/comments/gu6xfh/nearly\\_every\\_suggestion\\_i\\_got\\_for\\_my\\_every/?utm\\_source=share&utm\\_medium=ios\\_app&utm\\_name=iossmf)\n\nCopy: [https://docs.google.com/document/d/1Iokh5tF7H51E8vJTHUc6PfMVftLqqOKeXVgYdbVcqsA/edit](https://docs.google.com/document/d/1Iokh5tF7H51E8vJTHUc6PfMVftLqqOKeXVgYdbVcqsA/edit)\n\nAlt https://www.reddit.com/r/Cooking/comments/grgm1b/im\\_going\\_to\\_cook\\_one\\_recipe\\_from\\_every\\_country/\n\n",
+                content_markdown: "[https://www.reddit.com/r/Cooking/comments/gu6xfh/nearly\\_every\\_suggestion\\_i\\_got\\_for\\_my\\_every/?utm\\_source=share&utm\\_medium=ios\\_app&utm\\_name=iossmf](https://www.reddit.com/r/Cooking/comments/gu6xfh/nearly_every_suggestion_i_got_for_my_every/?utm_source=share&utm_medium=ios_app&utm_name=iossmf)\n\nCopy: [https://docs.google.com/document/d/1Iokh5tF7H51E8vJTHUc6PfMVftLqqOKeXVgYdbVcqsA/edit](https://docs.google.com/document/d/1Iokh5tF7H51E8vJTHUc6PfMVftLqqOKeXVgYdbVcqsA/edit)\n\nAlt https://www.reddit.com/r/Cooking/comments/grgm1b/im\\_going\\_to\\_cook\\_one\\_recipe\\_from\\_every\\_country/\n\n",
             }
         ]
     },
@@ -851,7 +851,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "Party food  \n[https://m.youtube.com/watch?v=jbBuxsvs\\_AE](https://m.youtube.com/watch?v=jbBuxsvs\\_AE)\n\n",
+                content_markdown: "Party food  \n[https://m.youtube.com/watch?v=jbBuxsvs\\_AE](https://m.youtube.com/watch?v=jbBuxsvs_AE)\n\n",
             }
         ]
     },
@@ -869,7 +869,11 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "From Tasty  \n[https://tasty-co.cdn.ampproject.org/v/s/tasty.co/amp/recipe/ratatouille](https://tasty-co.cdn.ampproject.org/v/s/tasty.co/amp/recipe/ratatouille?amp\\_js\\_v=a6&amp\\_gsa=1&usqp=mq331AQHKAFQArABIA%3D%3D\\#aoh=16145661266408&referrer=https%3A%2F%2Fwww.google.com&amp\\_tf=From%20%251%24s&ampshare=https%3A%2F%2Ftasty.co%2Frecipe%2Fratatouille)\n\n",
+                content_markdown: "From Tasty  \n[https://tasty-co.cdn.ampproject.org/v/s/tasty.co/amp/recipe/ratatouille](https://tasty-co.cdn.ampproject.org/v/s/tasty.co/amp/recipe/ratatouille?amp_js_v=a6&amp_gsa=1&usqp=mq331AQHKAFQArABIA%3D%3D#aoh=16145661266408&referrer=https%3A%2F%2Fwww.google.com&amp_tf=From%20%251%24s&ampshare=https%3A%2F%2Ftasty.co%2Frecipe%2Fratatouille)\n\n",
+            },
+            {
+                date_epoch_seconds: 1728284400,
+                content_markdown: "\nMade the above recipe with fresh tomatoes and it was great.  Used sofrito better than bouillon but mostly just salt.  No need for seasoning.  We ate on top of pita bread that we got on too good to go.  We had leftovers for shakshuka too\\!\n\n",
             }
         ]
     },
@@ -896,7 +900,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://www.youtube.com/redirect?event=video\\_description&redir\\_token=QUFFLUhqbTNnMkRMRllxMUptbHJhVTdScVpWYzd1WjJ4QXxBQ3Jtc0trZU1nMW93ODlROElTQTlxc2phdU5DYWtRNVNXNVRTLXdXSS1yNFd0V1ZhMFZEdjZsdXlNd1NvNEhkOGh1UnVqNmFNVXc2Q0M5djFVNUtqWVREekRpUFFscUFlRWZpWHdWclhUVkxib0lPVVhOOVdRbw&q=https%3A%2F%2Ffoodwishes.blogspot.com%2F2019%2F03%2Fropa-vieja-cuban-beef-back-off-marie.html](https://www.youtube.com/redirect?event=video\\_description&redir\\_token=QUFFLUhqbTNnMkRMRllxMUptbHJhVTdScVpWYzd1WjJ4QXxBQ3Jtc0trZU1nMW93ODlROElTQTlxc2phdU5DYWtRNVNXNVRTLXdXSS1yNFd0V1ZhMFZEdjZsdXlNd1NvNEhkOGh1UnVqNmFNVXc2Q0M5djFVNUtqWVREekRpUFFscUFlRWZpWHdWclhUVkxib0lPVVhOOVdRbw&q=https%3A%2F%2Ffoodwishes.blogspot.com%2F2019%2F03%2Fropa-vieja-cuban-beef-back-off-marie.html)\n\nUse flank steak in a braise with tomatoes and capers and peppers\n\n",
+                content_markdown: "[https://www.youtube.com/redirect?event=video\\_description&redir\\_token=QUFFLUhqbTNnMkRMRllxMUptbHJhVTdScVpWYzd1WjJ4QXxBQ3Jtc0trZU1nMW93ODlROElTQTlxc2phdU5DYWtRNVNXNVRTLXdXSS1yNFd0V1ZhMFZEdjZsdXlNd1NvNEhkOGh1UnVqNmFNVXc2Q0M5djFVNUtqWVREekRpUFFscUFlRWZpWHdWclhUVkxib0lPVVhOOVdRbw&q=https%3A%2F%2Ffoodwishes.blogspot.com%2F2019%2F03%2Fropa-vieja-cuban-beef-back-off-marie.html](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbTNnMkRMRllxMUptbHJhVTdScVpWYzd1WjJ4QXxBQ3Jtc0trZU1nMW93ODlROElTQTlxc2phdU5DYWtRNVNXNVRTLXdXSS1yNFd0V1ZhMFZEdjZsdXlNd1NvNEhkOGh1UnVqNmFNVXc2Q0M5djFVNUtqWVREekRpUFFscUFlRWZpWHdWclhUVkxib0lPVVhOOVdRbw&q=https%3A%2F%2Ffoodwishes.blogspot.com%2F2019%2F03%2Fropa-vieja-cuban-beef-back-off-marie.html)\n\nUse flank steak in a braise with tomatoes and capers and peppers\n\n",
             }
         ]
     },
@@ -972,7 +976,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "I compared Chef John\u2019s recipe with the one from King Arthur flour and the main difference I noticed is Chef John\u2019s sweet crepe has a quarter cup of sugar (w.r.t. flour) and his savoury both is sweet and savoury double the milk (or halve the other ingredients)\n\nFor my first attempt, I\u2019m using [Chef John\u2019s ratios](https://foodwishes.blogspot.com/2008/06/how-to-make-crepes-even-messed-up-ones.html?m=1) so more liquid, and I\u2019m letting it sit in the fridge for 1 hr as suggested by both.\n\nMaybe make some whipped cream and put with nutella, strawberries, and blueberries?  I can do fried apples.\n\nMix wet first then dry, or else lumps.  Oil in pan helps fry and brown.  More watery means easiest to spread.  I tried the less watery AllRecipes version and it was tough to distribute.  Also cold pan.\n\n1c flour  \n2 eggs  \n2 tbsp butter  \n1.25 c milk  \n\u00bc tsp Morton kosher (don\u2019t change the salt, Jenny)\n\n[SPECIAL CREPE from Vegan and Vegetatoan Delicious crepes](https://delicious-crepes.com/menu/\\#Savory) at the Campbell farmers market   \nSpinach, tomatoes, green onions, marinated onions, feta, cheddar cheeses, and lemon juice.\n\nServe in \u2153 cup scoops into 12 inch heavy pan\n\nStart low-med on large burner with a paper wipe of butter and up to medium-high, cook other side briefly to crisp\n\nTo flip, lift edge by finger and flip with spatula.  Turn off immediately.  Pooled oils will fry the other side and coat the next crepe.\n\nServe open, not folded, so Jenny can stuff with Nutella, Banana, cinnamon, etc.\n\nJenny likes with Trader Joe\u2019s Cinabun Spread\n\n",
+                content_markdown: "I compared Chef John\u2019s recipe with the one from King Arthur flour and the main difference I noticed is Chef John\u2019s sweet crepe has a quarter cup of sugar (w.r.t. flour) and his savoury both is sweet and savoury double the milk (or halve the other ingredients)\n\nFor my first attempt, I\u2019m using [Chef John\u2019s ratios](https://foodwishes.blogspot.com/2008/06/how-to-make-crepes-even-messed-up-ones.html?m=1) so more liquid, and I\u2019m letting it sit in the fridge for 1 hr as suggested by both.\n\nMaybe make some whipped cream and put with nutella, strawberries, and blueberries?  I can do fried apples.\n\nMix wet first then dry, or else lumps.  Oil in pan helps fry and brown.  More watery means easiest to spread.  I tried the less watery AllRecipes version and it was tough to distribute.  Also cold pan.\n\n1c flour  \n2 eggs  \n2 tbsp butter  \n1.25 c milk  \n\u00bc tsp Morton kosher (don\u2019t change the salt, Jenny)\n\n[SPECIAL CREPE from Vegan and Vegetatoan Delicious crepes](https://delicious-crepes.com/menu/#Savory) at the Campbell farmers market   \nSpinach, tomatoes, green onions, marinated onions, feta, cheddar cheeses, and lemon juice.\n\nServe in \u2153 cup scoops into 12 inch heavy pan\n\nStart low-med on large burner with a paper wipe of butter and up to medium-high, cook other side briefly to crisp\n\nTo flip, lift edge by finger and flip with spatula.  Turn off immediately.  Pooled oils will fry the other side and coat the next crepe.\n\nServe open, not folded, so Jenny can stuff with Nutella, Banana, cinnamon, etc.\n\nJenny likes with Trader Joe\u2019s Cinabun Spread\n\n",
             }
         ]
     },
@@ -981,7 +985,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://m.youtube.com/watch?v=YWh\\_9xOq\\_8o](https://m.youtube.com/watch?v=YWh\\_9xOq\\_8o)\n\nUsed almost a cup of flour but 2 tbsp soy sauce  \nCut cabbage thinner  \nUsed Korean Napa, it\u2019s alright  \nSalt a lot more than I think  \nJenny made a sauce of mayo, ketchup, soy, and water  \nDidn\u2019t use corn starch  \nMake sure it\u2019s fairly heavy on batter or else it falls apart   \nFinish by frying in butter like omelette \n\n",
+                content_markdown: "[https://m.youtube.com/watch?v=YWh\\_9xOq\\_8o](https://m.youtube.com/watch?v=YWh_9xOq_8o)\n\nUsed almost a cup of flour but 2 tbsp soy sauce  \nCut cabbage thinner  \nUsed Korean Napa, it\u2019s alright  \nSalt a lot more than I think  \nJenny made a sauce of mayo, ketchup, soy, and water  \nDidn\u2019t use corn starch  \nMake sure it\u2019s fairly heavy on batter or else it falls apart   \nFinish by frying in butter like omelette \n\n",
             },
             {
                 date_epoch_seconds: 1642402800,
@@ -1105,7 +1109,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://flouronmyface.com/instant-pot-london-broil/](https://flouronmyface.com/instant-pot-london-broil/)\n\n[https://disheswithdad.com/instant-pot-london-broil/\\#how-to-make-london-broil-in-an-instant-pot](https://disheswithdad.com/instant-pot-london-broil/\\#how-to-make-london-broil-in-an-instant-pot)\n\nStart white rice on side  \nMushrooms, carrots, onion, butter, beef fats, herbs like marjoram and rosemary  \nPotato\u2019s and squash Beets  \n1.5 lbs Beef and 2 cup broth, worchestershire some glugs, ketchup, just a big squirt.  \n20 min per lbs. so 30 min.  \nRemove content, add corn starch slurry to make gravy  \nShred beef and pour gravy on top\n\nTurned out good, good broth volume, could do a bit more.\n\nConsider cooking for less time for beef cause it was pretty well done.  Concerned the potato\u2019s and stuff won\u2019t cook fully though.  This time was good, next time might not be.\n\n",
+                content_markdown: "[https://flouronmyface.com/instant-pot-london-broil/](https://flouronmyface.com/instant-pot-london-broil/)\n\n[https://disheswithdad.com/instant-pot-london-broil/\\#how-to-make-london-broil-in-an-instant-pot](https://disheswithdad.com/instant-pot-london-broil/#how-to-make-london-broil-in-an-instant-pot)\n\nStart white rice on side  \nMushrooms, carrots, onion, butter, beef fats, herbs like marjoram and rosemary  \nPotato\u2019s and squash Beets  \n1.5 lbs Beef and 2 cup broth, worchestershire some glugs, ketchup, just a big squirt.  \n20 min per lbs. so 30 min.  \nRemove content, add corn starch slurry to make gravy  \nShred beef and pour gravy on top\n\nTurned out good, good broth volume, could do a bit more.\n\nConsider cooking for less time for beef cause it was pretty well done.  Concerned the potato\u2019s and stuff won\u2019t cook fully though.  This time was good, next time might not be.\n\n",
             }
         ]
     },
@@ -1300,7 +1304,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://m.youtube.com/watch?v=-E5\\_B2PemAI](https://m.youtube.com/watch?v=-E5\\_B2PemAI)\n\nFish over potato\u2019s and veggies \n\n",
+                content_markdown: "[https://m.youtube.com/watch?v=-E5\\_B2PemAI](https://m.youtube.com/watch?v=-E5_B2PemAI)\n\nFish over potato\u2019s and veggies \n\n",
             }
         ]
     },
@@ -1319,6 +1323,10 @@ export const recipes: PlaceholderData[] = [
             {
                 date_epoch_seconds: 1593759600,
                 content_markdown: "Stems cannot be steamed or slow fried, should be crispy fried because of strings like sting peas\n\nLeaves should be wilted but stems crunchy mushy\n\n",
+            },
+            {
+                date_epoch_seconds: 1728198000,
+                content_markdown: "[https://thewoksoflife.com/yam-leaves/\\#recipe](https://thewoksoflife.com/yam-leaves/#recipe)\n\n",
             }
         ]
     },
@@ -1416,7 +1424,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://www.instructables.com/Glass-Potato-Chips/?amp\\_page=true](https://www.instructables.com/Glass-Potato-Chips/?amp\\_page=true)  \nJenny saw someone on the Instacart slack channel make it.\n\n",
+                content_markdown: "[https://www.instructables.com/Glass-Potato-Chips/?amp\\_page=true](https://www.instructables.com/Glass-Potato-Chips/?amp_page=true)  \nJenny saw someone on the Instacart slack channel make it.\n\n",
             }
         ]
     },
@@ -1546,7 +1554,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "Party food?\n\nJenny likes it with bleu cheese but goat cheese more\n\n[https://pinchofyum.com/bacon-wrapped-dates-with-goat-cheese](https://pinchofyum.com/bacon-wrapped-dates-with-goat-cheese)\n\nFrom Socarrat in NYC with Jenny\n\nFrom [AkBlind on Reddit](https://www.reddit.com/r/Cooking/comments/b0ma4z/what\\_is\\_your\\_best\\_appetizerparty\\_food/eifvw8l/).\n\nBacon Wrapped Dates filled with Goat Cheese:\n\n* Standard breakfast bacon  \n* Dried Dates (like those you find in the snack or preservatives aisle)  \n* Goat Cheese (compound is fine, standard is what is used here)\n\n1. Pre-heat oven to 350-375F (175C-190)  \n2. Cut the tip off the dates and remove the pits, if there. Make a small cut down the center but only through one side of the skin. You want them to open up similar to a hard shell taco.  \n3. Take a small finger amount of goat cheese and fill the cavity.  \n4. Halve your bacon strips and wrap the date in bacon, I personally like to wrap them so that all of the date is covered, even the tips. If you do have exposed areas, make sure it's the raw side of the date exposed and not the goat cheese cavity.  \n5. Place on wire rack stacked in a baking sheet and bake in the center of the oven till bacon is at your desired finish. For crispy, expect 20-30 minutes or 5-10 minutes after the fat has begun to liquidate and they start to sizzle.\n\n",
+                content_markdown: "Party food?\n\nJenny likes it with bleu cheese but goat cheese more\n\n[https://pinchofyum.com/bacon-wrapped-dates-with-goat-cheese](https://pinchofyum.com/bacon-wrapped-dates-with-goat-cheese)\n\nFrom Socarrat in NYC with Jenny\n\nFrom [AkBlind on Reddit](https://www.reddit.com/r/Cooking/comments/b0ma4z/what_is_your_best_appetizerparty_food/eifvw8l/).\n\nBacon Wrapped Dates filled with Goat Cheese:\n\n* Standard breakfast bacon  \n* Dried Dates (like those you find in the snack or preservatives aisle)  \n* Goat Cheese (compound is fine, standard is what is used here)\n\n1. Pre-heat oven to 350-375F (175C-190)  \n2. Cut the tip off the dates and remove the pits, if there. Make a small cut down the center but only through one side of the skin. You want them to open up similar to a hard shell taco.  \n3. Take a small finger amount of goat cheese and fill the cavity.  \n4. Halve your bacon strips and wrap the date in bacon, I personally like to wrap them so that all of the date is covered, even the tips. If you do have exposed areas, make sure it's the raw side of the date exposed and not the goat cheese cavity.  \n5. Place on wire rack stacked in a baking sheet and bake in the center of the oven till bacon is at your desired finish. For crispy, expect 20-30 minutes or 5-10 minutes after the fat has begun to liquidate and they start to sizzle.\n\n",
             }
         ]
     },
@@ -1555,7 +1563,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://www.seriouseats.com/sea-urchin-uni-pasta-recipe](https://www.seriouseats.com/sea-urchin-uni-pasta-recipe)\n\n* Home MAde Pasta  \n* Crema  \n* Uni\n\n[https://japanfoodstyle.com/uni-japanese-sea-urchin-2/](https://japanfoodstyle.com/uni-japanese-sea-urchin-2/)\n\nHow to find, pick, open, clean, serve: [Catch and SUSHI Ep.2: UNI (Sea Urchin)](https://www.youtube.com/watch?v=Giv3ykfnuVc)\n\nForaging:\n\n* Look for rocky coast (isolated?) along kelp forest areas  \n* HMB (Pillar point) or Mendocino (Fort Ross)  \n* [Sail Rock off Mavericks beach](https://www.reddit.com/r/AskSF/comments/cmlxvr/comment/ew7zype/?utm\\_source=reddit&utm\\_medium=web2x&context=3)  \n* Avoid domoic acid season  \n* Needs negative tide\n\n[Pretty good guide around HMB and cleaning](https://www.wheredoitakethekids.com/places/foraging-for-sea-urchins-at-pillar-point/)\n\n[https://www.urchinomics.com](https://www.urchinomics.com)\n\n",
+                content_markdown: "[https://www.seriouseats.com/sea-urchin-uni-pasta-recipe](https://www.seriouseats.com/sea-urchin-uni-pasta-recipe)\n\n* Home MAde Pasta  \n* Crema  \n* Uni\n\n[https://japanfoodstyle.com/uni-japanese-sea-urchin-2/](https://japanfoodstyle.com/uni-japanese-sea-urchin-2/)\n\nHow to find, pick, open, clean, serve: [Catch and SUSHI Ep.2: UNI (Sea Urchin)](https://www.youtube.com/watch?v=Giv3ykfnuVc)\n\nForaging:\n\n* Look for rocky coast (isolated?) along kelp forest areas  \n* HMB (Pillar point) or Mendocino (Fort Ross)  \n* [Sail Rock off Mavericks beach](https://www.reddit.com/r/AskSF/comments/cmlxvr/comment/ew7zype/?utm_source=reddit&utm_medium=web2x&context=3)  \n* Avoid domoic acid season  \n* Needs negative tide\n\n[Pretty good guide around HMB and cleaning](https://www.wheredoitakethekids.com/places/foraging-for-sea-urchins-at-pillar-point/)\n\n[https://www.urchinomics.com](https://www.urchinomics.com)\n\n",
             }
         ]
     },
@@ -1609,7 +1617,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "Emily Udea: for bossam i\u2019ve been meaning to try maangchi\u2019s recipe [https://youtu.be/t0Ta\\_ckc9O0](https://youtu.be/t0Ta\\_ckc9O0)\n\nI tried to do David Changs but it was way too salty.  He coated in so much salt and sugar that I think I was supposed to wash off but it was way too much.\n\n",
+                content_markdown: "Emily Udea: for bossam i\u2019ve been meaning to try maangchi\u2019s recipe [https://youtu.be/t0Ta\\_ckc9O0](https://youtu.be/t0Ta_ckc9O0)\n\nI tried to do David Changs but it was way too salty.  He coated in so much salt and sugar that I think I was supposed to wash off but it was way too much.\n\n",
             }
         ]
     },
@@ -1645,7 +1653,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://docs.google.com/presentation/d/1MJw2wxHNNNMHDRAJQdA5-rMoJFtQRRBRn8HU-hMjsk8/edit\\#slide=id.g10f39a16fb2\\_0\\_313](https://docs.google.com/presentation/d/1MJw2wxHNNNMHDRAJQdA5-rMoJFtQRRBRn8HU-hMjsk8/edit\\#slide=id.g10f39a16fb2\\_0\\_313)\n\n",
+                content_markdown: "[https://docs.google.com/presentation/d/1MJw2wxHNNNMHDRAJQdA5-rMoJFtQRRBRn8HU-hMjsk8/edit\\#slide=id.g10f39a16fb2\\_0\\_313](https://docs.google.com/presentation/d/1MJw2wxHNNNMHDRAJQdA5-rMoJFtQRRBRn8HU-hMjsk8/edit#slide=id.g10f39a16fb2_0_313)\n\n",
             }
         ]
     },
@@ -1726,7 +1734,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://showmethecurry.com](https://showmethecurry.com)\n\n[https://www.bingingwithbabish.com/\\#top](https://www.bingingwithbabish.com/\\#top)\n\n[http://internetshaquille.com](http://internetshaquille.com)\n\n[https://www.instagram.com/yousuckatcooking/](https://www.instagram.com/yousuckatcooking/)\n\n[https://showmethecurry.com/](https://showmethecurry.com/)\n\n",
+                content_markdown: "[https://showmethecurry.com](https://showmethecurry.com)\n\n[https://www.bingingwithbabish.com/\\#top](https://www.bingingwithbabish.com/#top)\n\n[http://internetshaquille.com](http://internetshaquille.com)\n\n[https://www.instagram.com/yousuckatcooking/](https://www.instagram.com/yousuckatcooking/)\n\n[https://showmethecurry.com/](https://showmethecurry.com/)\n\n",
             }
         ]
     },
@@ -1896,7 +1904,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://www.reddit.com/r/Cooking/comments/b0ma4z/what\\_is\\_your\\_best\\_appetizerparty\\_food/](https://www.reddit.com/r/Cooking/comments/b0ma4z/what\\_is\\_your\\_best\\_appetizerparty\\_food/)\n\n",
+                content_markdown: "[https://www.reddit.com/r/Cooking/comments/b0ma4z/what\\_is\\_your\\_best\\_appetizerparty\\_food/](https://www.reddit.com/r/Cooking/comments/b0ma4z/what_is_your_best_appetizerparty_food/)\n\n",
             }
         ]
     },
@@ -1923,7 +1931,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://www.reddit.com/r/Cooking/comments/b0ma4z/what\\_is\\_your\\_best\\_appetizerparty\\_food/eifjufx/?utm\\_source=reddit&utm\\_medium=web2x&context=3](https://www.reddit.com/r/Cooking/comments/b0ma4z/what\\_is\\_your\\_best\\_appetizerparty\\_food/eifjufx/?utm\\_source=reddit&utm\\_medium=web2x&context=3)\n\nReminds me of the dip we got from Marfa\u2019s \u201cThe Get Go\u201d Grocery Store.\n\n",
+                content_markdown: "[https://www.reddit.com/r/Cooking/comments/b0ma4z/what\\_is\\_your\\_best\\_appetizerparty\\_food/eifjufx/?utm\\_source=reddit&utm\\_medium=web2x&context=3](https://www.reddit.com/r/Cooking/comments/b0ma4z/what_is_your_best_appetizerparty_food/eifjufx/?utm_source=reddit&utm_medium=web2x&context=3)\n\nReminds me of the dip we got from Marfa\u2019s \u201cThe Get Go\u201d Grocery Store.\n\n",
             }
         ]
     },
@@ -1985,7 +1993,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1647759600,
-                content_markdown: "Made for meeting Mimi for the first time  \nGreens\n\n* Crunch: Carrots / Cucumber / Sugar Snap Peas / Edamame  \n* Spice: **Celery** / Cilantro / **Green Spring Onion Scallion** / Mint  \n* Body: **Romaine** / Spinach / Napa or Red or Green Cabbage\n\nToppings\n\n* Sesame clusters  \n* **Wonton crisps** (air fryer) or crushed ramen (use seasoning in dressing)  \n* Raisins?  \n* **Mandarin oranges** / Chopped Mangos  \n* Sesame seeds  \n* **Pine Nuts**, Cashews?  No almonds or peanuts or cheese (allergies)\n\nDressing\n\n* 3 oil : 1 vinegar is for vinaigrette  \n* Sesame oil / Canola  \n* (Seasoned) Rice vinegar / lemon  \n* Sugar / Honey  \n* Grated ginger / Ground sesame seeds tamari paste / Orange Zest / Ground Sesame  \n* Salt: Hoisin / Miso / Soy sauce  \n* Spice: Sriracha? Chili oil? Chili crunch?\n\n[http://www.remiyasui.com/blog/2020/5/21/wonton-happiness-salad-inspired-by-souplantation](http://www.remiyasui.com/blog/2020/5/21/wonton-happiness-salad-inspired-by-souplantation) \n\n[https://ohsweetbasil.com/won-ton-chicken-salad/](https://ohsweetbasil.com/won-ton-chicken-salad/) \n\nFrom [Reddit Dressing](https://www.reddit.com/r/Old\\_Recipes/comments/c28vzb/this\\_is\\_my\\_moms\\_asian\\_salad\\_she\\_got\\_the\\_recipe\\_a/):\n\n* 1/2 cup oil  \n* 1/2 cup sugar  \n* 1 tablespoon soy sauce  \n* 1/4 cup cider vinegar  \n* Sesame oil  \n* \\-Blend above 5 ingredients well, chill-\n\n",
+                content_markdown: "Made for meeting Mimi for the first time  \nGreens\n\n* Crunch: Carrots / Cucumber / Sugar Snap Peas / Edamame  \n* Spice: **Celery** / Cilantro / **Green Spring Onion Scallion** / Mint  \n* Body: **Romaine** / Spinach / Napa or Red or Green Cabbage\n\nToppings\n\n* Sesame clusters  \n* **Wonton crisps** (air fryer) or crushed ramen (use seasoning in dressing)  \n* Raisins?  \n* **Mandarin oranges** / Chopped Mangos  \n* Sesame seeds  \n* **Pine Nuts**, Cashews?  No almonds or peanuts or cheese (allergies)\n\nDressing\n\n* 3 oil : 1 vinegar is for vinaigrette  \n* Sesame oil / Canola  \n* (Seasoned) Rice vinegar / lemon  \n* Sugar / Honey  \n* Grated ginger / Ground sesame seeds tamari paste / Orange Zest / Ground Sesame  \n* Salt: Hoisin / Miso / Soy sauce  \n* Spice: Sriracha? Chili oil? Chili crunch?\n\n[http://www.remiyasui.com/blog/2020/5/21/wonton-happiness-salad-inspired-by-souplantation](http://www.remiyasui.com/blog/2020/5/21/wonton-happiness-salad-inspired-by-souplantation) \n\n[https://ohsweetbasil.com/won-ton-chicken-salad/](https://ohsweetbasil.com/won-ton-chicken-salad/) \n\nFrom [Reddit Dressing](https://www.reddit.com/r/Old_Recipes/comments/c28vzb/this_is_my_moms_asian_salad_she_got_the_recipe_a/):\n\n* 1/2 cup oil  \n* 1/2 cup sugar  \n* 1 tablespoon soy sauce  \n* 1/4 cup cider vinegar  \n* Sesame oil  \n* \\-Blend above 5 ingredients well, chill-\n\n",
             }
         ]
     },
@@ -2070,7 +2078,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://getpocket.com/explore/item/this-genius-sauce-turns-your-pasta-into-a-seasonal-stunner-no-matter-the-season](https://getpocket.com/explore/item/this-genius-sauce-turns-your-pasta-into-a-seasonal-stunner-no-matter-the-season?utm\\_source=pocket-newtab)\n\n",
+                content_markdown: "[https://getpocket.com/explore/item/this-genius-sauce-turns-your-pasta-into-a-seasonal-stunner-no-matter-the-season](https://getpocket.com/explore/item/this-genius-sauce-turns-your-pasta-into-a-seasonal-stunner-no-matter-the-season?utm_source=pocket-newtab)\n\n",
             }
         ]
     },
@@ -2193,7 +2201,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "[https://www.instagram.com/p/ClE\\_xd3Lae3/?igshid=MDJmNzVkMjY=](https://www.instagram.com/p/ClE\\_xd3Lae3/?igshid=MDJmNzVkMjY=)\n\n",
+                content_markdown: "[https://www.instagram.com/p/ClE\\_xd3Lae3/?igshid=MDJmNzVkMjY=](https://www.instagram.com/p/ClE_xd3Lae3/?igshid=MDJmNzVkMjY=)\n\n",
             }
         ]
     },
@@ -2417,7 +2425,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1593759600,
-                content_markdown: "I really like Chinese Cooking Demistified\n\n2% salt by weight (3g or 0.5tsp)  [Recipes App](https://docs.google.com/document/d/126sD52zpuXMtTCaYG2jkXthMu7d2arjX8HN2x5KBYbY/edit\\#heading=h.s5l98pabcim9) similar to 1% for dumping wrappers\n\nAlso salted the water..\n\n[https://www.reddit.com/r/Cooking/comments/axyghr/recipe\\_biang\\_biang\\_noodles\\_with\\_chili\\_oil\\_topping/](https://www.reddit.com/r/Cooking/comments/axyghr/recipe\\_biang\\_biang\\_noodles\\_with\\_chili\\_oil\\_topping/)\n\nLots of resting.\n\n* 1 minute kneed  \n* 30 minute rest  \n* 2 minute kneed  \n* split dough into 4 logs.  Oil (optional)  \n* rest for 2 hrs  \n* Press and stretch and smack.  Boil.\n\n",
+                content_markdown: "I really like Chinese Cooking Demistified\n\n2% salt by weight (3g or 0.5tsp)  [Recipes App](https://docs.google.com/document/d/126sD52zpuXMtTCaYG2jkXthMu7d2arjX8HN2x5KBYbY/edit#heading=h.s5l98pabcim9) similar to 1% for dumping wrappers\n\nAlso salted the water..\n\n[https://www.reddit.com/r/Cooking/comments/axyghr/recipe\\_biang\\_biang\\_noodles\\_with\\_chili\\_oil\\_topping/](https://www.reddit.com/r/Cooking/comments/axyghr/recipe_biang_biang_noodles_with_chili_oil_topping/)\n\nLots of resting.\n\n* 1 minute kneed  \n* 30 minute rest  \n* 2 minute kneed  \n* split dough into 4 logs.  Oil (optional)  \n* rest for 2 hrs  \n* Press and stretch and smack.  Boil.\n\n",
             }
         ]
     },
@@ -2569,6 +2577,10 @@ export const recipes: PlaceholderData[] = [
             {
                 date_epoch_seconds: 1721458800,
                 content_markdown: "Made it again with one small bunch of collard greens from Bi-Rite\u2019s compost.  Used 1 cup of pinto beans from buy nothing from SF Food Bank.\n\nBeans on bottom so they soak in the water better.  3c water : 1c beans. 45 min high  (I did 30 but it was still crunchy).  Previously Jenny said she liked it more with fewer beans so I\u2019ll just make the normal amount and fish it out.\n\n",
+            },
+            {
+                date_epoch_seconds: 1723273200,
+                content_markdown: "Soaked the stale pinto beans cause last time was crunchy no matter what.  I soaked 24 hours and they\u2019re pretty good state before instant pot .  Drained, refilled with 2 cups chicken broth \\+ 2 tbsp sugar maybe.\n\n50 min high.\n\nAlso some dried chipotle peppers in adobo (\\~2 peppers), it\u2019s kind of spicy.\n\n",
             }
         ]
     },
@@ -2652,6 +2664,10 @@ export const recipes: PlaceholderData[] = [
             {
                 date_epoch_seconds: 1722841200,
                 content_markdown: "Jenny is about to go to the BIPOC meditation retreat.\n\nI decided to follow the above recipe website but use oat milk as well as:\n\n* \u00be cup AP flour  \n* \u00be cup blue corn masa harina (flour)  \n* 1 cup corn meal mix (for the grit and leavening)  \n* 1 tsp baking soda (cause corn meal mix has leavening)  \n* Added some extra water to get the right drizzly consistency, it was pretty doughy  \n* Double-fry\n\nHella good. Save them by half frying.  Even better the day after by waffle iron.  Ultra crispy but not overly dry.\n\n",
+            },
+            {
+                date_epoch_seconds: 1727679600,
+                content_markdown: "\nUsed 1 cup corn meal, 1 cup blue corn masa harina, 0.5 cup high protein flour  \n2 cups soy milk  \nJenny added cinnamon and vanilla\n\nNo need to double fry cause I use less water this time\n\n",
             }
         ]
     },
@@ -2828,7 +2844,7 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1721804400,
-                content_markdown: "[https://www.budgetbytes.com/spiced-lentils-with-carrots/](https://www.budgetbytes.com/spiced-lentils-with-carrots/)\n\nPretty dank recipe.  I used red lentils, it was a little bit \u201csoupy\u201d but soaked up real well at the end.  Finished uncovered.  Jenny liked the moderate spiciness of it.  Don\u2019t   \noverdo it though.\n\nJenny says no cumin in the future,.,.  Too heavy and \u201cspiced\u201d.\n\nMaybe next time: [https://www.recipetineats.com/lentil-soup/](https://www.recipetineats.com/lentil-soup/)\n\n",
+                content_markdown: "[https://www.budgetbytes.com/spiced-lentils-with-carrots/](https://www.budgetbytes.com/spiced-lentils-with-carrots/)\n\nPretty dank recipe.  I used red lentils, it was a little bit \u201csoupy\u201d but soaked up real well at the end.  Finished uncovered.  Jenny liked the moderate spiciness of it.  Don\u2019t   \noverdo it though.\n\nJenny says no cumin in the future,.,.  Too heavy and \u201cspiced\u201d.\u201d.\n\nMaybe next time: [https://www.recipetineats.com/lentil-soup/](https://www.recipetineats.com/lentil-soup/)\n\n",
             },
             {
                 date_epoch_seconds: 1722150000,
@@ -2841,7 +2857,208 @@ export const recipes: PlaceholderData[] = [
         notes: [
             {
                 date_epoch_seconds: 1721977200,
-                content_markdown: "Inspired by a Too Good To Go from Kawashima Kitchen\n\n[https://www.justonecookbook.com/ginger-pork-shogayaki/\\#wprm-recipe-container-60165](https://www.justonecookbook.com/ginger-pork-shogayaki/\\#wprm-recipe-container-60165)\n\n",
+                content_markdown: "Inspired by a Too Good To Go from Kawashima Kitchen\n\n[https://www.justonecookbook.com/ginger-pork-shogayaki/\\#wprm-recipe-container-60165](https://www.justonecookbook.com/ginger-pork-shogayaki/#wprm-recipe-container-60165)\n\n",
+            }
+        ]
+    },
+    {
+        name: "Steak",
+        notes: [
+            {
+                date_epoch_seconds: 1593759600,
+                content_markdown: "[https://www.seriouseats.com/the-food-labs-perfect-grilled-ribeye-steaks](https://www.seriouseats.com/the-food-labs-perfect-grilled-ribeye-steaks)\n\nPre-salt  \n\\~10 minutes on high on grills until 125F internal, kind of rare, closer to medium-rare, good temp.\n\nKind of whatever.  It\u2019s a steak.\n\n",
+            }
+        ]
+    },
+    {
+        name: "Bacon Jam Deviled Eggs",
+        notes: [
+            {
+                date_epoch_seconds: 1723532400,
+                content_markdown: "Discovered at One Flew Over at ATL\n\n",
+            }
+        ]
+    },
+    {
+        name: "Peruvian Chicken Noodle Soup Caldo de Gallina",
+        notes: [
+            {
+                date_epoch_seconds: 1724310000,
+                content_markdown: "Somen-like noodles with chunks of chicken and veggies.  Very borthy and salty and oregano.  Delicious.  Very consistent throughout country so far, very delicious, any kind of veggie: squash, carrot, peas, mushroom.\n\n",
+            }
+        ]
+    },
+    {
+        name: "Peruvian Tuna Salad",
+        notes: [
+            {
+                date_epoch_seconds: 1724655600,
+                content_markdown: "From backpacking Maccu Picchu\n\nWontons green beans light you a  \nGood for party food \n\n",
+            }
+        ]
+    },
+    {
+        name: "Chinese Chicken Salad",
+        notes: [
+            {
+                date_epoch_seconds: 1724655600,
+                content_markdown: "Jenny says good party food and no one ever brings it\n\n",
+            }
+        ]
+    },
+    {
+        name: "Peruvian Quinoa Soup",
+        notes: [
+            {
+                date_epoch_seconds: 1724655600,
+                content_markdown: "Fava beans, carrots chicken, so good\n\n",
+            }
+        ]
+    },
+    {
+        name: "Avocado Tomato Cheese Toast",
+        notes: [
+            {
+                date_epoch_seconds: 1725346800,
+                content_markdown: "\nTraditional breakfast in Peru.  Use hard thick and salty cheese.\n\n",
+            }
+        ]
+    },
+    {
+        name: "Yogurt Cereal with Fruit",
+        notes: [
+            {
+                date_epoch_seconds: 1725346800,
+                content_markdown: "\nTraditional breakfast in Peru.  They love Andean cereal but I like it more with yogurt and cut fruit like strawberry and melon.\n\n",
+            }
+        ]
+    },
+    {
+        name: "Pumpkin Squash Soup",
+        notes: [
+            {
+                date_epoch_seconds: 1724655600,
+                content_markdown: "\nDelicious food served in Peru.  Blended pumpkin squash thingy into soup with chicken broth.\n\n",
+            }
+        ]
+    },
+    {
+        name: "Quinoa Tom Yum Kha",
+        notes: [
+            {
+                date_epoch_seconds: 1725174000,
+                content_markdown: "\nDelicious Thai food in Cusco Peru, basically just Tom kha with quinoa in it but it\u2019s so good soup\\!  I should make more quinoa soup later.\n\n",
+            }
+        ]
+    },
+    {
+        name: "Bibimbap Korean Rice Veggie Bowl",
+        notes: []
+    },
+    {
+        name: "Kimbap Korean Rice Roll",
+        notes: [
+            {
+                date_epoch_seconds: 1593759600,
+                content_markdown: "See also, Onigiri, sushi.\n\n",
+            }
+        ]
+    },
+    {
+        name: "Korean Potatoes soaked in sugar",
+        notes: []
+    },
+    {
+        name: "",
+        notes: []
+    },
+    {
+        name: "Little France (Francito) Portuguese Dish",
+        notes: [
+            {
+                date_epoch_seconds: 1725865200,
+                content_markdown: "\nRecommended by Carol and dude on Galapagos Cruise\n\nLayers and layers of overeating.  Like a lasagna of bread, bacon, cheese, veggies, potato\u2019s, etc.  it\u2019s a dish of Portugal.\n\n",
+            }
+        ]
+    },
+    {
+        name: "Pavlova",
+        notes: [
+            {
+                date_epoch_seconds: 1725865200,
+                content_markdown: "\nDesert like merengue egg whites with vinegar instead so it\u2019s baked slow and low it\u2019s crispier and filled with lemon curd\n\nRecommended by Denise from Galapagos Cruise\n\n",
+            }
+        ]
+    },
+    {
+        name: "Potato and Egg Casserole",
+        notes: [
+            {
+                date_epoch_seconds: 1726297200,
+                content_markdown: "\nIn Quito, the Hilton Colon\n\nThey serve like a casserole of layers of thin sliced potato cooked with a thin layer of egg poured between each layer\n\n",
+            }
+        ]
+    },
+    {
+        name: "vegan Banana pancakes",
+        notes: [
+            {
+                date_epoch_seconds: 1726470000,
+                content_markdown: "\n[https://www.bbcgoodfood.com/recipes/vegan-banana-pancakes](https://www.bbcgoodfood.com/recipes/vegan-banana-pancakes)\n\nJenny says best pancakes I\u2019ve ever made\n\n* 3 bananas, some smooth some chunky  \n* Used yogurt and milk instead of almond milk  \n* Fried in butter instead of oil\n\n",
+            }
+        ]
+    },
+    {
+        name: "Claypot Eggplant Tofu and Mushroom",
+        notes: [
+            {
+                date_epoch_seconds: 1727334000,
+                content_markdown: "\n[https://www.foodnetwork.com/recipes/food-network-kitchen/braised-eggplant-with-tofu-and-shiitake-mushrooms-in-a-clay-pot-16999078](https://www.foodnetwork.com/recipes/food-network-kitchen/braised-eggplant-with-tofu-and-shiitake-mushrooms-in-a-clay-pot-16999078)\n\nMade a riff off of the recipe.  Roughly the sauce but steamed in a dutch oven instead to make things cleaner and simpler.  I liked it but Jenny wishes for more sauce.\n\n",
+            }
+        ]
+    },
+    {
+        name: "Chicken Riggies",
+        notes: [
+            {
+                date_epoch_seconds: 1727506800,
+                content_markdown: "\nRich made for community dinner at a church\n\n[https://www.delish.com/cooking/recipe-ideas/a38148014/chicken-riggies-recipe/](https://www.delish.com/cooking/recipe-ideas/a38148014/chicken-riggies-recipe/)\n\nChicken breast  \nRigatoni pasta  \nTomato sauce  \nFlavor\n\n",
+            }
+        ]
+    },
+    {
+        name: "Spring Roll Peanut Sauce",
+        notes: [
+            {
+                date_epoch_seconds: 1593759600,
+                content_markdown: "[https://vickypham.com/blog/vietnamese-peanut-sauce-spring-rolls/](https://vickypham.com/blog/vietnamese-peanut-sauce-spring-rolls/)\n\n",
+            }
+        ]
+    },
+    {
+        name: "Fried Nian Gao Sweet Potato Sandwiches",
+        notes: [
+            {
+                date_epoch_seconds: 1728630000,
+                content_markdown: "[https://whattocooktoday.com/fried-nian-gao-sweet-potato-sandwich.html](https://whattocooktoday.com/fried-nian-gao-sweet-potato-sandwich.html)\n\n",
+            }
+        ]
+    },
+    {
+        name: "Made With Lau Eggplant Garlic Sauce Pretty good (steam first)",
+        notes: [
+            {
+                date_epoch_seconds: 1728716400,
+                content_markdown: "[https://www.madewithlau.com/recipes/eggplant-with-garlic-sauce](https://www.madewithlau.com/recipes/eggplant-with-garlic-sauce)\n\nKind of salty and thick so we added like 4 tbsp water (mushroom broth)\n\n",
+            }
+        ]
+    },
+    {
+        name: "Jenny\u2019s Kombucha",
+        notes: [
+            {
+                date_epoch_seconds: 1729321200,
+                content_markdown: "Lemon Raspberry Ginger Watermelon 10/10 jenny likes it\\!  Very impressed.  Like GT\u2019s.\n\n",
             }
         ]
     },
