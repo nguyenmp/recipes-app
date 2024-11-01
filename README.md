@@ -112,3 +112,12 @@ vercel env pull .env.local
 white rice - my personal recipes should be on top
 instantpot rice
 rice
+
+## Running migrations
+
+```bash
+set -a && source .env.local && set +a
+pnpm migrate
+```
+
+or via docker, see vps-management

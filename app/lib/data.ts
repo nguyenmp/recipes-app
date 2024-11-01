@@ -18,6 +18,7 @@ export const ARCHIVE_BOX_HOST = process.env.ARCHIVE_BOX_HOST!;
 const RELATED_WORDS_LIMIT = 30;
 
 export async function resetDatabaseTables() {
+    throw new Error('This is not supported anymore, no more dataloss.  We are officially using the recipes app from now on.  See migrations.ts');
     await sql`DROP TABLE IF EXISTS Recipes CASCADE`;
     await sql`DROP TABLE IF EXISTS Notes CASCADE`;
     await sql`DROP TABLE IF EXISTS Notes CASCADE`;

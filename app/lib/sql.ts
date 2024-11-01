@@ -1,5 +1,7 @@
 import * as vercel_postgres from "@vercel/postgres";
-import { Pool, QueryConfigValues, QueryResult, QueryResultRow } from 'pg';
+import pg from 'pg';
+import {QueryConfigValues, QueryResult, QueryResultRow} from 'pg';
+const { Pool } = pg;
 
 // Specifically don't export our connection so that all SQL must
 // go through the methods below and get logged during debug mode
@@ -11,6 +13,10 @@ const connectionPool = new Pool({
   password: process.env.POSTGRES_PASSWORD,
   port: 5432,
 });
+
+// Only exception is for auth cause they want a pool.
+// TODO: Make this a proxy object so we can log what SQL queries they submit
+export const connectionPoolForAuth = connectionPool;
 
 const DEBUG = false;
 

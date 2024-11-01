@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
+import { SignIn } from "./ui/sign-in"
 
 
 function ChemicalIcon() {
@@ -26,6 +27,7 @@ export default async function Home() {
                 <Link href="/recipes" className="m-auto p-4 text-center">
                     <ChemicalIcon /> Get Started
                 </Link>
+                <SignIn />
             </div>
         </div>
     )
