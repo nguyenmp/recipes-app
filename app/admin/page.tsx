@@ -111,7 +111,7 @@ async function insertNoteForRecipe(recipeId: Number, note: ShallowNote): Promise
     return await createNoteForRecipe(recipeId.valueOf(), note);
 }
 
-async function EmbeddingsMetadata() {
+async function EmbeddingsMetadata() {return await withTimingAsync('EmbeddingsMetadata', async () => {
     const cookieStore = await cookies(); // Do this to prevent SSR because below code can break.
     const wordEmbeddingsMetadata = await countWordsNeedingEmbeddings();
     const recipeEmbeddingsMetadata = await countRecipesNeedingEmbeddings();
@@ -124,18 +124,18 @@ async function EmbeddingsMetadata() {
             </ul>
         </div>
     );
-}
+})};
 
-async function AllTheLinks() {
+async function AllTheLinks() {return await withTimingAsync('AllTheLinks', async () => {
     const cookieStore = await cookies(); // Do this to prevent SSR because below code can break.
-    const contents = await withTimingAsync('Query', async () => await sql<{content_markdown: string}>`SELECT content_markdown FROM Notes`);
+    const contents = await sql<{content_markdown: string}>`SELECT content_markdown FROM Notes`;
     const links = contents.rows.flatMap((row) => {
         const markdown_converter = new showdown.Converter({ simplifiedAutoLink: true });
-        const html = withTiming('makeHtml', () => markdown_converter.makeHtml(row.content_markdown));
-        const document = withTiming('DOMParser', () => (new DOMParser).parseFromString(html, 'text/html'));
-        return withTiming('querySelectorAll', () => (Array.from(document.querySelectorAll("a")) as HTMLAnchorElement[]).map((anchor) => {
+        const html = markdown_converter.makeHtml(row.content_markdown);
+        const document = (new DOMParser).parseFromString(html, 'text/html');
+        return (Array.from(document.querySelectorAll("a")) as HTMLAnchorElement[]).map((anchor) => {
             return anchor.href;
-        }));
+        });
     });
 
     return (
@@ -145,7 +145,7 @@ async function AllTheLinks() {
             })}
         </div>
     );
-}
+})};
 
 export default async function AdminPage() {
     return (
