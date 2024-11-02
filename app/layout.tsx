@@ -21,9 +21,9 @@ export async function Header() {
  
   return (
     <div>
-      <p>{session.user?.name || "Unknown Name"}</p>
-      <p>{session.user?.email || "Unknown Email"}</p>
-      <img src={session.user?.image || undefined} alt="User Avatar" />
+      <p>{session.user.name || "Unknown Name"}</p>
+      <p>{session.user.email || "Unknown Email"}</p>
+      <img src={session.user.image || undefined} alt="User Avatar" />
       <SignOut />
     </div>
   )

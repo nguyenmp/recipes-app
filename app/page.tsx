@@ -1,6 +1,4 @@
-import Image from "next/image"
 import Link from "next/link"
-import { SignIn } from "./ui/sign-in"
 
 
 function ChemicalIcon() {
