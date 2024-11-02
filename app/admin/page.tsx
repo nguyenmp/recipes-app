@@ -13,11 +13,16 @@ import { sql } from '../lib/sql';
 import { ErrorBoundary } from '../ui/error_boundary';
 import { cookies } from 'next/headers';
 import { Suspense } from 'react';
+import { auth, Role } from '@/auth';
+import { NextResponse } from 'next/server';
+import { ListBucketInventoryConfigurationsOutputFilterSensitiveLog } from '@aws-sdk/client-s3';
 
 const SERIAL_OPERATIONS = false;
 
 async function seedDatabase() {
     "use server";
+    const session = await auth();
+    if (session?.user.role !== Role.admin) return redirect('/404');
     console.log('Seed Database')
 
     await resetDatabaseTables();
@@ -42,6 +47,8 @@ async function seedDatabase() {
 
 async function resetCache() {
     "use server";
+    const session = await auth();
+    if (session?.user.role !== Role.admin) return redirect('/404');
     // https://nextjs.org/docs/app/api-reference/functions/revalidatePath#revalidating-all-data
     revalidatePath('/', 'layout')
     redirect('/');
@@ -148,6 +155,8 @@ async function AllTheLinks() {return await withTimingAsync('AllTheLinks', async 
 })};
 
 export default async function AdminPage() {
+    const session = await auth();
+    if (session?.user.role !== Role.admin) return redirect('/404');
     return (
         <main>
             <h1>Admin Page</h1>

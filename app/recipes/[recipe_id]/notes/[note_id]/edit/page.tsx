@@ -3,12 +3,14 @@ import { saveNote } from "@/app/lib/actions";
 import { getNoteById } from "@/app/lib/data";
 import { ShallowNote } from "@/app/lib/definitions";
 import { EditNote } from "@/app/ui/recipe";
+import { has_read_permissions } from "@/auth";
 
 
 
 export default async function Page(
     props: { params: Promise<{ recipe_id: string, note_id: string }>, searchParams: Promise<Partial<ShallowNote>> }
 ) {
+    await has_read_permissions();
     const searchParams = await props.searchParams;
     const params = await props.params;
     // Load note from DB first

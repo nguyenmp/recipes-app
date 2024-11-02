@@ -4,6 +4,7 @@ import PostgresAdapter from "@auth/pg-adapter"
 import NextAuth from "next-auth"
 import { connectionPoolForAuth } from "./app/lib/sql"
 import Nodemailer from "next-auth/providers/nodemailer"
+import { redirect } from 'next/navigation'
 
 export enum Role {
   admin,
@@ -47,3 +48,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
 })
+
+export async function has_read_permissions() {
+  const session = await auth();
+  if (session?.user.role !== Role.admin && session?.user.role !== Role.read_only_guest) return redirect('/404');
+}
