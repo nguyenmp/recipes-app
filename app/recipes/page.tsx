@@ -8,7 +8,7 @@ import { withTimingAsync } from "../lib/utils";
 import PipelineSingleton from "../lib/embeddings_pipeline";
 import assert from "assert";
 import { FeatureExtractionPipeline } from "@xenova/transformers";
-import { has_read_permissions } from "@/auth";
+import { has_read_permissions, has_write_permissions } from "@/auth";
 
 type ScoredRecipeMatch = StoredRecipe & {
   matches_by_term: {[term: string]: SearchMatch & {term_score: number}};
@@ -231,6 +231,7 @@ async function SuggestedTerms(params: {levenshtein: LevenshteinMatch[], db_embed
 
 export default async function Recipes(props: {searchParams: Promise<{query?: string, debug?: string}>}) {
   await has_read_permissions();
+  const render_write_permission_stuff = await has_write_permissions();
   const searchParams = await props.searchParams;
   const query = searchParams.query || '';
 
@@ -241,7 +242,7 @@ export default async function Recipes(props: {searchParams: Promise<{query?: str
 
   return (
     <main>
-      <Link href="/recipes/new">Create New Recipe</Link>
+      {render_write_permission_stuff ? <Link href="/recipes/new">Create New Recipe</Link> : <></>}
       <Suspense>
         <SearchBar />
       </Suspense>

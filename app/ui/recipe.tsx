@@ -50,7 +50,7 @@ export function AttachmentsViewer(params: {attachments?: MaterializedAttachment[
     )
 }
 
-export async function RecipeCard(recipe: DeepRecipe) {
+export async function RecipeCard(recipe: DeepRecipe, readOnly: boolean) {
     const materializedAttachmentsByNoteId = await materializeAttachmentsForRecipe(recipe);
 
     return (
@@ -60,13 +60,13 @@ export async function RecipeCard(recipe: DeepRecipe) {
                 return <div key={`note-${note.id}`} className="px-5 hover:bg-stone-200 transition-colors duration-200">
                     <div className="flex flex-row space-x-4">
                         <p className="text-xs">{getDateStringFromEpochSeconds(note.date_epoch_seconds)}</p>
-                        <Link className="text-xs" href={`/recipes/${recipe.id}/notes/${note.id}/edit`}>Edit Note</Link>
+                        {readOnly ? <></> : <Link className="text-xs" href={`/recipes/${recipe.id}/notes/${note.id}/edit`}>Edit Note</Link>}
                     </div>
                     <MarkdownPreview content_markdown={note.content_markdown} />
                     <AttachmentsViewer attachments={materializedAttachmentsByNoteId.get(note.id)} />
                 </div>
             })}
-            <Link href={`/recipes/${recipe.id}/notes/new`}>Add a new note</Link>
+            {readOnly ? <></> : <Link href={`/recipes/${recipe.id}/notes/new`}>Add a new note</Link>}
         </div>
     );
 }

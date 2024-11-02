@@ -3,14 +3,15 @@ import { saveNote } from "@/app/lib/actions";
 import { getNoteById } from "@/app/lib/data";
 import { ShallowNote } from "@/app/lib/definitions";
 import { EditNote } from "@/app/ui/recipe";
-import { has_read_permissions } from "@/auth";
+import { has_read_permissions, has_write_permissions } from "@/auth";
+import { redirect } from "next/navigation";
 
 
 
 export default async function Page(
     props: { params: Promise<{ recipe_id: string, note_id: string }>, searchParams: Promise<Partial<ShallowNote>> }
 ) {
-    await has_read_permissions();
+    if (!await has_write_permissions()) redirect('/404');
     const searchParams = await props.searchParams;
     const params = await props.params;
     // Load note from DB first

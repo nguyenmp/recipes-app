@@ -53,3 +53,8 @@ export async function has_read_permissions() {
   const session = await auth();
   if (session?.user.role !== Role.admin && session?.user.role !== Role.read_only_guest) return redirect('/404');
 }
+
+export async function has_write_permissions(): Promise<boolean> {
+  const session = await auth();
+  return session?.user.role === Role.admin;
+}
