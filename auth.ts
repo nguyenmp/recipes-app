@@ -49,9 +49,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
 })
 
-export async function has_read_permissions() {
+export async function has_read_permissions(): Promise<boolean> {
   const session = await auth();
-  if (session?.user.role !== Role.admin && session?.user.role !== Role.read_only_guest) return redirect('/404');
+  return session?.user.role === Role.admin || session?.user.role === Role.read_only_guest;
+}
+
+export async function error_on_read_permissions() {
+  if (!await has_read_permissions()) return redirect('/404');
 }
 
 export async function has_write_permissions(): Promise<boolean> {

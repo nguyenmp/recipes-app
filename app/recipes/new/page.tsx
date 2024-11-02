@@ -1,7 +1,7 @@
 import { saveRecipe } from "@/app/lib/actions";
 import { getRecipeById } from "@/app/lib/data";
 import { EditRecipe } from "@/app/ui/recipe";
-import { has_read_permissions, has_write_permissions } from "@/auth";
+import { error_on_read_permissions, has_write_permissions } from "@/auth";
 import { redirect } from "next/navigation";
 
 export default async function Page() {

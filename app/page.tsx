@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { error_on_read_permissions, has_read_permissions, signIn } from "@/auth"
 
 
 function ChemicalIcon() {
@@ -13,6 +13,7 @@ function ChemicalIcon() {
 
 
 export default async function Home() {
+    const is_readable = await has_read_permissions();
     return (
         <div className="h-screen flex flex-col">
             <div className="m-auto text-center">
@@ -22,9 +23,17 @@ export default async function Home() {
                     <li>Markdown based notes</li>
                     <li>Show related recipes </li>
                 </ul>
-                <Link href="/recipes" className="m-auto p-4 text-center">
-                    <ChemicalIcon /> Get Started
-                </Link>
+                {
+                    is_readable ? <a href="/recipes" className="m-auto p-4 text-center"><ChemicalIcon /> Get Started</a> : 
+                    <form
+                        action={async () => {
+                            "use server"
+                            await signIn(undefined ,{redirectTo: '/recipes'})
+                        }}
+                    >
+                        <button className="m-auto p-4 text-center" type="submit"><ChemicalIcon /> Get Started</button>
+                    </form>
+                }
             </div>
         </div>
     )

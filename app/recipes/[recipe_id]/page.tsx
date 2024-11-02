@@ -1,11 +1,11 @@
 import { getRecipeById, getRelatedRecipesFromRecipe } from "@/app/lib/data";
 import { RecipeCard } from "@/app/ui/recipe";
-import { has_read_permissions, has_write_permissions } from "@/auth";
+import { error_on_read_permissions, has_write_permissions } from "@/auth";
 import Link from "next/link";
 
 
 export default async function Page(props: { params: Promise<{ recipe_id: string }> }) {
-    await has_read_permissions();
+    await error_on_read_permissions();
     const render_write_permission_stuff = await has_write_permissions();
     const params = await props.params;
     const id = Number(params.recipe_id);

@@ -3,7 +3,7 @@ import { saveNote } from "@/app/lib/actions";
 import { getNoteById } from "@/app/lib/data";
 import { ShallowNote } from "@/app/lib/definitions";
 import { EditNote } from "@/app/ui/recipe";
-import { has_read_permissions, has_write_permissions } from "@/auth";
+import { error_on_read_permissions, has_write_permissions } from "@/auth";
 import { redirect } from "next/navigation";
 
 
