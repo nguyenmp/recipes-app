@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { auth } from "@/auth";
+import { auth, Role } from "@/auth";
 import { SignIn } from "./ui/sign-in";
 import { SignOut } from "./ui/sign-out";
 
@@ -21,8 +21,9 @@ export async function Header() {
  
   return (
     <div>
-      <p>{session.user.name || "Unknown Name"}</p>
-      <p>{session.user.email || "Unknown Email"}</p>
+      <p>Name: {session.user.name || "Unknown Name"}</p>
+      <p>Email: {session.user.email || "Unknown Email"}</p>
+      <p>Role: {Role[session.user.role]}</p>
       <img src={session.user.image || undefined} alt="User Avatar" />
       <SignOut />
     </div>
