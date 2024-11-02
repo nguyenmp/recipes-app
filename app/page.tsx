@@ -1,4 +1,5 @@
 import { error_on_read_permissions, has_read_permissions, signIn } from "@/auth"
+import Link from "next/link";
 
 
 function ChemicalIcon() {
@@ -24,7 +25,7 @@ export default async function Home() {
                     <li>Show related recipes </li>
                 </ul>
                 {
-                    is_readable ? <a href="/recipes" className="m-auto p-4 text-center"><ChemicalIcon /> Get Started</a> : 
+                    is_readable ? <Link href="/recipes" className="m-auto p-4 text-center"><ChemicalIcon /> Get Started</Link> :
                     <form
                         action={async () => {
                             "use server"
