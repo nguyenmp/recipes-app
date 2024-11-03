@@ -143,7 +143,7 @@ export default async function AdminPage() {
             <h1>Admin Page</h1>
 
             <form action={seedDatabase}>
-                <button type="submit" className="bg-slate-300 rounded p-4 active:bg-slate-600">Reset Database but don't delete notes or recipes</button>
+                <button type="submit" className="bg-slate-300 rounded p-4 active:bg-slate-600">Reset Database but don&apos; delete notes or recipes</button>
             </form>
 
             <form action={resetCache}>
