@@ -44,8 +44,6 @@ function getTimeSecondsEpochOfRun(run : any): number {
 function getLatestRun(runs: any[], succeeded_only: boolean = false): any | null {
   let latest_run : any | null = null;
 
-  console.log(`Parsing ${JSON.stringify(runs)}`)
-
   runs = runs ?? [];
   for (const run of runs) {
     if (succeeded_only && run['status'] !== 'succeeded') {

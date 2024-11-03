@@ -1,6 +1,6 @@
 import { ShallowNote } from '../lib/definitions';
 import { PlaceholderData, recipes } from '../lib/placeholder-data';
-import { archiveLinks, countRecipesNeedingEmbeddings, countWordsNeedingEmbeddings, createNoteForRecipe, createRecipe, getRecipeById, getStoredRecipesNeedingEmbeddings, getStoredWordsNeedingEmbeddings, getTermsFromQuery, pullExistingLinks, putStoredWords, resetDatabaseTables, updateRecipeById, updateRecipeEmbeddingById } from '../lib/data';
+import { archiveLinks, countRecipesNeedingEmbeddings, countWordsNeedingEmbeddings, createNoteForRecipe, createRecipe, getRecipeById, getRecipes, getStoredRecipesNeedingEmbeddings, getStoredWordsNeedingEmbeddings, getTermsFromQuery, pullExistingLinks, putStoredWords, resetDatabaseTables, updateRecipeById, updateRecipeEmbeddingById, updateRecipeEmbeddingForRecipeId } from '../lib/data';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { GenerateEmbeddings } from '../ui/generate_embeddings';
@@ -25,15 +25,6 @@ async function seedDatabase() {
     if (session?.user.role !== Role.admin) return redirect('/404');
     console.log('Seed Database')
 
-    await resetDatabaseTables();
-
-    if (SERIAL_OPERATIONS) {
-        for (const recipe of recipes) {
-            await insertRecipe(recipe);
-        }
-    } else {
-        await Promise.all(recipes.map(insertRecipe));
-    }
     await archiveLinks();
     await pullExistingLinks();
     await rebuildWordsEmbeddings();
@@ -80,24 +71,14 @@ async function rebuildRecipeEmbeddings() {
 
     const {missingCount, totalCount} = await countRecipesNeedingEmbeddings();
     let handledRecipes = 0;
-    let storedRecipeEmbeddings = await getStoredRecipesNeedingEmbeddings();
-    while (storedRecipeEmbeddings.length != 0) {
-        for (let index = 0; index < storedRecipeEmbeddings.length; index += 1) {
-            console.log(`Progress: ${handledRecipes}/${missingCount} ~ ${Math.round(handledRecipes / missingCount * 100)}%`)
-            const recipe = storedRecipeEmbeddings[index];
-            const deepRecipe = await getRecipeById(recipe.id);
-            const content = [
-                deepRecipe.name,
-                ...deepRecipe.notes,
-            ].join(' ');
-            const output = await classifier(content, {pooling: 'mean', normalize: true});
-            const embedding = output.tolist()[0];
-            await updateRecipeEmbeddingById(recipe.id, embedding);
-            handledRecipes += 1;
-        }
-        revalidatePath('/admin')
-        storedRecipeEmbeddings = await getStoredRecipesNeedingEmbeddings();
+    let storedRecipeEmbeddings = await getRecipes();
+    for (let index = 0; index < storedRecipeEmbeddings.length; index += 1) {
+        console.log(`Progress: ${handledRecipes}/${totalCount} ~ ${Math.round(handledRecipes / totalCount * 100)}%`)
+        const recipe = storedRecipeEmbeddings[index];
+        await updateRecipeEmbeddingForRecipeId(recipe.id, classifier);
+        handledRecipes += 1;
     }
+    revalidatePath('/admin')
 }
 
 async function insertRecipe(recipe: PlaceholderData): Promise<Number> {
@@ -162,7 +143,7 @@ export default async function AdminPage() {
             <h1>Admin Page</h1>
 
             <form action={seedDatabase}>
-                <button type="submit" className="bg-slate-300 rounded p-4 active:bg-slate-600">Reset Database</button>
+                <button type="submit" className="bg-slate-300 rounded p-4 active:bg-slate-600">Reset Database but don't delete notes or recipes</button>
             </form>
 
             <form action={resetCache}>

@@ -3,6 +3,8 @@ import { DeepRecipe, ShallowAttachment, ShallowNote, ShallowRecipe, StoredAttach
 import { getLinksFromMarkdown, getUrlFromHTMLAnchorElement, get, post, withTimingAsync } from "./utils";
 import {sync_content_from_archive} from "../api/archive_webhook/route";
 import assert from "assert";
+import PipelineSingletonClass from "./embeddings_pipeline";
+import { FeatureExtractionPipeline } from "@xenova/transformers";
 
 export const ARCHIVE_BOX_API_KEY = process.env.ARCHIVE_BOX_API_KEY!;
 export const ARCHIVE_BOX_URL = process.env.ARCHIVE_BOX_URL!;
@@ -264,6 +266,42 @@ export async function getRecipesForTerm(term : string): Promise<StoredRecipeSear
 
 export async function updateRecipeById(id: number, data: ShallowRecipe) {
     await sql`UPDATE Recipes SET name = ${data.name} WHERE id=${id}`
+
+    await updateRecipeEmbeddingForRecipeId(id);
+}
+
+export async function updateRecipeEmbeddingForRecipeId(id: number, classifier?: FeatureExtractionPipeline) {
+    classifier ??= await PipelineSingletonClass.getInstance();
+    const deepRecipe = await getRecipeById(id);
+    const link_contents = await getLinkContentsForRecipe(id);
+    const all_contents_and_weights: {content: string, weight: number}[] = [
+        {content: deepRecipe.name, weight: 5},
+        ...deepRecipe.notes.map((note) => {
+            return {content: note.content_markdown, weight: 3};
+        }),
+        {content: link_contents.join(' '), weight: 1},
+    ];
+    const weighted_embeddings = await Promise.all(all_contents_and_weights.map(async ({content, weight}) => {
+        const output = await classifier(content, {pooling: 'mean', normalize: true});
+        const embedding : number[] = output.tolist()[0];
+        return {embedding, weight};
+    }));
+    const embedding = mergeEmbeddingsByWeight(weighted_embeddings);
+    await updateRecipeEmbeddingById(id, embedding);
+}
+
+export function mergeEmbeddingsByWeight(input: {embedding: number[], weight: number}[]): number[] {
+    const total_weight : number = input.map((value) => value.weight).reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+    const result : number[] = [];
+    for (let index = 0; index < input[0].embedding.length; index++) {
+        let index_value = 0;
+        for (const embedding_and_weight of input) {
+            index_value += embedding_and_weight.embedding[index] * embedding_and_weight.weight;
+        }
+        index_value /= total_weight;
+        result.push(index_value);
+    }
+    return result;
 }
 
 export async function updateRecipeEmbeddingById(id: number, embedding: number[]) {
@@ -273,6 +311,7 @@ export async function updateRecipeEmbeddingById(id: number, embedding: number[])
 export async function createRecipe(recipe: Omit<ShallowRecipe, 'embedding'>): Promise<number> {
     const result = await sql<{id: number}>`INSERT INTO recipes (name) VALUES (${recipe.name}) RETURNING id;`
     const newRecipeId = result.rows[0]['id'];
+    await updateRecipeEmbeddingForRecipeId(newRecipeId);
     return newRecipeId;
 }
 
@@ -316,6 +355,8 @@ export async function updateNoteById(id: number, data: ShallowNote) {
         WHERE id=${id}
     `;
     await addLinksForNote(id, data);
+    const recipe_id = (await sql<{recipe_id: number}>`SELECT recipe_id FROM Notes WHERE Notes.id = ${id}`).rows[0].recipe_id;
+    await updateRecipeEmbeddingForRecipeId(recipe_id);
 }
 
 export async function addAttachmentforNote(note_id: number, attachment: ShallowAttachment) {
@@ -337,7 +378,7 @@ export async function createNoteForRecipe(recipeId: number, note: ShallowNote): 
     }
 
     await addLinksForNote(newNoteId, note);
-
+    await updateRecipeEmbeddingForRecipeId(recipeId);
     return newNoteId;
 }
 
@@ -345,6 +386,10 @@ export async function addLinksForNote(note_id: number, note: ShallowNote): Promi
     const links = getLinksFromMarkdown(note.content_markdown);
     if (links.length === 0) return;
     const urls: string[] = [];
+
+    // Need to do delete here in case we remove a link (or edit the URL)
+    // Should be done in a transaction but -shrug-
+    await sql`DELETE FROM NoteLinks WHERE note_id = ${note_id}`;
 
     for (const link of links) {
         const url = getUrlFromHTMLAnchorElement(link);
@@ -416,6 +461,13 @@ export async function addLinkContent(url: string, content: string, extractor_typ
         ON CONFLICT (link_id, content_type) DO UPDATE SET link_content = EXCLUDED.link_content, timestamp_epoch_seconds = EXCLUDED.timestamp_epoch_seconds
         WHERE LinkContents.timestamp_epoch_seconds < EXCLUDED.timestamp_epoch_seconds
     `;
+
+    const recipe_ids = (await sql<{recipe_id: number}>`SELECT DISTINCT Notes.recipe_id FROM NoteLinks
+        LEFT JOIN Notes ON Notes.id = NoteLinks.note_id 
+        WHERE NoteLinks.link_id = 1;`).rows.map((row) => row.recipe_id);
+    for (const recipe_id of recipe_ids) {
+        await updateRecipeEmbeddingForRecipeId(recipe_id);
+    }
 }
 
 export type LinkContent = {
@@ -429,6 +481,15 @@ export async function getLinkContents(url: string): Promise<string[]> {
     return response.rows.map((row) => {
         return row.content_type;
     })
+}
+
+export async function getLinkContentsForRecipe(recipe_id: number): Promise<string[]> {
+    const response = await sql<{link_content: string}>`select distinct link_content FROM LinkContents
+        JOIN Links on Links.id = LinkContents.link_id
+        join notelinks on notelinks.link_id  = links.id
+        join notes on notes.id = notelinks.note_id
+        where notes.recipe_id = ${recipe_id}`;
+    return response.rows.map((row) => row.link_content);
 }
 
 export function getTermsFromQuery(query: string): string[] {
