@@ -1,7 +1,7 @@
 
 import { saveNote } from "@/app/lib/actions";
 import { EditNote, RecipeCard } from "@/app/ui/recipe";
-import { error_on_read_permissions, has_write_permissions } from "@/auth";
+import { has_write_permissions } from "@/auth";
 import { redirect } from "next/navigation";
 
 

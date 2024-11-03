@@ -1,4 +1,4 @@
-import { error_on_read_permissions, has_read_permissions, signIn } from "@/auth"
+import { has_read_permissions, signIn } from "@/auth"
 import Link from "next/link";
 
 
