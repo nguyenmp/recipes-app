@@ -50,8 +50,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 })
 
 export async function has_read_permissions(): Promise<boolean> {
-  const session = await auth();
-  return session?.user.role === Role.admin || session?.user.role === Role.read_only_guest;
+  // Anyone can read...  no guest account needed.
+  return true;
 }
 
 export async function error_on_read_permissions() {
