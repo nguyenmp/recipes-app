@@ -11,6 +11,7 @@
 @layer components {
   .markdown-container {
     @apply py-3;
+    @apply break-all;
 
     p {
       @apply py-2
