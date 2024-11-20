@@ -7,7 +7,7 @@ import Link from "next/link";
 async function RelatedRecipes(params: {relatedRecipes: EmbeddingMatch<StoredRecipe>[]}) {
 
   return (
-    <div className="max-w-screen overflow-y-auto">
+    <div className="max-w-screen overflow-y-auto p-4">
       <ul className="flex flex-row gap-4">
         <p className="flex-shrink-0">Related Recipes:</p>
         {
