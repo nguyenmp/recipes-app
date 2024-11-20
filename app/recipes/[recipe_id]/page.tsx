@@ -1,8 +1,25 @@
-import { getRecipeById, getRelatedRecipesFromRecipe } from "@/app/lib/data";
+import { EmbeddingMatch, getRecipeById, getRelatedRecipesFromRecipe } from "@/app/lib/data";
+import { StoredRecipe } from "@/app/lib/definitions";
 import { RecipeCard } from "@/app/ui/recipe";
 import { error_on_read_permissions, has_write_permissions } from "@/auth";
 import Link from "next/link";
 
+async function RelatedRecipes(params: {relatedRecipes: EmbeddingMatch<StoredRecipe>[]}) {
+
+  return (
+    <div className="max-w-screen overflow-y-auto">
+      <ul className="flex flex-row gap-4">
+        <p className="flex-shrink-0">Related Recipes:</p>
+        {
+          params.relatedRecipes.map((recipe) => {
+            const link = `/recipes/${recipe.id}/`;
+            return <li className="flex-shrink-0" key={recipe.id}><a href={link} data-distance={recipe.distance} title={recipe.name}>{recipe.name}</a></li>
+          })
+        }
+      </ul>
+    </div>
+  );
+}
 
 export default async function Page(props: { params: Promise<{ recipe_id: string }> }) {
     await error_on_read_permissions();
@@ -15,11 +32,8 @@ export default async function Page(props: { params: Promise<{ recipe_id: string 
         <div>
             <p><Link href="/recipes">All Recipes</Link></p>
             {render_write_permission_stuff ? <p><Link href={`/recipes/${id}/edit`}>Edit Recipe</Link></p> : <></>}
+            <RelatedRecipes relatedRecipes={relatedRecipes} />
             {RecipeCard(recipe, !render_write_permission_stuff)}
-            <p>Related Recipes:</p>
-            {relatedRecipes.map((relatedRecipe) => {
-                return <li key={relatedRecipe.id} className="list-disc list-inside m-2 p-2"><Link href={`/recipes/${relatedRecipe.id}`} title={`${relatedRecipe.distance}`}>{relatedRecipe.name}</Link></li>
-            })}
         </div>
     );
 }
