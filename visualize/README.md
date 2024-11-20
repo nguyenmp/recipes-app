@@ -19,4 +19,6 @@ file_handle = open('recipes_202411190923.json', 'rt')
 data = json.load(file_handle)
 recipe_names = list(map(lambda recipe: recipe['name'], data['recipes']))
 recipe_embeddings = list(map(lambda recipe: json.loads(recipe['embedding']), data['recipes']))
+# words = list(map(lambda recipe: recipe['word'], data['embeddings']))
+# embeddings = list(map(lambda recipe: json.loads(recipe['embedding']), data['embeddings']))
 ```
